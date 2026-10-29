@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>River · Causal Data Science Meeting 2026 · PyMC Labs</title>
+<link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/deck.css">
+<link rel="stylesheet" href="css/slides.css">
+<link rel="stylesheet" href="css/scenes/arch.css">
+<link rel="stylesheet" href="css/scenes/causal.css">
+<link rel="stylesheet" href="css/scenes/machine.css">
+<link rel="stylesheet" href="css/scenes/results.css">
+</head>
+<body data-theme="dark">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="pymc-logo" viewBox="0 0 119.1 39.8"><defs>
+<clipPath id="pymc-logo-clip">
+<path clip-rule="nonzero" d="M 0 0.0507812 L 40 0.0507812 L 40 39.550781 L 0 39.550781 Z M 0 0.0507812 "/>
+</clipPath>
+</defs>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 54.886719 5.664062 C 56.214844 5.664062 57.164062 5.964844 57.742188 6.566406 C 58.320312 7.167969 58.609375 8.054688 58.609375 9.234375 L 58.609375 10.511719 C 58.609375 11.691406 58.316406 12.578125 57.742188 13.179688 C 57.164062 13.78125 56.210938 14.082031 54.886719 14.082031 L 47.71875 14.082031 L 47.71875 17.40625 C 47.71875 17.660156 47.589844 17.785156 47.339844 17.785156 L 45.46875 17.785156 C 45.203125 17.785156 45.070312 17.660156 45.070312 17.40625 L 45.070312 6.183594 C 45.070312 5.835938 45.246094 5.664062 45.589844 5.664062 L 54.886719 5.664062 M 47.71875 11.792969 L 54.351562 11.792969 C 54.941406 11.792969 55.355469 11.667969 55.597656 11.414062 C 55.839844 11.160156 55.960938 10.773438 55.960938 10.253906 L 55.960938 9.59375 C 55.960938 9.074219 55.839844 8.6875 55.597656 8.433594 C 55.355469 8.179688 54.941406 8.054688 54.351562 8.054688 L 47.945312 8.054688 C 47.796875 8.054688 47.722656 8.125 47.722656 8.261719 L 47.722656 11.792969 L 47.71875 11.792969 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 74.171875 8.28125 C 74.300781 8.28125 74.382812 8.324219 74.421875 8.410156 C 74.464844 8.496094 74.457031 8.597656 74.398438 8.714844 L 67.75 20.433594 C 67.519531 20.839844 67.191406 21.136719 66.773438 21.328125 C 66.351562 21.519531 65.765625 21.613281 65.015625 21.613281 L 63.804688 21.613281 C 63.597656 21.613281 63.492188 21.507812 63.492188 21.300781 L 63.492188 19.882812 C 63.492188 19.671875 63.597656 19.570312 63.804688 19.570312 L 64.824219 19.570312 C 65.265625 19.570312 65.558594 19.4375 65.707031 19.171875 L 66.644531 17.527344 C 66.355469 17.503906 66.132812 17.433594 65.976562 17.320312 C 65.820312 17.203125 65.675781 17.023438 65.535156 16.78125 L 60.863281 8.714844 C 60.804688 8.601562 60.796875 8.5 60.835938 8.410156 C 60.875 8.324219 60.960938 8.28125 61.085938 8.28125 L 63.078125 8.28125 C 63.273438 8.28125 63.414062 8.363281 63.492188 8.523438 L 67.335938 15.1875 C 67.429688 15.351562 67.503906 15.457031 67.554688 15.511719 C 67.605469 15.5625 67.671875 15.589844 67.753906 15.589844 L 71.820312 8.527344 C 71.902344 8.363281 72.039062 8.285156 72.238281 8.285156 L 74.175781 8.285156 L 74.171875 8.28125 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 80.511719 5.664062 C 80.765625 5.664062 80.984375 5.683594 81.167969 5.714844 C 81.351562 5.75 81.515625 5.816406 81.652344 5.914062 C 81.789062 6.015625 81.914062 6.144531 82.023438 6.3125 C 82.136719 6.480469 82.246094 6.703125 82.363281 6.980469 L 85.960938 15.289062 C 86.007812 15.394531 86.089844 15.445312 86.203125 15.445312 L 86.410156 15.445312 C 86.527344 15.445312 86.605469 15.394531 86.652344 15.289062 L 90.253906 6.980469 C 90.371094 6.703125 90.484375 6.480469 90.589844 6.3125 C 90.699219 6.144531 90.824219 6.015625 90.964844 5.914062 C 91.101562 5.816406 91.261719 5.753906 91.441406 5.714844 C 91.617188 5.679688 91.835938 5.664062 92.089844 5.664062 L 93.941406 5.664062 C 94.542969 5.664062 94.949219 5.800781 95.15625 6.074219 C 95.359375 6.34375 95.464844 6.808594 95.464844 7.46875 L 95.464844 17.40625 C 95.464844 17.660156 95.332031 17.785156 95.066406 17.785156 L 93.300781 17.785156 C 93.046875 17.785156 92.921875 17.660156 92.921875 17.40625 L 92.921875 8.367188 C 92.921875 8.253906 92.875 8.195312 92.78125 8.195312 L 92.628906 8.195312 C 92.511719 8.195312 92.4375 8.242188 92.402344 8.332031 L 88.90625 16.089844 C 88.765625 16.398438 88.625 16.664062 88.480469 16.875 C 88.335938 17.089844 88.183594 17.265625 88.015625 17.40625 C 87.847656 17.542969 87.65625 17.640625 87.441406 17.699219 C 87.230469 17.753906 86.976562 17.785156 86.691406 17.785156 L 85.859375 17.785156 C 85.570312 17.785156 85.320312 17.753906 85.105469 17.699219 C 84.894531 17.640625 84.703125 17.542969 84.535156 17.40625 C 84.367188 17.265625 84.214844 17.089844 84.070312 16.875 C 83.925781 16.664062 83.785156 16.398438 83.644531 16.089844 L 80.148438 8.332031 C 80.113281 8.238281 80.039062 8.195312 79.921875 8.195312 L 79.765625 8.195312 C 79.675781 8.195312 79.628906 8.25 79.628906 8.367188 L 79.628906 17.40625 C 79.628906 17.660156 79.5 17.785156 79.25 17.785156 L 77.484375 17.785156 C 77.21875 17.785156 77.085938 17.660156 77.085938 17.40625 L 77.085938 7.46875 C 77.085938 6.808594 77.1875 6.34375 77.394531 6.074219 C 77.601562 5.800781 78.011719 5.664062 78.625 5.664062 L 80.511719 5.664062 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 111.65625 5.664062 C 111.910156 5.664062 112.035156 5.792969 112.035156 6.046875 L 112.035156 7.742188 C 112.035156 8.007812 111.90625 8.140625 111.65625 8.140625 L 103.953125 8.140625 C 103.503906 8.140625 103.128906 8.175781 102.835938 8.25 C 102.542969 8.328125 102.308594 8.453125 102.136719 8.632812 C 101.960938 8.8125 101.835938 9.050781 101.761719 9.351562 C 101.6875 9.648438 101.648438 10.03125 101.648438 10.492188 L 101.648438 12.953125 C 101.648438 13.414062 101.6875 13.796875 101.761719 14.101562 C 101.835938 14.410156 101.960938 14.652344 102.136719 14.832031 C 102.308594 15.007812 102.542969 15.136719 102.835938 15.210938 C 103.128906 15.285156 103.503906 15.324219 103.953125 15.324219 L 111.65625 15.324219 C 111.910156 15.324219 112.035156 15.449219 112.035156 15.703125 L 112.035156 17.398438 C 112.035156 17.652344 111.90625 17.777344 111.65625 17.777344 L 103.847656 17.777344 C 102.96875 17.777344 102.226562 17.699219 101.613281 17.535156 C 101.003906 17.375 100.503906 17.113281 100.117188 16.75 C 99.730469 16.382812 99.449219 15.910156 99.269531 15.328125 C 99.089844 14.746094 99 14.039062 99 13.207031 L 99 10.230469 C 99 9.398438 99.089844 8.695312 99.269531 8.117188 C 99.449219 7.539062 99.730469 7.070312 100.117188 6.707031 C 100.503906 6.34375 101.003906 6.078125 101.613281 5.910156 C 102.226562 5.746094 102.96875 5.660156 103.847656 5.660156 L 111.65625 5.660156 L 111.65625 5.664062 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 47.496094 21.816406 C 47.761719 21.816406 47.894531 21.949219 47.894531 22.21875 L 47.894531 29.515625 C 47.894531 30.003906 47.9375 30.410156 48.015625 30.734375 C 48.09375 31.058594 48.226562 31.3125 48.410156 31.5 C 48.589844 31.691406 48.839844 31.824219 49.148438 31.902344 C 49.460938 31.984375 49.855469 32.023438 50.328125 32.023438 L 57.738281 32.023438 C 58.007812 32.023438 58.140625 32.15625 58.140625 32.421875 L 58.140625 34.214844 C 58.140625 34.484375 58.007812 34.617188 57.738281 34.617188 L 50.21875 34.617188 C 49.289062 34.617188 48.503906 34.535156 47.859375 34.363281 C 47.214844 34.191406 46.683594 33.914062 46.277344 33.527344 C 45.867188 33.144531 45.566406 32.644531 45.378906 32.027344 C 45.191406 31.410156 45.09375 30.664062 45.09375 29.785156 L 45.09375 22.210938 C 45.09375 21.941406 45.234375 21.808594 45.515625 21.808594 L 47.492188 21.808594 L 47.496094 21.816406 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 71.226562 24.578125 C 72.042969 24.578125 72.730469 24.648438 73.292969 24.789062 C 73.855469 24.929688 74.300781 25.148438 74.640625 25.445312 C 74.972656 25.746094 75.214844 26.128906 75.363281 26.597656 C 75.507812 27.066406 75.582031 27.632812 75.582031 28.292969 L 75.582031 33.160156 C 75.582031 33.453125 75.558594 33.691406 75.515625 33.882812 C 75.472656 34.070312 75.402344 34.21875 75.296875 34.332031 C 75.195312 34.441406 75.058594 34.515625 74.886719 34.558594 C 74.714844 34.601562 74.496094 34.621094 74.230469 34.621094 L 65.519531 34.621094 C 64.980469 34.621094 64.535156 34.570312 64.171875 34.464844 C 63.8125 34.363281 63.523438 34.207031 63.304688 34 C 63.085938 33.792969 62.929688 33.523438 62.839844 33.195312 C 62.746094 32.863281 62.699219 32.476562 62.699219 32.023438 L 62.699219 31.144531 C 62.699219 30.765625 62.746094 30.429688 62.839844 30.128906 C 62.929688 29.828125 63.085938 29.578125 63.304688 29.367188 C 63.523438 29.160156 63.816406 29.007812 64.171875 28.902344 C 64.535156 28.796875 64.980469 28.746094 65.519531 28.746094 L 72.964844 28.746094 L 72.964844 28.398438 C 72.964844 28.105469 72.9375 27.855469 72.875 27.648438 C 72.816406 27.441406 72.710938 27.273438 72.566406 27.144531 C 72.417969 27.015625 72.21875 26.921875 71.960938 26.863281 C 71.707031 26.800781 71.378906 26.769531 70.972656 26.769531 L 63.324219 26.769531 C 63.105469 26.769531 62.996094 26.660156 62.996094 26.441406 L 62.996094 24.90625 C 62.996094 24.6875 63.105469 24.578125 63.324219 24.578125 L 71.230469 24.578125 L 71.226562 24.578125 M 72.433594 32.609375 C 72.628906 32.609375 72.765625 32.566406 72.84375 32.472656 C 72.921875 32.382812 72.960938 32.222656 72.960938 31.988281 L 72.960938 30.378906 L 66.265625 30.378906 C 65.886719 30.378906 65.621094 30.457031 65.46875 30.609375 C 65.316406 30.757812 65.242188 30.980469 65.242188 31.277344 L 65.242188 31.660156 C 65.242188 31.988281 65.316406 32.230469 65.46875 32.382812 C 65.621094 32.535156 65.886719 32.609375 66.265625 32.609375 L 72.433594 32.609375 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 83.0625 20.902344 C 83.332031 20.902344 83.464844 21.035156 83.464844 21.304688 L 83.464844 24.578125 L 90.324219 24.578125 C 91.140625 24.578125 91.832031 24.648438 92.394531 24.789062 C 92.953125 24.929688 93.402344 25.148438 93.738281 25.445312 C 94.074219 25.746094 94.316406 26.128906 94.460938 26.597656 C 94.605469 27.066406 94.679688 27.632812 94.679688 28.292969 L 94.679688 30.925781 C 94.679688 31.585938 94.609375 32.148438 94.460938 32.617188 C 94.316406 33.085938 94.074219 33.472656 93.738281 33.769531 C 93.402344 34.070312 92.953125 34.285156 92.394531 34.421875 C 91.832031 34.554688 91.140625 34.621094 90.324219 34.621094 L 85.203125 34.621094 C 84.371094 34.621094 83.679688 34.554688 83.125 34.421875 C 82.570312 34.285156 82.125 34.070312 81.789062 33.769531 C 81.457031 33.472656 81.214844 33.085938 81.066406 32.617188 C 80.921875 32.148438 80.847656 31.585938 80.847656 30.925781 L 80.847656 21.304688 C 80.847656 21.035156 80.988281 20.902344 81.269531 20.902344 L 83.0625 20.902344 M 83.464844 26.773438 L 83.464844 30.417969 C 83.464844 30.804688 83.496094 31.128906 83.558594 31.386719 C 83.617188 31.640625 83.722656 31.847656 83.878906 32 C 84.03125 32.148438 84.234375 32.261719 84.492188 32.328125 C 84.746094 32.394531 85.070312 32.425781 85.460938 32.425781 L 90.070312 32.425781 C 90.472656 32.425781 90.800781 32.394531 91.058594 32.328125 C 91.316406 32.261719 91.519531 32.148438 91.671875 32 C 91.824219 31.847656 91.929688 31.640625 91.992188 31.386719 C 92.054688 31.128906 92.082031 30.804688 92.082031 30.417969 L 92.082031 28.789062 C 92.082031 28.410156 92.054688 28.089844 91.992188 27.828125 C 91.933594 27.5625 91.824219 27.359375 91.671875 27.203125 C 91.519531 27.050781 91.316406 26.941406 91.058594 26.875 C 90.804688 26.808594 90.472656 26.773438 90.070312 26.773438 L 83.464844 26.773438 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 111.789062 24.578125 C 112.007812 24.578125 112.117188 24.6875 112.117188 24.90625 L 112.117188 26.371094 C 112.117188 26.59375 112.007812 26.699219 111.789062 26.699219 L 103.539062 26.699219 C 103.160156 26.699219 102.898438 26.769531 102.75 26.910156 C 102.605469 27.050781 102.53125 27.253906 102.53125 27.523438 L 102.53125 27.796875 C 102.53125 28.042969 102.605469 28.234375 102.75 28.375 C 102.898438 28.515625 103.160156 28.585938 103.539062 28.585938 L 109.703125 28.585938 C 110.726562 28.585938 111.460938 28.796875 111.898438 29.226562 C 112.335938 29.652344 112.554688 30.253906 112.554688 31.039062 L 112.554688 32.0625 C 112.554688 32.464844 112.507812 32.824219 112.410156 33.140625 C 112.3125 33.457031 112.152344 33.726562 111.925781 33.945312 C 111.699219 34.164062 111.40625 34.335938 111.039062 34.449219 C 110.671875 34.566406 110.222656 34.621094 109.6875 34.621094 L 100.320312 34.621094 C 100.101562 34.621094 99.988281 34.511719 99.988281 34.292969 L 99.988281 32.828125 C 99.988281 32.609375 100.101562 32.5 100.320312 32.5 L 108.992188 32.5 C 109.371094 32.5 109.636719 32.433594 109.789062 32.300781 C 109.9375 32.164062 110.015625 31.941406 110.015625 31.621094 L 110.015625 31.128906 C 110.015625 30.882812 109.9375 30.695312 109.789062 30.5625 C 109.632812 30.425781 109.371094 30.359375 108.992188 30.359375 L 102.84375 30.359375 C 101.820312 30.359375 101.085938 30.148438 100.648438 29.730469 C 100.207031 29.308594 99.988281 28.695312 99.988281 27.890625 L 99.988281 27.085938 C 99.988281 26.707031 100.039062 26.363281 100.136719 26.050781 C 100.234375 25.738281 100.394531 25.472656 100.621094 25.253906 C 100.847656 25.035156 101.140625 24.867188 101.507812 24.753906 C 101.875 24.636719 102.324219 24.578125 102.863281 24.578125 L 111.789062 24.578125 "/>
+<g clip-path="url(#pymc-logo-clip)">
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 19.734375 0.0898438 C 24.992188 0.0898438 29.9375 2.140625 33.65625 5.863281 L 33.660156 5.863281 C 41.339844 13.542969 41.339844 26.035156 33.660156 33.714844 C 29.941406 37.429688 24.992188 39.480469 19.734375 39.480469 C 14.972656 39.480469 10.472656 37.796875 6.898438 34.722656 L 8.03125 33.722656 C 11.304688 36.476562 15.40625 37.980469 19.734375 37.980469 C 24.59375 37.980469 29.164062 36.089844 32.601562 32.65625 C 36.039062 29.21875 37.933594 24.640625 37.933594 19.785156 C 37.933594 14.925781 36.039062 10.355469 32.601562 6.917969 C 29.164062 3.480469 24.59375 1.585938 19.734375 1.585938 C 17.132812 1.585938 14.617188 2.132812 12.308594 3.167969 C 12.1875 2.667969 11.960938 2.214844 11.664062 1.820312 C 14.167969 0.691406 16.902344 0.0898438 19.734375 0.0898438 M 5.550781 6.128906 C 5.828125 6.550781 6.183594 6.914062 6.605469 7.191406 C 3.335938 10.59375 1.535156 15 1.535156 19.785156 C 1.535156 24.566406 3.371094 29.066406 6.699219 32.480469 L 16.042969 22.4375 C 15.097656 21.726562 13.933594 21.371094 12.738281 21.417969 L 8.183594 24.757812 L 11.699219 20.460938 L 11.71875 20.414062 C 12.59375 18.195312 13.976562 16.097656 15.722656 14.351562 C 19.546875 10.527344 24.808594 8.648438 29.46875 9.4375 L 29.988281 9.527344 L 30.078125 10.050781 C 30.871094 14.703125 28.992188 19.972656 25.167969 23.792969 C 23.539062 25.425781 21.601562 26.734375 19.546875 27.613281 L 14.914062 31.085938 L 18.089844 27.066406 L 18.089844 27.035156 C 18.207031 25.75 17.839844 24.488281 17.078125 23.472656 L 17.078125 23.476562 L 2.953125 36.511719 L 5.679688 33.578125 C 2.042969 29.871094 0.0429688 24.917969 0.0429688 19.785156 C 0.0429688 14.652344 2 9.816406 5.550781 6.128906 M 29.511719 25.292969 C 29.941406 26.300781 30.734375 27.113281 31.71875 27.582031 C 30.730469 28.054688 29.941406 28.867188 29.511719 29.875 C 29.085938 28.867188 28.292969 28.050781 27.308594 27.582031 C 28.296875 27.113281 29.085938 26.300781 29.511719 25.292969 M 28.683594 10.835938 C 24.628906 10.347656 20.117188 12.070312 16.78125 15.40625 C 15.449219 16.738281 14.347656 18.289062 13.554688 19.941406 C 15.09375 20.078125 16.546875 20.746094 17.65625 21.859375 C 18.773438 22.972656 19.441406 24.425781 19.578125 25.964844 C 21.230469 25.171875 22.777344 24.070312 24.109375 22.738281 C 27.449219 19.398438 29.167969 14.890625 28.683594 10.835938 M 20.964844 17.378906 C 21.507812 17.378906 21.949219 17.820312 21.949219 18.367188 C 21.949219 18.910156 21.507812 19.351562 20.964844 19.351562 C 20.417969 19.351562 19.976562 18.910156 19.976562 18.367188 C 19.976562 17.820312 20.417969 17.378906 20.964844 17.378906 M 23.15625 15.609375 C 23.464844 15.609375 23.71875 15.863281 23.71875 16.171875 C 23.71875 16.484375 23.464844 16.738281 23.15625 16.738281 C 22.84375 16.738281 22.59375 16.484375 22.59375 16.171875 C 22.59375 15.863281 22.84375 15.609375 23.15625 15.609375 M 8.683594 1.59375 C 9.1875 2.78125 10.117188 3.738281 11.273438 4.289062 C 10.117188 4.839844 9.1875 5.796875 8.683594 6.984375 C 8.179688 5.796875 7.253906 4.839844 6.09375 4.289062 C 7.253906 3.738281 8.179688 2.78125 8.683594 1.59375 "/>
+</g></symbol>
+</svg>
+
+<div class="bg bg-dark"></div>
+<div class="bg bg-light"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<main class="stage stage-main">
+
+<!-- =====================================================================
+     OPENING
+     ===================================================================== -->
+
+<!-- 01 · Title -->
+<section class="slide slide-title" data-title="Title" data-act="Opening" data-theme="dark" data-chrome="off"
+  data-field='{"mode":"contour","focus":[0.74,0.80],"intensity":1}'>
+  <header class="title-top">
+    <svg class="brand-logo r" viewBox="0 0 119.1 39.8" aria-label="PyMC Labs"><use href="#pymc-logo"/></svg>
+    <div class="title-meta r">
+      <div>Causal Data Science Meeting 2026</div>
+      <div class="hot">5 November 2026 · Session 01 · Research prototype</div>
+    </div>
+  </header>
+  <div class="title-block">
+    <p class="eyebrow r">River · the first Marketing Foundational Model</p>
+    <h1 class="title-h r">Foundation Models for<br>Causal Effect Estimation<br>and Conditional Discovery<br><span class="accent">in Marketing</span></h1>
+    <p class="title-sub r">River reads a marketing dataset, samples the graphs of direct effects that can explain it, and returns the contributions for each graph. It needs no new fit.</p>
+  </div>
+  <footer class="title-foot r">
+    <div class="who">
+      <span class="label">Presented by</span>
+      <span>Carlos Trujillo · Teemu Säilynoja</span>
+    </div>
+    <div class="who">
+      <span class="label">Authors</span>
+      <span>Carlos Trujillo · Teemu Säilynoja · Camilo Saldarriaga · Masataka Hayashi · Thomas Wiecki, PhD · Luca Fiaschi, PhD</span>
+    </div>
+  </footer>
+  <aside class="notes">
+    <p>Welcome. This talk is about River, the first Marketing Foundational Model from PyMC Labs.</p>
+    <p>The question for this audience: can one trained network learn which inputs cause sales, and how much each one contributed, from the data alone?</p>
+    <p>The contour field is the white-paper cover: a posterior landscape. The orange point is the answer we look for.</p>
+  </aside>
+</section>
+
+<!-- 02 · Cold open video -->
+<section class="slide slide-video" data-title="River in forty seconds" data-act="Opening" data-theme="light" data-chrome="off"
+  data-field='{"mode":"none"}'>
+  <div class="video-full r">
+    <video src="assets/video/river_causal_cdsm2026.mp4" poster="assets/video/river_causal_cdsm2026_poster.jpg"
+      data-autoplay data-end="40.05" playsinline preload="auto"></video>
+  </div>
+  <aside class="notes">
+    <p>Let the film play. It is the talk in forty seconds: the problem, the network, graph sampling, the graph as a distribution, one trained model, and the research direction.</p>
+    <p>The film stops on "This is just the start." Press P to pause or resume. Then continue.</p>
+  </aside>
+</section>
+
+<!-- 03 · Team -->
+<section class="slide slide-team" data-title="The team" data-act="Opening" data-theme="light"
+  data-field='{"mode":"ribbon","y":0.565,"intensity":0.9}'>
+  <div class="frame">
+    <p class="eyebrow r">The team</p>
+    <h2 class="h2 r">Researching foundation models<br><span class="accent-2">for marketing science</span></h2>
+  </div>
+  <ul class="team">
+    <li class="r" style="--wave:-26px"><img src="assets/team/carlos-trujillo.webp" alt=""><span class="name">Carlos<br>Trujillo</span><span class="tag">Speaker</span></li>
+    <li class="r" style="--wave:-6px"><img src="assets/team/teemu-sailynoja.webp" alt=""><span class="name">Teemu<br>Säilynoja</span><span class="tag">Speaker</span></li>
+    <li class="r" style="--wave:20px"><img src="assets/team/camilo-saldarriaga.webp" alt=""><span class="name">Camilo<br>Saldarriaga</span></li>
+    <li class="r" style="--wave:24px"><img src="assets/team/masataka-hayashi.webp" alt=""><span class="name">Masataka<br>Hayashi</span></li>
+    <li class="r" style="--wave:2px"><img src="assets/team/thomas-wiecki.webp" alt=""><span class="name">Thomas<br>Wiecki, PhD</span></li>
+    <li class="r" style="--wave:-22px"><img src="assets/team/luca-fiaschi.webp" alt=""><span class="name">Luca<br>Fiaschi, PhD</span></li>
+  </ul>
+  <p class="team-foot r">PyMC Labs · pymc-labs.com/team</p>
+  <aside class="notes">
+    <p>Six authors at PyMC Labs. Carlos and Teemu present today.</p>
+  </aside>
+</section>
+
+<!-- 04 · Agenda -->
+<section class="slide slide-agenda" data-title="Five parts" data-act="Opening" data-theme="dark"
+  data-field='{"mode":"sweep","intensity":0.7}'>
+  <div class="frame agenda">
+    <div>
+      <p class="eyebrow r">The talk</p>
+      <h2 class="h1 r">Five parts</h2>
+      <span class="bar r"></span>
+    </div>
+    <ol class="points">
+      <li class="r"><span class="n">01</span><span class="t">Sales do not reveal causes<small>Why marketing measurement is an identification problem.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Simulated causal worlds<small>A prior that knows the graph and every contribution.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Inside River<small>One encoder and two flow heads that sample graphs, then effects.</small></span></li>
+      <li class="r"><span class="n">04</span><span class="t">What River recovers<small>Structure, contributions and checks on 500 held-out cases.</small></span></li>
+      <li class="r"><span class="n">05</span><span class="t">Boundaries and the next stage<small>What the results show, and what they do not show.</small></span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>Five parts. The causal thread runs through all of them: the target is a contribution, an interventional quantity, under uncertainty about which inputs act.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     01 · THE PROBLEM
+     ===================================================================== -->
+
+<!-- 05 · Same sales, different stories -->
+<section class="slide" data-title="Sales show what happened" data-act="01 · The problem" data-theme="light" data-steps="3"
+  data-scene="decomp" data-field='{"mode":"sweep","intensity":0.55}'>
+  <div class="frame text-col">
+    <p class="eyebrow r"><span class="num">01</span>The problem</p>
+    <h2 class="h1 r">Sales show what happened.<br><span class="accent-2">Not what caused it.</span></h2>
+    <p class="lede r" style="margin-top:48px">Marketing teams plan TV, search and promotions as one system. The inputs move together, so different splits of sales fit the same history.</p>
+    <p class="lede fade" data-step="3" style="margin-top:28px"><strong>A good sales forecast does not tell you what each channel caused.</strong></p>
+  </div>
+  <div class="scene-root" style="left:900px;top:200px;width:900px;height:720px"></div>
+  <aside class="notes">
+    <p>Step 0: weekly sales. One line. This is all that the data show.</p>
+    <p>Steps 1 to 3: three decompositions. The total stays the same in every one. Only the split changes.</p>
+    <p>Key point: predicting sales does not determine contributions. The central problem is contribution inference under structural uncertainty.</p>
+  </aside>
+</section>
+
+<!-- 06 · The structural model -->
+<section class="slide slide-eq" data-title="A marketing mix model is a structural model" data-act="01 · The problem" data-theme="light" data-steps="4"
+  data-field='{"mode":"sweep","intensity":0.55}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">01</span>The problem</p>
+    <h2 class="h2 r">A marketing mix model is a structural model</h2>
+    <span class="bar r"></span>
+  </div>
+  <div class="eq-stage">
+    <div class="eq lg r" data-tex="\mu_t \;=\; \htmlClass{t-b}{B_t} \;+\; \htmlClass{t-c}{\sum_{k=1}^{K} C_{t,k}} \;+\; \htmlClass{t-u}{\sum_{m=1}^{M} U_{t,m}}" data-display></div>
+    <div class="eq sm r" data-tex="Y_t = \mu_t + \htmlClass{t-e}{\varepsilon_t}, \qquad \varepsilon_t \sim \mathrm{Normal}(0, \sigma_Y^2)" data-display></div>
+    <div class="eq-labels">
+      <div class="eq-label" data-step-only="1"><b>Intrinsic baseline.</b> The part of sales that no input explains. It can change over time.</div>
+      <div class="eq-label" data-step-only="2"><b>Channel contributions.</b> Media spend after carryover (adstock) and a response curve (saturation).</div>
+      <div class="eq-label" data-step-only="3"><b>Control contributions.</b> Price, holidays and other measured factors that are not media.</div>
+    </div>
+  </div>
+  <div class="trio" data-step="4">
+    <div class="card"><p class="card-label">Channels run together</p><p>TV and search rise and fall in the same weeks. Sales cannot say which one worked.</p></div>
+    <div class="card peri"><p class="card-label">Spend follows demand</p><p>Budgets go up when the season goes up. Part of the “effect” is the season.</p></div>
+    <div class="card peach"><p class="card-label">Promotions move with campaigns</p><p>Price cuts land in the same weeks as media and claim the same sales.</p></div>
+  </div>
+  <p class="source r">Eq. (3) of the paper. Bottleneck examples from the white paper.</p>
+  <aside class="notes">
+    <p>The model writes sales as a sum. Baseline, each channel, each control, plus noise.</p>
+    <p>Each term is a latent quantity. We never observe it. We observe only the sum.</p>
+    <p>Step 4: three reasons why the sum is hard to split. All three are confounding stories this audience knows well.</p>
+  </aside>
+</section>
+
+<!-- 07 · One specification -->
+<section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="4"
+  data-field='{"mode":"sweep","intensity":0.55}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">01</span>The problem · We always underestimate uncertainty</p>
+    <h2 class="h2 r">Each analysis commits to one specification</h2>
+  </div>
+  <div class="choices r">
+    <div class="choice-row"><span class="choice-k">Carryover</span>
+      <span class="chip" data-pick="a">2 weeks</span><span class="chip">6 weeks</span><span class="chip" data-pick="b">10 weeks</span></div>
+    <div class="choice-row"><span class="choice-k">Diminishing returns</span>
+      <span class="chip" data-pick="a">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip">Michaelis–Menten</span></div>
+    <div class="choice-row"><span class="choice-k">Causal structure</span>
+      <span class="chip" data-pick="a">Price as control</span><span class="chip" data-pick="b">Price as confounder</span><span class="chip">No price</span></div>
+    <div class="choice-row"><span class="choice-k">Constraints</span>
+      <span class="chip" data-pick="a">Positive effects</span><span class="chip" data-pick="b">ROI range</span><span class="chip">Last year’s priors</span></div>
+  </div>
+  <div class="splits">
+    <div class="split-row" data-step="1"><span class="who">Analyst 1</span>
+      <div class="splitbar"><span style="--w:45%" class="s-tv">TV 45%</span><span style="--w:30%" class="s-se">Search 30%</span><span style="--w:25%" class="s-so">Social 25%</span></div></div>
+    <div class="split-row" data-step="2"><span class="who">Analyst 2</span>
+      <div class="splitbar"><span style="--w:20%" class="s-tv">TV 20%</span><span style="--w:50%" class="s-se">Search 50%</span><span style="--w:30%" class="s-so">Social 30%</span></div></div>
+    <p class="small" data-step="2" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers.</p>
+  </div>
+  <div class="bma">
+    <div class="bma-eq" data-step="3">
+      <div class="eq" data-tex="p(C \mid \mathcal{D}, \hat m)" data-display></div>
+      <p class="small">One selected specification. Its intervals ignore every other model.</p>
+    </div>
+    <div class="bma-eq" data-step="4">
+      <div class="eq" data-tex="p(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
+      <p class="small">Bayesian model averaging: uncertainty within each model <em>and</em> about the model. Each term needs its own fit.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Every analysis makes four kinds of choices. One of them is the causal structure.</p>
+    <p>Steps 1 and 2: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
+    <p>Step 3: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
+    <p>Step 4: the principled answer is model averaging. But each specification needs its own MCMC fit, and nothing checks the choices against the truth.</p>
+  </aside>
+</section>
+
+<!-- 08 · Start backwards -->
+<section class="slide slide-inter" data-title="What if we could start backwards?" data-act="01 · The problem" data-theme="dark" data-steps="1"
+  data-field='{"mode":"ribbon","y":0.30,"intensity":0.6}'>
+  <div class="frame mid">
+    <p class="eyebrow r">A different order of work</p>
+    <h2 class="display-2 r">What if we could<br><span class="accent">start backwards?</span></h2>
+    <p class="lede r" style="margin-top:44px">Write many specifications down first. Learn inference once, on worlds where the truth is known. Then read each new dataset with no new fit.</p>
+    <div class="process" data-step="1">
+      <div class="proc-row">
+        <span class="proc-k">Today</span>
+        <ol class="proc"><li><i>1</i><b>Data</b></li><li><i>2</i><b>Specialist</b><small>chooses the structure</small></li><li><i>3</i><b>Build</b><small>adstock, curves, priors</small></li><li><i>4</i><b>Fit</b><small>MCMC sampling</small></li><li><i>5</i><b>Check</b><small>plausible? refit</small></li><li class="end"><i>6</i><b>Decision</b><small>after weeks</small></li></ol>
+        <span class="proc-loop"><svg class="loop-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4.6h-4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>every change is a new build, fit and check</span>
+      </div>
+      <div class="proc-row">
+        <span class="proc-k">With River</span>
+        <ol class="proc short"><li><i>1</i><b>Data</b></li><li class="mfm"><i>2</i><b>River</b><small>fixed weights, no new fit</small></li><li><i>3</i><b>Draws</b><small>graphs and contributions</small></li><li class="end"><i>4</i><b>Decision</b><small>goal: a shorter loop</small></li></ol>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The usual order: assume one thing, fit, check, change, fit again. It is sequential.</p>
+    <p>We reverse it. We assume many things at the start, in a prior. We learn inference once. Then each dataset is a forward pass.</p>
+    <p>A shorter loop is a goal. Part 4 gives the measured cost and its caveats.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     02 · SIMULATED CAUSAL WORLDS
+     ===================================================================== -->
+
+<!-- 09 · Worlds -->
+<section class="slide" data-title="A prior is a simulator that knows the truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+  data-scene="worlds" data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
+    <h2 class="h2 r">A prior is a simulator that <span class="accent-2">knows the truth</span></h2>
+    <p class="body r" style="margin-top:30px">Each world has its own inputs, causal links, response curves and sales. The simulator stores the graph and every contribution.</p>
+    <div class="chips r">
+      <span class="chip fill">200,000 worlds</span><span class="chip fill">208 weeks</span>
+      <span class="chip">1–10 channels</span><span class="chip">1–10 controls</span><span class="chip">50 prior combinations</span>
+    </div>
+    <div class="facts" data-step="2">
+      <p><b>57,994</b> of 200,000 worlds have one channel with a direct effect.</p>
+      <p><b>725</b> of 1,000 sampled worlds have an input with a variance inflation factor above 5.</p>
+      <p class="accent-2">Different worlds give similar data with different contributions. The network must learn a distribution of explanations.</p>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <p class="source r">Section 2 of the paper. 196,000 training worlds, 4,000 holdout worlds; 50 equally weighted combinations of 10 response choices and 5 input settings.</p>
+  <aside class="notes">
+    <p>We write the plausible specifications into one prior. The prior is a simulator.</p>
+    <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
+    <p>Step 2: the data are hard on purpose. Many worlds have one active channel. Inputs persist and move together.</p>
+  </aside>
+</section>
+
+<!-- 10 · Interventional target -->
+<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+  data-scene="intervention" data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>The causal target</p>
+    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
+    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
+    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k,0:T-1} = 0)\big)" data-display></div>
+    <div class="boundary" data-step="2">
+      <p class="card-label">The boundary of River’s prior</p>
+      <p>Only input → sales edges. No paths between inputs. No hidden demand. River learns which permitted edges are present.</p>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <p class="source r">Section 2.2 and Appendix A.1.1 of the paper.</p>
+  <aside class="notes">
+    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
+    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
+    <p>Step 2: the boundary. The graph family is restricted: direct effects only, no confounding by hidden demand, no input-to-input paths. River learns which permitted edges are present.</p>
+  </aside>
+</section>
+
+<!-- 11 · Learn the posterior from the prior -->
+<section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="3"
+  data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">02</span>Amortized inference · prior-fitted networks</p>
+    <h2 class="h2 r">Learn the posterior from the prior</h2>
+    <span class="bar r"></span>
+  </div>
+  <div class="pfn-eqs">
+    <div class="pfn-eq r">
+      <span class="eq-tag">train</span>
+      <div class="eq" data-tex="\mathcal{L}(\varphi) = \mathbb{E}_{(\mathcal{D}, C) \sim p(\mathcal{D}, C)}\big[-\log q_\varphi(C \mid \mathcal{D})\big]" data-display></div>
+    </div>
+    <div class="pfn-eq" data-step="1">
+      <span class="eq-tag">equals</span>
+      <div class="eq" data-tex="\mathbb{E}_{\mathcal{D}}\Big[\mathrm{KL}\big(p(C \mid \mathcal{D}) \,\|\, q_\varphi(C \mid \mathcal{D})\big)\Big] + \text{const}" data-display></div>
+    </div>
+    <div class="pfn-eq" data-step="2">
+      <span class="eq-tag">optimum</span>
+      <div class="eq" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
+      <p class="small">If the network is flexible enough, the loss is smallest at the model-averaged posterior of the mixture prior.</p>
+    </div>
+  </div>
+  <div class="trio" data-step="3">
+    <div class="card"><p class="card-label">1 · Simulate</p><p>Draw worlds from the prior. Store the graph and the contributions.</p></div>
+    <div class="card peri"><p class="card-label">2 · Train</p><p>Teach one network to return the stored truth from what an analyst would see.</p></div>
+    <div class="card peach"><p class="card-label">3 · Use</p><p>Read a new dataset with fixed weights. Outside the prior, no guarantee holds.</p></div>
+  </div>
+  <p class="source r">Eqs. (1), (2) and Appendix B.1 of the paper; prior-fitted networks (Müller et al., 2022).</p>
+  <aside class="notes">
+    <p>This is the prior-fitted network argument. Train on pairs of datasets and contributions from the prior. Minimize the negative log density of the truth.</p>
+    <p>Step 1: the loss is an expected KL divergence to the true posterior, plus a constant.</p>
+    <p>Step 2: so the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once.</p>
+    <p>Step 3: the honest part. Finite data and optimization do not guarantee the ideal. River uses flow matching, which has the same target. Outside the prior, there is no such result.</p>
+  </aside>
+</section>
+
+<!-- 12 · Not a number -->
+<section class="slide slide-inter" data-title="The output is a distribution over causal systems" data-act="02 · Causal worlds" data-theme="dark"
+  data-field='{"mode":"fan","origin":[0.1,0.62],"intensity":0.9}'>
+  <div class="frame mid">
+    <p class="eyebrow r">The output</p>
+    <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over causal systems.</span></h2>
+    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
+      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
+      <li><span class="n">2</span><span class="t">For each graph, a posterior of contributions over time.</span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>Borrowed from our ODSC talk: the outcome is not a number, it is a system.</p>
+    <p>River returns graphs and, for each graph, contributions. Now we open the network.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     03 · INSIDE RIVER
+     ===================================================================== -->
+
+<!-- 13 · Architecture assembly -->
+<section class="slide slide-arch" data-title="Assembling River" data-act="03 · Inside River" data-theme="dark" data-steps="8"
+  data-scene="arch" data-field='{"mode":"sweep","intensity":0.25}'>
+  <div class="arch-head">
+    <p class="eyebrow r"><span class="num">03</span>Inside River</p>
+    <div class="arch-captions r">
+      <div class="arch-cap" data-step-only="0"><h3 class="h3">One dataset in</h3><p>Spend and controls for every week. Sales only for the context weeks. Query sales are zero-filled and flagged. The true graph and contributions never enter the encoder.</p></div>
+      <div class="arch-cap" data-step-only="1"><h3 class="h3">A shared transformer encoder</h3><p>Attention runs across weeks and across inputs. Time attention is causal: a week cannot read later weeks. Four blocks, width 128, eight heads.</p></div>
+      <div class="arch-cap" data-step-only="2"><h3 class="h3">The joint router</h3><p>A flow head that generates a graph and a decomposition together. Its target appends the graph, coded −1 / +1, to the contributions: 346 coordinates per week.</p></div>
+      <div class="arch-cap" data-step-only="3"><h3 class="h3">A sampled graph G</h3><p>An edge is present when its mean signed state over the query weeks is above zero. The router’s own decomposition is discarded.</p></div>
+      <div class="arch-cap" data-step-only="4"><h3 class="h3">The graph conditioner</h3><p>One round of messages along the sampled edges, from inputs to the baseline and sales. 321 graph slots in 8 families; River’s prior uses the direct ones.</p></div>
+      <div class="arch-cap" data-step-only="5"><h3 class="h3">The conditional decoder</h3><p>A second flow head generates contributions for that graph. A support mask removes forbidden coordinates: an absent edge gives exactly zero.</p></div>
+      <div class="arch-cap" data-step-only="6"><h3 class="h3">One decomposition draw</h3><p>Baseline, each channel and each control, for every week of the requested window. 25 coordinates per week.</p></div>
+      <div class="arch-cap" data-step-only="7"><h3 class="h3">Training</h3><p>The simulator’s graph and contributions are the targets. The decoder learns with the true graph. An auxiliary edge classifier helps training only; it never selects graphs.</p></div>
+      <div class="arch-cap" data-step-only="8"><h3 class="h3">Inference: weights fixed</h3><p>For each of 256 draws: sample a graph with the router, then decode contributions for that graph. Each draw takes 16 Euler steps.</p></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:120px;top:330px;width:1680px;height:660px"></div>
+  <aside class="notes">
+    <p>We assemble the network piece by piece. The camera zooms into each part.</p>
+    <p>0: the input tensor. 208 weeks by 21 rows: up to 10 channels, 10 controls and sales. 31 features per cell. Context and query windows.</p>
+    <p>1: the encoder. Time attention is lower-triangular. Entity attention is bidirectional over the inputs of a week.</p>
+    <p>2 and 3: the router generates contributions and a graph together. We keep only the graph.</p>
+    <p>4 and 5: the conditioner adjusts the representations for that graph. The decoder draws contributions for it. Absent edges give exact zeros.</p>
+    <p>7: training uses the true graph for the decoder, and the simulated contributions as targets. Loss: joint and conditional velocity losses for query and context windows, plus an edge classification loss.</p>
+    <p>8: inference repeats graph, then contributions, 256 times.</p>
+  </aside>
+</section>
+
+<!-- 14 · Flow matching -->
+<section class="slide" data-title="Flow matching turns noise into draws" data-act="03 · Inside River" data-theme="dark" data-steps="3"
+  data-scene="flow" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">03</span>Inside River · How a head draws</p>
+    <h2 class="h2 r">Flow matching turns <span class="accent">noise into draws</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">A flow head starts from random noise and moves it, in small steps, toward a plausible value of the contributions.</p></div>
+      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network learns the velocity toward the truth.</p>
+        <div class="eq sm" data-tex="z_\tau = (1-\tau)\,z_0 + \tau\,z_1, \qquad u_\tau = z_1 - z_0" data-display></div>
+        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div></div>
+      <div data-step-only="2"><p class="body">At inference, the head follows its learned velocities from fresh noise. Sixteen Euler steps. Different noise gives different draws.</p>
+        <div class="eq sm" data-tex="z \leftarrow z + \tfrac{1}{16}\, v_\varphi(z, \tau;\, h, \kappa)" data-display></div></div>
+      <div data-step-only="3"><p class="body">The noise is coherent over time, so weeks within one draw move together.</p>
+        <div class="eq sm" data-tex="z_{0,t,a} = \sqrt{\rho}\,\kappa_{t,a} + \sqrt{1-\rho}\,e_{t,a}, \qquad \rho = 0.98" data-display></div></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
+  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023).</p>
+  <aside class="notes">
+    <p>Both heads are flow-matching heads. Here is how one head makes a draw.</p>
+    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions.</p>
+    <p>Step 2: inference. Start from new noise. Follow the field for 16 steps. The target here has two modes, one for each graph. The flow finds both.</p>
+    <p>Step 3: the noise has a shared time component, so a draw is a coherent path over weeks, not independent weekly values.</p>
+  </aside>
+</section>
+
+<!-- 15 · Graph sampling -->
+<section class="slide" data-title="At inference, River samples the causal graph" data-act="03 · Inside River" data-theme="dark" data-steps="4"
+  data-scene="graphs" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">03</span>Inside River · The causal core</p>
+    <h2 class="h2 r">At inference, River samples <span class="accent">the causal graph</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">The prior permits one edge from each input to sales. The true graph is not given. River infers which edges are present.</p></div>
+      <div data-step-only="1"><p class="body">Each draw starts with a graph from the router.</p><div class="eq sm" data-tex="G^{(s)} \sim q^{\text{router}}_\varphi(G \mid \mathcal{D}), \quad s = 1, \dots, 256" data-display></div></div>
+      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, these edge probabilities are calibrated.</p></div>
+      <div data-step-only="3"><p class="body">For each graph, the decoder draws contributions. An input without an edge contributes exactly zero, so each contribution posterior mixes a point mass at zero with a continuous part.</p></div>
+      <div data-step-only="4"><p class="body">Together, they form the learned posterior: variation between graphs and within each graph.</p>
+        <div class="eq sm" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{G} \htmlClass{tex-hot}{q^{\text{router}}_\varphi(G \mid \mathcal{D})}\; \htmlClass{tex-accent}{q^{\text{cond}}_\varphi(C \mid \mathcal{D}, G)}" data-display></div></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:780px;top:170px;width:1020px;height:800px"></div>
+  <p class="source r">Section 3.4, Eq. (4) of the paper.</p>
+  <aside class="notes">
+    <p>This is the causal core of River. It is conditional discovery: structure inferred from the data, conditional on the prior's graph family.</p>
+    <p>Step 1: 256 graph draws. Step 2: their frequencies are edge probabilities.</p>
+    <p>Step 3: absent edges give exact zeros. A channel's contribution posterior is a spike at zero plus a slab. Graph uncertainty enters the contribution draws.</p>
+    <p>Step 4: Eq. (4) is the network's counterpart of model averaging, with graphs in place of specifications. Response functions and input settings enter through the training mixture.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     04 · EVIDENCE
+     ===================================================================== -->
+
+<!-- 16 · Test design -->
+<section class="slide slide-test" data-title="500 held-out cases with known truth" data-act="04 · Evidence" data-theme="light" data-steps="2"
+  data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
+    <h2 class="h2 r">500 held-out cases where <span class="accent-2">the truth is known</span></h2>
+  </div>
+  <div class="test-flow">
+    <div class="card r"><p class="card-label">1 · A world</p><p class="card-title">The true split</p><p>Baseline, channels, controls and the graph, stored with the world. Then hidden from every method.</p></div>
+    <span class="arrow r">→</span>
+    <div class="card peri r"><p class="card-label">2 · One table</p><p class="card-title">What an analyst sees</p><p>Spend and controls for all weeks. Sales for the context weeks only.</p></div>
+    <span class="arrow r">→</span>
+    <div class="card r methods"><p class="card-label">3 · Five methods</p>
+      <ul>
+        <li><b>River</b> · graph not supplied</li>
+        <li><b>PyMC-Marketing 1.2</b> · production MMM</li>
+        <li><b>PathMC</b> · Bayesian regression</li>
+        <li><b>OLS</b> · linear regression</li>
+        <li><b>Oracle</b> · told the true graph</li>
+      </ul></div>
+    <span class="arrow r">→</span>
+    <div class="card peach r"><p class="card-label">4 · Scores</p><p class="card-title">Against the truth</p><p>CRPS of contributions: accuracy of a whole distribution. Lower is better.</p></div>
+  </div>
+  <div class="test-design td-1" data-step="1">
+    <div class="td-k">Five conditions · 100 cases each</div>
+    <div class="chips"><span class="chip fill">Full inputs</span><span class="chip fill">Saturation recovery</span><span class="chip fill">Smooth baseline</span><span class="chip peach">Omitted channel · out of prior</span><span class="chip peach">Omitted control · out of prior</span></div>
+  </div>
+  <div class="test-design td-2" data-step="2">
+    <div class="td-k">Two horizons</div>
+    <div class="chips"><span class="chip">99 context weeks → 109 query weeks</span><span class="chip">207 context weeks → 1 query week</span><span class="chip fill">1,000 scored views</span></div>
+  </div>
+  <p class="source r">Section 4.1 of the paper. 300 distinct held-out worlds; the full-input and both omission conditions share 100 base worlds.</p>
+  <aside class="notes">
+    <p>The design keeps the truth known. Every method gets the same table and nothing else.</p>
+    <p>The oracle is a fitted reference that receives the generating graph and mechanism families. No analyst has it. It is a ceiling, not a competitor.</p>
+    <p>Two of the five conditions are out of prior: we hide the largest-effect channel or control.</p>
+  </aside>
+</section>
+
+<!-- 17 · Structure recovery -->
+<section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light" data-steps="3"
+  data-scene="structure" data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · Structure</p>
+    <h2 class="h2 r">River finds most direct effects <span class="accent-2">from the data alone</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">The true graph is not supplied at inference. We score the sampled graphs on the 100 full-input worlds. Two questions stay separate.</p></div>
+      <div data-step-only="1"><p class="body"><b>Edge by edge.</b> An edge counts when its marginal probability is at least 0.5. Channel edges reach a precision and recall near 0.9.</p></div>
+      <div data-step-only="2"><p class="body"><b>Calibration.</b> When River says 0.8, the edge is present about 80% of the time. Edge-pooled calibration error for channels: 0.04 to 0.07.</p></div>
+      <div data-step-only="3"><p class="body"><b>Whole set.</b> The exact set of live channels is right in about half of the worlds. The full graph, with controls, in fewer than one in five.</p>
+        <p class="body accent-2" style="margin-top:20px">Partial structure recovery, under the specified prior.</p></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <p class="source r">Section 4.3 and Appendix C.9 of the paper; reliability bins from the structure-accuracy run (router, channel edges).</p>
+  <aside class="notes">
+    <p>The headline causal result. Good edge-level scores do not mean every graph is right. We report both.</p>
+    <p>Step 1: precision and recall 0.89 and 0.90 with 99 context weeks; 0.92 and 0.87 with 207.</p>
+    <p>Step 2: reliability diagram from the actual bins. Points near the diagonal mean calibrated edge probabilities.</p>
+    <p>Step 3: exact channel set in 45% and 49% of worlds; channels and controls together in 17% and 19%. Full-graph calibration is not established.</p>
+  </aside>
+</section>
+
+<!-- 18 · Contribution accuracy -->
+<section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light" data-steps="2"
+  data-scene="crps" data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
+    <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest error, and a lower score than both regressions in 75 of 100 worlds.</p></div>
+      <div data-step-only="1"><p class="body">The same order holds in all five conditions and at both horizons, also when the largest channel or control is hidden.</p></div>
+      <div data-step-only="2"><p class="body">Against a production PyMC-Marketing model on the 100 full-input worlds, River’s channel CRPS is about a quarter of the MMM’s.</p></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <p class="source r">Tables 1 and 2 of the paper. CRPS of window-mean contributions on the context sales scale; lower is better.</p>
+  <aside class="notes">
+    <p>CRPS scores a whole distribution against the true value. Lower is better.</p>
+    <p>Step 1: five conditions, two horizons. River is lower than PathMC and OLS in every row.</p>
+    <p>Step 2: PyMC-Marketing 1.2 with eight-lag geometric adstock, logistic saturation and default priors, fitted once per world and horizon. The ratio is 3.9 at 99 context weeks and 4.7 at 207. All 200 MMM fits failed at least one health criterion; none was excluded.</p>
+  </aside>
+</section>
+
+<!-- 19 · Three checks -->
+<section class="slide slide-stats" data-title="Three more checks" data-act="04 · Evidence" data-theme="dark"
+  data-field='{"mode":"sweep","intensity":0.55}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · Checks</p>
+    <h2 class="h2 r">Three more checks</h2>
+    <div class="stats">
+      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="\le 8 \times 10^{-16}"></div><div><p class="stat-head">The same answer in any units</p><p class="stat-body">Rescaling sales, spend and controls by factors from 0.001 to 1,000 changes the draws by at most <span data-tex="8 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,024,000 draw pairs.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">0.39<span class="unit">s</span></div><div><p class="stat-head">A fresh one-week answer, with no fit</p><p class="stat-body">Against 74 s for a new PyMC-Marketing fit and prediction: about 190 times as fast. Indicative only: different hardware (GPU against eight CPU cores) and a separate cohort.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest input omitted</p><p class="stat-body">River still has the lowest error on the visible inputs. It does not recover the hidden cause.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Units: the decomposition is invariant to the units of the data.</p>
+    <p>Cost: twelve-channel cohort, 1,200 draws. River 0.39 s for one week, 42 s for 109 weeks. PyMC-Marketing fit plus prediction 74 s and 55 s. After a fit, the MMM prediction call alone takes about 0.4 s. A matched re-run is pending. Read these times as indicative.</p>
+    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     05 · BOUNDARIES AND THE NEXT STAGE
+     ===================================================================== -->
+
+<!-- 20 · Limits -->
+<section class="slide slide-limits" data-title="Where River falls short" data-act="05 · Boundaries" data-theme="light"
+  data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">05</span>Boundaries · It says where it fails</p>
+    <h2 class="h2 r">Where River falls short</h2>
+    <ol class="points limits">
+      <li class="r"><span class="n">01</span><span class="t">The oracle still does better<small>Told the true graph, the oracle has lower channel CRPS: 0.0185 against River’s 0.0294 with 99 context weeks.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Contributions improve; one-week sales do not<small>For the one-week query, total-sales CRPS is 0.0384 for River, 0.0188 for PathMC and 0.0290 for OLS.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Uncertainty is not yet calibrated<small>One-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. Long-query contribution intervals are too narrow.</small></span></li>
+      <li class="r"><span class="n">04</span><span class="t">The gain is not yet attributed<small>The comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</small></span></li>
+    </ol>
+  </div>
+  <p class="source r">Sections 4.2, 4.5 and 4.6 of the paper.</p>
+  <aside class="notes">
+    <p>The advantage is in the decomposition. It is not general prediction superiority.</p>
+    <p>Wide bands that cover the truth are not evidence of a better predictive distribution.</p>
+  </aside>
+</section>
+
+<!-- 21 · Demonstrated vs not -->
+<section class="slide slide-scope" data-title="What is demonstrated, and what is not" data-act="05 · Boundaries" data-theme="light" data-steps="2"
+  data-field='{"mode":"sweep","intensity":0.5}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">05</span>Boundaries · The causal claim</p>
+    <h2 class="h2 r">What is demonstrated, <span class="accent-2">and what is not</span></h2>
+  </div>
+  <div class="scope">
+    <div class="card r"><p class="card-label">Demonstrated now</p><p class="card-title">Inference in a restricted direct-effect setting</p>
+      <p>Contribution inference and partial recovery of permitted direct effects, on held-out synthetic worlds, with no new fit.</p></div>
+    <div class="card peach" data-step="1"><p class="card-label">Not yet established</p><p class="card-title">Unrestricted causal discovery</p>
+      <p>Full DAG discovery, learned edge directions, recovery under hidden confounding, new response mechanisms, and identification from real business data.</p></div>
+    <div class="card peri" data-step="2"><p class="card-label">Research goal</p><p class="card-title">Richer causal structure</p>
+      <p>Mediation, awareness, funnel effects and interactions. Each needs a broader prior, new weights and new evaluation.</p></div>
+  </div>
+  <p class="scope-note r">Graph draws describe structural uncertainty under the prior’s assumptions. They do not establish causal identification from business data.</p>
+  <p class="source r">Sections 5.1 and 5.3 of the paper.</p>
+  <aside class="notes">
+    <p>We keep three statements separate: what is demonstrated, what is not, and the research goal.</p>
+    <p>The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
+  </aside>
+</section>
+
+<!-- 22 · Graph slots -->
+<section class="slide" data-title="The graph slots are already in the network" data-act="05 · Next stage" data-theme="dark" data-steps="3"
+  data-scene="slots" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">05</span>The next stage</p>
+    <h2 class="h2 r">The graph slots are <span class="accent">already in the network</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">Today River learns one fixed graph of direct effects, the same for every week.</p></div>
+      <div data-step-only="1"><p class="body">The network keeps 321 graph slots in 8 families, including hidden demand and paths between inputs. River’s prior sets them to zero. They are capacity, not learned effects.</p></div>
+      <div data-step-only="2"><p class="body">The next research stage: mediation, hidden demand and interactions. New priors, new weights, new tests.</p></div>
+      <div data-step-only="3"><p class="body">And a structure that can change over time: time-varying causal graphs.</p></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
+  <p class="source r">Appendix B.5 and Section 5.3 of the paper.</p>
+  <aside class="notes">
+    <p>The architecture is ahead of the prior. Slots for latent demand and input-to-input edges exist, with zero training targets.</p>
+    <p>Mediation: an input acts through another variable. Awareness: marketing builds a state that affects later sales. Funnel: stages from awareness to purchase. Interactions: one input changes another's effect.</p>
+    <p>Time-varying graphs connect to the last part of the film.</p>
+  </aside>
+</section>
+
+<!-- 23 · Conclusions -->
+<section class="slide slide-concl" data-title="Conclusions" data-act="Conclusions" data-theme="light"
+  data-field='{"mode":"sweep","intensity":0.55}'>
+  <div class="frame">
+    <p class="eyebrow r">Conclusions</p>
+    <h2 class="h2 r">An initial result toward<br><span class="accent-2">causal discovery in marketing</span></h2>
+    <ol class="points">
+      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower channel CRPS than both regressions in all five conditions and at both horizons. About a quarter of a PyMC-Marketing model’s error.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Constrained causal structure learning<small>Edge precision and recall near 0.9 with calibrated edge probabilities. The exact channel set in about half of the worlds.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves every dataset, with no new fit, and the same answer in any units.</small></span></li>
+    </ol>
+    <p class="concl-note r">River shows that structure learning occurs in the tested direct-effect setting. It does not show that the current weights handle richer causal systems.</p>
+  </div>
+  <aside class="notes">
+    <p>Three contributions, each with its limit.</p>
+    <p>River is a first tool, not the finished tool.</p>
+  </aside>
+</section>
+
+<!-- 24 · Closing -->
+<section class="slide slide-close" data-title="This is just the start" data-act="Closing" data-theme="dark" data-chrome="min"
+  data-field='{"mode":"contour","focus":[0.80,0.30],"intensity":0.8}'>
+  <div class="frame mid">
+    <p class="eyebrow r">What comes next</p>
+    <h2 class="display-2 r">This is just the start.<br><span class="accent">We will push it further.</span></h2>
+    <div class="close-cols">
+      <div class="close-col r" style="--band:var(--aqua)"><p class="card-label">Read the paper</p><p>Marketing Foundational Models: Amortized Bayesian Inference over Mixtures of Marketing Mix Models</p></div>
+      <div class="close-col r" style="--band:var(--peri)"><p class="card-label">Start here</p><p>pymc-labs.com/marketing-foundation-models</p></div>
+      <div class="close-col r" style="--band:var(--peach)"><p class="card-label">Contact</p><p>info@pymc-labs.com</p></div>
+    </div>
+    <p class="thanks r">Thank you · Gracias · Obrigado <span class="soft">— Questions?</span></p>
+  </div>
+  <aside class="notes">
+    <p>Close with the line from the film. The next test keeps real marketing inputs and simulates their effects, so the truth stays known. After that, real campaigns.</p>
+  </aside>
+</section>
+
+</main>
+
+<!-- Chrome: header, footer, progress -->
+<div class="chrome" aria-hidden="true">
+  <div class="stage">
+    <div class="chrome-head">
+      <svg class="brand-logo" viewBox="0 0 119.1 39.8"><use href="#pymc-logo"/></svg>
+      <div class="chrome-meta">
+        <div>Causal Data Science Meeting 2026</div>
+        <div class="act"><span class="chrome-act-swap" data-chrome-act></span></div>
+      </div>
+    </div>
+    <div class="chrome-foot">
+      <span>PyMC Labs · River · Research prototype</span>
+      <span class="page-num" data-chrome-page></span>
+    </div>
+  </div>
+</div>
+<div class="progress"></div>
+<div class="notes-panel" aria-live="polite"></div>
+<nav class="overview" aria-label="All slides"></nav>
+<div class="blackout"></div>
+<div class="hint"></div>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/field.js"></script>
+<script src="js/deck.js"></script>
+<script src="js/scenes/arch.js"></script>
+<script src="js/scenes/causal.js"></script>
+<script src="js/scenes/machine.js"></script>
+<script src="js/scenes/results.js"></script>
+</body>
+</html>
