@@ -158,38 +158,57 @@
     catch (e) { console.error('[field]', e); }
   }
 
-  /* ---- Media ------------------------------------------------------------------- */
-  // Videos with data-autoplay play when their slide enters and pause when it
-  // leaves. A video that has ended restarts from the beginning.
-  function playVideo(v, slide) {
-    if (v.ended) v.currentTime = 0;
-    var p = v.play();
-    if (p && p.catch) {
-      p.catch(function (err) {
-        // Only a blocked autoplay (no user gesture yet) needs the hint; a slow
-        // load or a play() interrupted by pause() does not.
-        if (err && err.name === 'NotAllowedError' && slides[cur] === slide) showHint('Press P to play the video');
-      });
+  /* ---- Quiet zones: the background lines fade out behind text ------------------ */
+  // Text is the protagonist. Every text run, equation, card and scene area of the
+  // active slide, and the visible chrome, goes to the background field as a box
+  // in stage px. The field clears its lines there and fades them in around it.
+  // Blocks are cleared as a whole, so a list or a group of notes sits on one
+  // plain area instead of lines running between its rows.
+  var QUIET_BLOCKS = '.katex, .card, .chip, .close-col, .boundary, .scene-root, .proc i, .splitbar, ' +
+    '.points, .stats, .trio, .scope, .test-flow, .test-design, .choices, .splits, .bma, .pfn-eqs, .eq-stage, ' +
+    '.flow-text, .facts, .chips, .title-block, .close-cols, .thanks, .arch-head, .process';
+  var quietTimer = null;
+  function quietZones(slide) {
+    var base = document.querySelector('.stage-main').getBoundingClientRect();
+    var k = baseScale();
+    var out = [];
+    var range = document.createRange();
+    function add(r) {
+      if (r.width >= 1 && r.height >= 1) out.push([(r.left - base.left) / k, (r.top - base.top) / k, r.width / k, r.height / k]);
     }
+    function addText(root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (n) {
+          if (!/\S/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+          return n.parentElement.closest('.notes, .katex, .scene-root') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      while (walker.nextNode()) {
+        range.selectNodeContents(walker.currentNode);
+        var rs = range.getClientRects();
+        for (var i = 0; i < rs.length; i++) add(rs[i]);
+      }
+    }
+    addText(slide.el);
+    slide.el.querySelectorAll(QUIET_BLOCKS).forEach(function (el) { add(el.getBoundingClientRect()); });
+    if (slide.chrome !== 'off') {
+      addText(document.querySelector('.chrome-foot'));
+      if (slide.chrome !== 'min') {
+        addText(document.querySelector('.chrome-head'));
+        add(document.querySelector('.chrome-head .brand-logo').getBoundingClientRect());
+      }
+    }
+    return out;
   }
-  function enterMedia(slide) {
-    slide.videos.forEach(function (v) { if (v.hasAttribute('data-autoplay')) playVideo(v, slide); });
+  function syncQuiet(slide, instant) {
+    if (!window.Field || typeof window.Field.quiet !== 'function' || zoom.on) return;
+    try { window.Field.quiet(quietZones(slide), { instant: !!instant }); }
+    catch (e) { console.error('[field]', e); }
   }
-  function leaveMedia(slide) {
-    slide.videos.forEach(function (v) { if (!v.paused) v.pause(); });
-  }
-  function toggleMedia() {
-    var s = slides[cur];
-    if (!s) return;
-    s.videos.forEach(function (v) { if (v.paused) playVideo(v, s); else v.pause(); });
-  }
-  function wireVideo(v) {
-    v.addEventListener('click', function (e) {
-      // Zoom clicks (Z armed, zoomed, Alt+click) belong to the zoom handler.
-      if (zoom.on || zoom.armed || e.altKey) return;
-      e.stopPropagation();
-      toggleMedia();
-    });
+  // Entering text rises and fades in for about a second; measure again at rest.
+  function settleQuiet(slide) {
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(function () { if (slides[cur] === slide) syncQuiet(slide); }, 1300);
   }
 
   /* ---- Chrome ------------------------------------------------------------------ */
@@ -250,7 +269,6 @@
     slides.forEach(function (s) { if (s !== old) s.el.classList.remove('is-leaving'); });
 
     if (old) {
-      leaveMedia(old);
       callScene(old, 'leave', { dir: dir });
       old.el.classList.remove('is-active');
       if (!opts.instant) {
@@ -273,7 +291,8 @@
     syncField(target, opts.instant);
     updateChrome(target, index);
     callScene(target, 'enter', { step: step, dir: dir, instant: !!opts.instant });
-    enterMedia(target);
+    syncQuiet(target, opts.instant);
+    settleQuiet(target);
     updateNotes();
     updateOverviewCurrent();
     emit('slidechange', { index: index, step: step, dir: dir, slide: target.el });
@@ -424,7 +443,6 @@
       case 'o': case 'O': case 'Escape': e.preventDefault(); toggleOverview(true); break;
       case 'b': case 'B': case '.': toggleBlackout(); break;
       case 'z': case 'Z': armZoom(); break;
-      case 'p': case 'P': toggleMedia(); break;
       default: break;
     }
   }
@@ -451,6 +469,7 @@
     document.documentElement.style.setProperty('--scale', scale.toFixed(5));
     slides.forEach(function (s) { if (s.mounted) callScene(s, 'resize'); });
     if (window.Field && window.Field.resize) window.Field.resize();
+    if (slides[cur]) syncQuiet(slides[cur], true);
   }
   // Moving the window between a 1x projector and a 2x laptop screen changes the
   // pixel ratio without a resize event; canvases must re-fit their backing store.
@@ -496,8 +515,6 @@
       el.querySelectorAll('.r').forEach(function (r, idx) {
         if (!r.style.getPropertyValue('--i')) r.style.setProperty('--i', String(idx));
       });
-      var videos = Array.prototype.slice.call(el.querySelectorAll('video'));
-      videos.forEach(wireVideo);
       return {
         el: el,
         title: el.dataset.title || '',
@@ -509,7 +526,6 @@
         field: field,
         frags: Array.prototype.slice.call(el.querySelectorAll('[data-step], [data-until], [data-step-only]')),
         pasts: Array.prototype.slice.call(el.querySelectorAll('[data-past]')),
-        videos: videos,
         mounted: false
       };
     });

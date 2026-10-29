@@ -184,6 +184,25 @@
   var ink = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   var tint = [0, 0, 0];
 
+  /* ---- Quiet zones: the lines fade out behind text ------------------------------- */
+  // The deck sends the boxes of every text run, equation, card and scene of the
+  // active slide (Field.quiet). They are rasterised into a coarse stage mask:
+  // full clearance on the text, then a soft fade into the lines. The mask is
+  // upscaled with smoothing and erases the lines (destination-out) each frame.
+  var QC = 8;                         // stage px per mask cell
+  var QW = W / QC, QH = H / QC;       // 240 x 135 cells
+  var Q_CORE = 12;                    // full clearance around each box, stage px
+  var Q_REACH = 28;                   // dilation before the blur, stage px
+  var Q_BLUR = 3;                     // box-blur radius in cells, applied twice
+  var Q_MS = 700;                     // crossfade between slides
+  var quietPrev = new Float32Array(QW * QH);
+  var quietNext = new Float32Array(QW * QH);
+  var quietShown = new Float32Array(QW * QH);
+  var quietMix = new Tween(1);
+  var quietCanvas = null, quietCtx = null, quietImg = null;
+  var quietDirty = false;
+  var quietAny = false;
+
   /* ---- Line modes ---------------------------------------------------------------- */
   function genSweep(spec, t, X, Y, A) {
     var x0 = view.x0, xw = view.x1 - view.x0, y0 = view.y0, yh = view.y1 - view.y0;
@@ -587,11 +606,80 @@
       drawLines(la, tm);
     }
     ctx.globalAlpha = 1;
+    eraseQuiet(now);
+  }
+
+  /* ---- Quiet-zone mask ------------------------------------------------------------- */
+  function fillBox(m, r, pad) {
+    var x0 = Math.max(0, Math.floor((r[0] - pad) / QC));
+    var y0 = Math.max(0, Math.floor((r[1] - pad) / QC));
+    var x1 = Math.min(QW, Math.ceil((r[0] + r[2] + pad) / QC));
+    var y1 = Math.min(QH, Math.ceil((r[1] + r[3] + pad) / QC));
+    for (var y = y0; y < y1; y++) for (var x = x0; x < x1; x++) m[y * QW + x] = 1;
+  }
+  // Separable running-sum box blur, radius r cells, in place (tmp is scratch).
+  function boxBlur(m, tmp, r) {
+    var x, y, i, acc, n = 2 * r + 1;
+    for (y = 0; y < QH; y++) {
+      acc = 0;
+      for (i = -r; i <= r; i++) acc += m[y * QW + clamp(i, 0, QW - 1)];
+      for (x = 0; x < QW; x++) {
+        tmp[y * QW + x] = acc / n;
+        acc += m[y * QW + Math.min(x + r + 1, QW - 1)] - m[y * QW + Math.max(x - r, 0)];
+      }
+    }
+    for (x = 0; x < QW; x++) {
+      acc = 0;
+      for (i = -r; i <= r; i++) acc += tmp[clamp(i, 0, QH - 1) * QW + x];
+      for (y = 0; y < QH; y++) {
+        m[y * QW + x] = acc / n;
+        acc += tmp[Math.min(y + r + 1, QH - 1) * QW + x] - tmp[Math.max(y - r, 0) * QW + x];
+      }
+    }
+  }
+  function buildQuiet(rects, out) {
+    var core = new Float32Array(QW * QH), tmp = new Float32Array(QW * QH), i;
+    out.fill(0);
+    for (i = 0; i < rects.length; i++) {
+      fillBox(core, rects[i], Q_CORE);
+      fillBox(out, rects[i], Q_REACH);
+    }
+    boxBlur(out, tmp, Q_BLUR);
+    boxBlur(out, tmp, Q_BLUR);
+    for (i = 0; i < out.length; i++) if (core[i] > out[i]) out[i] = core[i];
+  }
+  function paintQuiet(now) {
+    if (!quietCanvas) {
+      quietCanvas = document.createElement('canvas');
+      quietCanvas.width = QW;
+      quietCanvas.height = QH;
+      quietCtx = quietCanvas.getContext('2d');
+      quietImg = quietCtx.createImageData(QW, QH);
+    }
+    var k = quietMix.get(now), d = quietImg.data, any = false;
+    for (var i = 0; i < quietShown.length; i++) {
+      var v = quietPrev[i] + (quietNext[i] - quietPrev[i]) * k;
+      quietShown[i] = v;
+      d[i * 4 + 3] = v * 255 + 0.5 | 0;
+      if (v > 0.002) any = true;
+    }
+    quietCtx.putImageData(quietImg, 0, 0);
+    quietAny = any;
+    quietDirty = false;
+  }
+  function eraseQuiet(now) {
+    if (quietDirty || quietMix.busy(now)) paintQuiet(now);
+    if (!quietAny) return;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(quietCanvas, 0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   function animating(now) {
     var i;
-    if (theme.busy(now) || lineAlpha.busy(now) || morph) return true;
+    if (theme.busy(now) || lineAlpha.busy(now) || quietMix.busy(now) || morph) return true;
     for (i = 0; i < contours.length; i++) if (contours[i].alpha.busy(now)) return true;
     if (reduced()) return false;   // no drift: the last frame stays as it is
     if (lineAlpha.b > 0) return true;
@@ -705,6 +793,24 @@
     kick();
   }
 
+  // rects: [[x, y, w, h], ...] in stage px. The mask crossfades from what is on
+  // screen now, so quick slide changes never jump.
+  function quiet(rects, opts) {
+    if (!ensure()) return;
+    var now = performance.now();
+    var instant = !!(opts && opts.instant);
+    var k = quietMix.get(now);
+    for (var i = 0; i < quietShown.length; i++) quietPrev[i] = quietPrev[i] + (quietNext[i] - quietPrev[i]) * k;
+    buildQuiet(rects || [], quietNext);
+    quietMix.a = 0;
+    quietMix.b = 1;
+    quietMix.t0 = now;
+    quietMix.dur = instant ? 0 : reduced() ? REDUCED_MS : Q_MS;
+    quietDirty = true;
+    if (instant) render(now);
+    kick();
+  }
+
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       if (raf) cancelAnimationFrame(raf);
@@ -715,5 +821,5 @@
     }
   });
 
-  window.Field = { set: set, resize: resize };
+  window.Field = { set: set, quiet: quiet, resize: resize };
 })();

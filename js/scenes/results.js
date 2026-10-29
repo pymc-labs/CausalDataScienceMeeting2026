@@ -282,7 +282,7 @@
     { name: 'Promo', color: '#6874C4' },
     { name: 'Holiday', color: '#A3ACE0' }
   ];
-  // Illustrative example, the same as in the cold-open film: TV, Search and Promo act on sales.
+  // Illustrative example, shared with the graph-sampling slide: TV, Search and Promo act on sales.
   var EXAMPLE_GRAPH = [1, 1, 0, 1, 0];
   var EXAMPLE_P = [0.94, 0.90, 0.30, 0.86, 0.16];
 

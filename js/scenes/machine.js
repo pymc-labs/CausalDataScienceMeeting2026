@@ -40,7 +40,7 @@
     { name: 'Promo', kind: 'control', col: hex('#9FAAE2') },
     { name: 'Holiday', kind: 'control', col: hex('#C6CCF1') }
   ];
-  // Illustrative edge probabilities, as in the causal film (labelled "illustrative" on screen).
+  // Illustrative edge probabilities, shared with the structure slide (labelled "illustrative" on screen).
   var P_EDGE = [0.94, 0.90, 0.30, 0.86, 0.16];
 
   function rgba(c, a) {

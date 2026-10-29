@@ -8,7 +8,7 @@ River samples graphs of direct effects for a new dataset and then draws the cont
 It needs no new fit.
 
 The deck is a static web page: HTML, CSS and plain JavaScript. It has no build step and no package dependencies.
-Fonts, KaTeX, the team photos and the film are in the repository, so the deck also runs offline.
+Fonts, KaTeX and the team photos are in the repository, so the deck also runs offline.
 
 ## Run it
 
@@ -20,9 +20,7 @@ python3 -m http.server 8000
 
 Open <http://localhost:8000> in Chrome, then press **F** for full screen.
 
-In Chrome you can also open `index.html` directly (double-click it); the fonts, the film and the navigation work from `file://`.
-Use Chrome or Edge: `python3 -m http.server` does not support byte-range requests, which Safari needs to play the film.
-For Safari, use a server with range support, for example `npx serve .`.
+In Chrome or Edge you can also open `index.html` directly (double-click it); the fonts and the navigation work from `file://`.
 
 ## Controls
 
@@ -35,22 +33,23 @@ For Safari, use a server with range support, for example `npx serve .`.
 | N | Speaker notes for the current slide |
 | O or Esc | Overview of all slides; click a slide to go to it |
 | Z, then click (or Alt + click) | Zoom into a point of the slide; click, Z or Esc to zoom out |
-| P | Play or pause the film on slide 2 |
 | B or . | Black screen |
 
-The address bar keeps the position as `#/slide/step`, for example `#/13/4`. A reload keeps the position.
+The address bar keeps the position as `#/slide/step`, for example `#/12/4`. A reload keeps the position.
+
+The background lines fade out behind every text, equation and figure, so that text always sits on a plain background.
 
 ## Narrative
 
 | Part | Slides | Content |
 | --- | --- | --- |
-| Opening | 1–4 | Title, the 40-second film, the team, the five parts |
-| 01 · The problem | 5–8 | Sales do not reveal causes; the structural model; one specification against model averaging; “What if we could start backwards?” |
-| 02 · Causal worlds | 9–12 | The prior as a simulator with known graphs; the contribution as an interventional quantity; prior-fitted networks |
-| 03 · Inside River | 13–15 | The architecture, assembled step by step with zoom; flow matching; graph sampling and graph-averaged inference |
-| 04 · Evidence | 16–19 | Test design; structure recovery; contribution accuracy; units, cost and omitted inputs |
-| 05 · Boundaries | 20–22 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
-| Close | 23–24 | Conclusions and contact |
+| Opening | 1–3 | Title, the team, the five parts |
+| 01 · The problem | 4–7 | Sales do not reveal causes; the structural model; one specification against model averaging; “What if we could start backwards?” |
+| 02 · Causal worlds | 8–11 | The prior as a simulator with known graphs; the contribution as an interventional quantity; prior-fitted networks |
+| 03 · Inside River | 12–14 | The architecture, assembled step by step with zoom; flow matching; graph sampling and graph-averaged inference |
+| 04 · Evidence | 15–18 | Test design; structure recovery; contribution accuracy; units, cost and omitted inputs |
+| 05 · Boundaries | 19–21 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
+| Close | 22–23 | Conclusions and contact |
 
 ## Structure
 
@@ -60,10 +59,10 @@ css/deck.css          design system: brand palette, type, transitions, chrome
 css/slides.css        slide layouts
 css/scenes/*.css      styles of the animated scenes
 js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom
-js/field.js           background flow lines and contours that morph between slides
+js/field.js           background flow lines and contours; they morph between slides and fade out behind text
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results)
-assets/               fonts, team photos, official PyMC Labs logos, film
+assets/               fonts, team photos, official PyMC Labs logos
 vendor/katex/         KaTeX 0.16.11 for equations
 ```
 
@@ -77,8 +76,5 @@ vendor/katex/         KaTeX 0.16.11 for equations
   Soft Periwinkle `#9FAAE2`, Soft White `#F7F7F7`, Peach Orange `#F6AE72`; Archivo Expanded, Inter, Fira Mono).
 - Logos: the official PyMC Labs full logo (white and navy) and short mark (aqua; favicon).
 - Narrative elements: the ODSC West 2026 talk and the white paper.
-- Film: `slides/elements/video/river_causal_cdsm2026.mp4` from the MarketingFoundationalModels repository,
-  cut at 40.0 s into `assets/video/river_causal_cdsm2026_40s.mp4` so that it ends on “This is just the start.”
-  (the event card is removed; the music fades out).
 
 River is an early research prototype. The paper evaluates it on simulated data only.
