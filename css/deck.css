@@ -218,8 +218,11 @@ body.nav-back { --enter-y: -28px; --leave-y: 18px; }
   transition: background var(--t-theme) var(--ease);
 }
 .chrome-foot { bottom: 46px; font-size: 17px; letter-spacing: .02em; }
-.brand-logo { height: 44px; width: auto; color: var(--fg); transition: color var(--t-theme) var(--ease); }
-.brand-logo svg { height: 100%; width: auto; display: block; }
+/* Official PyMC Labs full logo: white on dark slides, navy on light slides. */
+.brand-logo { position: relative; display: block; height: 44px; width: 126px; }
+.brand-logo img { position: absolute; left: 0; top: 0; height: 100%; width: auto; transition: opacity var(--t-theme) var(--ease); }
+body[data-theme='dark'] .brand-logo .on-light,
+body[data-theme='light'] .brand-logo .on-dark { opacity: 0; }
 .chrome-meta { text-align: right; font-size: 17px; line-height: 1.35; letter-spacing: .02em; }
 .chrome-meta .act { color: var(--accent); font-weight: 500; transition: color var(--t-theme) var(--ease); }
 .chrome-act-swap { display: inline-block; transition: opacity .45s var(--ease), transform .6s var(--ease-out); }

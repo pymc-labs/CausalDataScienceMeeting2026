@@ -28,7 +28,7 @@
   position: absolute; left: 120px; right: 120px; top: 84px;
   display: flex; justify-content: space-between; align-items: flex-start;
 }
-.slide-title .brand-logo { height: 64px; width: auto; color: #fff; }
+.slide-title .title-logo { display: block; height: 64px; width: auto; }
 .slide-title .title-meta { text-align: right; font-size: 22px; line-height: 1.5; color: var(--fg-2); }
 .slide-title .title-block { position: absolute; left: 120px; top: 232px; width: 1460px; }
 .slide-title .title-h {
@@ -225,4 +225,6 @@
 .close-col { border-top: 6px solid var(--band); padding-top: 22px; }
 .close-col .card-label { font-size: 16px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-2); margin: 0 0 12px; }
 .close-col p { font-size: 23px; line-height: 1.45; color: var(--fg); margin: 0; }
-.thanks { margin-top: 80px; font-family: var(--f-display); font-stretch: 125%; font-size: 34px; color: var(--fg); }
+.thanks { margin-top: 80px; display: flex; align-items: center; gap: 24px; font-family: var(--f-display); font-stretch: 125%; font-size: 34px; color: var(--fg); }
+.thanks .soft { margin-left: -12px; }
+.thanks-mark { width: 64px; height: 64px; flex: none; }
