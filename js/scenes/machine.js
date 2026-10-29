@@ -59,6 +59,8 @@
     return s;
   }
   function still() { return !!Deck.reducedMotion; }
+  // With reduced motion every scene reaches its final frame within this time after enter or a step.
+  var IDLE_MS = 2000;
   // Progress of a timed build: eased 0..1 over `d` ms from `t0` (instant with reduced motion).
   function prog(now, t0, d, e) {
     if (still()) return now >= t0 ? 1 : 0;
@@ -150,6 +152,8 @@
     this.labels = [];
     this.raf = 0;
     this.running = false;
+    this.active = false;
+    this.idleAt = Infinity;
     this.draw = null;
     this.layers = [];
   }
@@ -203,20 +207,33 @@
     return ctx;
   };
   Surface.prototype.start = function (draw) {
-    var self = this;
     this.draw = draw;
+    this.active = true;
+    this.wake();
+  };
+  // The loop runs while the slide is active. With reduced motion every change settles
+  // within IDLE_MS, so the loop stops then; the next step wakes it again.
+  Surface.prototype.wake = function () {
+    var self = this;
+    this.idleAt = still() ? performance.now() + IDLE_MS : Infinity;
     if (this.running) return;
     this.running = true;
     var tick = function (now) {
       if (!self.running) return;
-      self.raf = requestAnimationFrame(tick);
       self.draw(now);
+      if (now > self.idleAt) { self.running = false; return; }
+      self.raf = requestAnimationFrame(tick);
     };
     this.raf = requestAnimationFrame(tick);
   };
   Surface.prototype.stop = function () {
+    this.active = false;
     this.running = false;
     cancelAnimationFrame(this.raf);
+  };
+  // One frame for the current state when the loop is idle (after a resize).
+  Surface.prototype.redraw = function () {
+    if (this.active && !this.running && this.draw) this.draw(performance.now());
   };
   // A text label at scene px (x, y). anchor: c (centre), l (left-middle), r (right-middle).
   // steps: the steps on which it shows (all steps when omitted).
@@ -959,7 +976,7 @@
         st.hop = { from: 0, t0: 0, dur: 1, play: Infinity };
         var top = pairs[0];
         for (var j = 1; j < pairs.length; j++) if (pairs[j].y0 < top.y0) top = pairs[j];
-        L.noise = sf.label('z<sub>0</sub> ~ N(0, I)', O[0], O[1] + 3.3 * S + 46, { cls: 'mx-mono', steps: [0, 1, 2], delay: 300 });
+        L.noise = sf.label('z<sub>0</sub> · base noise', O[0], O[1] + 3.3 * S + 46, { cls: 'mx-mono', steps: [0, 1, 2], delay: 300 });
         L.g1 = sf.label('graph G<sub>1</sub>', X(MODES[0].mu[0] + 3 * MODES[0].sd[0]) + 22, Y(MODES[0].mu[1]), { anchor: 'l', cls: 'mx-mono mx-aqua', steps: [0, 1, 2], delay: 450 });
         L.g2 = sf.label('graph G<sub>2</sub>', X(MODES[1].mu[0] + 3 * MODES[1].sd[0]) + 22, Y(MODES[1].mu[1]), { anchor: 'l', cls: 'mx-mono mx-aqua', steps: [0, 1, 2], delay: 520 });
         L.tau = sf.label('τ ~ U(0, 1)', 470, 64, { cls: 'mx-mono', steps: [1], delay: 450 });
@@ -995,9 +1012,10 @@
         var now = performance.now();
         setStep(ctx.step, now, false);
         if (ctx.instant) snap(now);
+        sf.wake();
       },
       leave: function () { sf.stop(); },
-      resize: function () { sf.fit(); }
+      resize: function () { sf.fit(); sf.redraw(); }
     };
   }
 
@@ -1329,9 +1347,10 @@
         var now = performance.now();
         setStep(ctx.step, now, false);
         if (ctx.instant) snap(now);
+        sf.wake();
       },
       leave: function () { sf.stop(); },
-      resize: function () { sf.fit(); }
+      resize: function () { sf.fit(); sf.redraw(); }
     };
   }
 
@@ -1638,8 +1657,8 @@
         L.hidden = sf.label('hidden demand', UX, UY + RU + 24, { cls: 'mx-mono mx-peri', steps: [2], delay: 650 });
         L.med = sf.label('mediation', (IX[0] + IX[1]) / 2, IY - RI - 58, { cls: 'mx-mono mx-peri', steps: [2], delay: 300 });
         L.inter = sf.label('interaction · TV × Promo', 630, junction[1], { anchor: 'l', cls: 'mx-mono mx-hot', steps: [2], delay: 1000 });
-        L.slots = sf.label(NET.graphSlots + ' slots · ' + NET.graphFamilies + ' families · zero in River’s prior', sf.w - 2, sf.h - 60, { anchor: 'r', cls: 'mx-mono', steps: [1, 2], delay: 400 });
-        L.one = sf.label('one graph · every week', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-aqua', steps: [0], delay: 1300 });
+        L.slots = sf.label(NET.graphSlots + ' slots · ' + NET.graphFamilies + ' families · ' + NET.graphSlotsZero + ' set to zero in River’s prior', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono', steps: [1, 2], delay: 400 });
+        L.one = sf.label('each sampled graph · every week', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-aqua', steps: [0], delay: 1300 });
         L.tv = sf.label('time-varying causal graphs', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-hot', steps: [3], delay: 400 });
         L.ill = sf.label('illustrative', sf.w - 2, sf.h - 16, { anchor: 'r', cls: 'mx-mono mx-faint', delay: 600 });
       },
@@ -1661,9 +1680,10 @@
         var now = performance.now();
         setStep(ctx.step, now, false);
         if (ctx.instant) snap(now);
+        sf.wake();
       },
       leave: function () { sf.stop(); },
-      resize: function () { sf.fit(); }
+      resize: function () { sf.fit(); sf.redraw(); }
     };
   }
 

@@ -56,6 +56,7 @@
   var FLICKER = [[1, 0, 1, 1, 0], [1, 1, 0, 0, 1], [0, 1, 0, 1, 1], [1, 1, 1, 1, 0], [1, 0, 0, 1, 1], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]];
   var FLICKER_T = [0, 170, 320, 450, 560, 650, 730];
   var DRAW_MS = 120;
+  var SETTLE_MS = 1500;                                // reduced motion: idle this long after a step
 
   // Training objective, built from the recorded loss weights.
   var LW = NET.lossWeights;
@@ -685,7 +686,7 @@
     fo.appendChild(div);
   }
 
-  // Step tags (zoomed views) and the inference counter (full view).
+  // Step tags (zoomed views), the inference counter and the full-view footnote.
   function buildNotes() {
     var N = L.notes;
     var n0 = piece(N, { only: [0], order: 6 });
@@ -704,19 +705,23 @@
       'velocity nets: baseline · entity · edge'
     ], { only: [2], order: 6 });
     tags(N, 962, 160, ['edge ⇔ mean signed state', 'over query weeks > 0', 'illustrative draws'], { only: [3], order: 8, peach: true, dimLast: true });
-    tags(N, 1212, 164, [
+    tags(N, 1200, 164, [
       NET.graphSlots + ' graph slots · ' + NET.graphFamilies + ' families',
-      'messages only on sampled edges'
-    ], { only: [4], order: 6 });
+      NET.graphSlotsUsed + ' direct slots used · ' + NET.graphSlotsZero + ' zero in River’s prior',
+      'messages only on sampled edges',
+      'illustrative draw'
+    ], { only: [4], order: 6, dimLast: true });
     tags(N, 1464, 164, [
       NET.decoderCoords + ' coordinates = 1 + K + M + 4',
-      'absent edge → exactly 0'
-    ], { only: [5], order: 6 });
+      'absent edge → exactly 0',
+      'illustrative draw'
+    ], { only: [5], order: 6, dimLast: true });
 
     var cnt = piece(N, { only: [8], order: 20 });
     refs.counter = txt(cnt, 1676, 318, 'draw 1 / ' + NET.draws, 'tm aquat', 20, 'end');
     txt(cnt, 1676, 340, 'weights fixed · ' + NET.eulerSteps + ' Euler steps', 'tm', FS.mono, 'end');
-    txt(cnt, 1676, 359, 'graph draws illustrative', 'tm dimtext', FS.mono, 'end');
+    // The full view shows the illustrative grid, graph draws and bands too.
+    txt(piece(N, { only: [7, 8], order: 21 }), 1676, 628, 'grid, graph draws, decomposition: illustrative', 'tm dimtext', FS.mono, 'end');
   }
 
   // Particle routes, sampled once at uniform arc length.
@@ -999,9 +1004,11 @@
     refs.discard.classList.toggle('faded', want);
   }
 
+  // Under reduced motion nothing moves once a step has settled, so the loop stops
+  // requesting frames until the next step, enter or resize.
   function frame(now) {
+    raf = 0;
     if (!active) return;
-    raf = requestAnimationFrame(frame);
     var dt = lastNow ? Math.min(0.05, (now - lastNow) / 1000) : 1 / 60;
     lastNow = now;
     updateCamera(now);
@@ -1011,6 +1018,11 @@
     updateGraphDraws(now);
     updateBands(now);
     updateDiscard(now);
+    if (reduced && !camAnim && !bandAnim && now - stepT0 > SETTLE_MS) { lastNow = 0; return; }
+    raf = requestAnimationFrame(frame);
+  }
+  function kick() {
+    if (active && !raf) raf = requestAnimationFrame(frame);
   }
 
   /* ---- Scene contract ------------------------------------------------------------------- */
@@ -1057,6 +1069,7 @@
       moveCamera(to, ctx.instant || reduced ? 0 : camDuration(to));
       if (ctx.instant) { flush(); svg.classList.remove('instant'); }
       setBands(step, prev, now);
+      kick();
     },
 
     leave: function () {
@@ -1065,6 +1078,8 @@
       raf = 0;
       camAnim = null;
       bandAnim = null;
-    }
+    },
+
+    resize: function () { kick(); }
   });
 })();

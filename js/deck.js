@@ -159,14 +159,21 @@
   }
 
   /* ---- Media ------------------------------------------------------------------- */
+  // Videos with data-autoplay play when their slide enters and pause when it
+  // leaves. A video that has ended restarts from the beginning.
+  function playVideo(v, slide) {
+    if (v.ended) v.currentTime = 0;
+    var p = v.play();
+    if (p && p.catch) {
+      p.catch(function (err) {
+        // Only a blocked autoplay (no user gesture yet) needs the hint; a slow
+        // load or a play() interrupted by pause() does not.
+        if (err && err.name === 'NotAllowedError' && slides[cur] === slide) showHint('Press P to play the video');
+      });
+    }
+  }
   function enterMedia(slide) {
-    slide.videos.forEach(function (v) {
-      if (!v.hasAttribute('data-autoplay')) return;
-      var start = Number(v.getAttribute('data-start') || 0);
-      if (v.ended || (v.dataset.finished === '1')) { v.currentTime = start; v.dataset.finished = '0'; }
-      var p = v.play();
-      if (p && p.catch) p.catch(function () { showHint('Press P to play the video'); });
-    });
+    slide.videos.forEach(function (v) { if (v.hasAttribute('data-autoplay')) playVideo(v, slide); });
   }
   function leaveMedia(slide) {
     slide.videos.forEach(function (v) { if (!v.paused) v.pause(); });
@@ -174,22 +181,15 @@
   function toggleMedia() {
     var s = slides[cur];
     if (!s) return;
-    s.videos.forEach(function (v) {
-      if (v.paused) {
-        if (v.dataset.finished === '1') { v.currentTime = Number(v.getAttribute('data-start') || 0); v.dataset.finished = '0'; }
-        v.play();
-      } else v.pause();
-    });
+    s.videos.forEach(function (v) { if (v.paused) playVideo(v, s); else v.pause(); });
   }
   function wireVideo(v) {
-    var end = v.hasAttribute('data-end') ? Number(v.getAttribute('data-end')) : null;
-    if (end !== null) {
-      v.addEventListener('timeupdate', function () {
-        if (v.currentTime >= end && !v.paused) { v.pause(); v.dataset.finished = '1'; }
-      });
-    }
-    v.addEventListener('ended', function () { v.dataset.finished = '1'; });
-    v.addEventListener('click', function (e) { e.stopPropagation(); toggleMedia(); });
+    v.addEventListener('click', function (e) {
+      // Zoom clicks (Z armed, zoomed, Alt+click) belong to the zoom handler.
+      if (zoom.on || zoom.armed || e.altKey) return;
+      e.stopPropagation();
+      toggleMedia();
+    });
   }
 
   /* ---- Chrome ------------------------------------------------------------------ */
@@ -200,10 +200,16 @@
     if (chrome.page) {
       chrome.page.innerHTML = String(index + 1).padStart(2, '0') + '<span class="of"> / ' + String(slides.length).padStart(2, '0') + '</span>';
     }
-    if (chrome.act && chrome.act.textContent !== slide.act) {
-      var el = chrome.act;
-      el.classList.add('out');
-      setTimeout(function () { el.textContent = slide.act; el.classList.remove('out'); }, 260);
+    if (chrome.act && chrome.actWant !== slide.act) {
+      // Track the wanted act, not the label text: a quick overshoot and return
+      // must cancel the pending swap.
+      chrome.actWant = slide.act;
+      clearTimeout(chrome.actTimer);
+      chrome.act.classList.add('out');
+      chrome.actTimer = setTimeout(function () {
+        chrome.act.textContent = chrome.actWant;
+        chrome.act.classList.remove('out');
+      }, 260);
     }
     updateProgress();
   }
@@ -334,6 +340,7 @@
   }
   function toggleOverview(force) {
     var on = typeof force === 'boolean' ? force : !chrome.overview.classList.contains('on');
+    if (on && (zoom.on || zoom.armed)) setZoom(false);
     chrome.overview.classList.toggle('on', on);
     if (on) {
       var b = chrome.overview.querySelector('button.current');
@@ -394,13 +401,17 @@
   /* ---- Input ------------------------------------------------------------------- */
   function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.key === 'Escape' && (zoom.on || zoom.armed)) { e.preventDefault(); setZoom(false); return; }
-    var overviewOn = chrome.overview.classList.contains('on');
     var k = e.key;
-    if (overviewOn) {
+    // Priority: blackout, then overview, then zoom. Nothing acts behind a black screen.
+    if (chrome.blackout.classList.contains('on')) {
+      if (k === 'b' || k === 'B' || k === '.' || k === 'Escape') { e.preventDefault(); toggleBlackout(); }
+      return;
+    }
+    if (chrome.overview.classList.contains('on')) {
       if (k === 'Escape' || k === 'o' || k === 'O') { e.preventDefault(); toggleOverview(false); }
       return;
     }
+    if (k === 'Escape' && (zoom.on || zoom.armed)) { e.preventDefault(); setZoom(false); return; }
     switch (k) {
       case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': case 'Enter':
         e.preventDefault(); next(); break;
@@ -440,6 +451,14 @@
     document.documentElement.style.setProperty('--scale', scale.toFixed(5));
     slides.forEach(function (s) { if (s.mounted) callScene(s, 'resize'); });
     if (window.Field && window.Field.resize) window.Field.resize();
+  }
+  // Moving the window between a 1x projector and a 2x laptop screen changes the
+  // pixel ratio without a resize event; canvases must re-fit their backing store.
+  function watchPixelRatio() {
+    if (!window.matchMedia) return;
+    var mq = window.matchMedia('(resolution: ' + (window.devicePixelRatio || 1) + 'dppx)');
+    if (!mq.addEventListener) return;
+    mq.addEventListener('change', function () { fit(); watchPixelRatio(); }, { once: true });
   }
   function baseScale() {
     return parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scale')) || 1;
@@ -510,6 +529,7 @@
 
     fit();
     window.addEventListener('resize', fit);
+    watchPixelRatio();
     document.addEventListener('keydown', onKey);
     document.addEventListener('touchstart', onTouchStart, { passive: true });
     document.addEventListener('touchend', onTouchEnd, { passive: true });

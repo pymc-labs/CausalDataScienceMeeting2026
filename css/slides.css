@@ -50,6 +50,7 @@
 .slide-video .video-full { position: absolute; inset: 0; background: #FDFDFD; }
 .slide-video video { display: block; width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
 .slide-video .r { transform: none; filter: none; }
+body.hide-cursor .slide-video video { cursor: none; }
 
 /* --- 03 Team --------------------------------------------------------------- */
 .slide-team .team {
@@ -189,11 +190,11 @@
 .slide-test .methods ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 20px; color: var(--fg-2); }
 .slide-test .methods li b { color: var(--fg); font-weight: 600; }
 .slide-test .methods li:first-child b { color: var(--accent); }
-.slide-test .test-design { position: absolute; left: 120px; right: 120px; display: grid; grid-template-columns: 470px 1fr; align-items: center; }
+.slide-test .test-design { position: absolute; left: 120px; right: 120px; display: grid; grid-template-columns: 360px 1fr; align-items: center; }
 .slide-test .test-design.td-1 { top: 720px; }
 .slide-test .test-design.td-2 { top: 810px; }
 .slide-test .test-design .chips { margin-top: 0; }
-.slide-test .td-k { font-size: 20px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+.slide-test .td-k { font-size: 18px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3); }
 
 /* --- 19 Stats --------------------------------------------------------------------------- */
 .slide-stats .stats { margin-top: 52px; }

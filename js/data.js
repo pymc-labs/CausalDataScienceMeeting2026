@@ -42,6 +42,14 @@ window.DECK_DATA = {
     padded: { K: 10, M: 10, J: 1 },
     graphSlots: 321,
     graphFamilies: 8,
+    // Appendix B.5 family list with K = M = 10, J = 1, no self-edges:
+    // channel->sales 10, control->sales 10 (used by River's prior);
+    // latent->channel 10, latent->control 10, latent->sales 1,
+    // channel->channel 90, control->channel 100, control->control 90 (zero in River's prior).
+    graphSlotsUsed: 20,
+    graphFamiliesUsed: 2,
+    graphSlotsZero: 301,
+    graphFamiliesZero: 6,
     routerCoordsPerWeek: 346,
     decoderCoords: 25,             // 1 + K + M + 4
     contextLengths: [75, 99, 123, 147, 171, 207],
@@ -68,8 +76,8 @@ window.DECK_DATA = {
   crpsChannels: [
     { condition: 'Full inputs', context: 99, n: 100, mfm: 0.0294, pathmc: 0.0948, ols: 0.2136, wins: '75/100' },
     { condition: 'Full inputs', context: 207, n: 100, mfm: 0.0263, pathmc: 0.1374, ols: 0.1175, wins: '62/100' },
-    { condition: 'Saturation recovery', context: 99, n: 100, mfm: 0.0315, pathmc: 0.1366, ols: 0.2342, wins: '78/100' },
-    { condition: 'Saturation recovery', context: 207, n: 100, mfm: 0.0268, pathmc: 0.2354, ols: 0.1857, wins: '70/100' },
+    { condition: 'In-sample saturation', context: 99, n: 100, mfm: 0.0315, pathmc: 0.1366, ols: 0.2342, wins: '78/100' },
+    { condition: 'In-sample saturation', context: 207, n: 100, mfm: 0.0268, pathmc: 0.2354, ols: 0.1857, wins: '70/100' },
     { condition: 'Smooth baseline', context: 99, n: 100, mfm: 0.0324, pathmc: 0.0772, ols: 0.1065, wins: '75/100' },
     { condition: 'Smooth baseline', context: 207, n: 100, mfm: 0.0278, pathmc: 0.1620, ols: 0.0933, wins: '72/100' },
     { condition: 'Omitted channel', context: 99, n: 84, mfm: 0.0246, pathmc: 0.1096, ols: 0.1617, wins: '56/84' },

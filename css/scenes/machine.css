@@ -43,7 +43,7 @@
 .mx-peri { color: var(--peri); }
 .mx-hot { color: var(--peach); }
 .mx-faint { color: rgba(243, 246, 251, .42); }
-.mx-lab sub { font-size: .72em; position: relative; top: .3em; vertical-align: baseline; line-height: 0; }
+.mx-lab sub { font-size: 15px; position: relative; top: .3em; vertical-align: baseline; line-height: 0; }
 .mx-sw { display: inline-block; width: 24px; height: 2px; margin-right: 12px; vertical-align: middle; background: currentColor; }
 
 @media (prefers-reduced-motion: reduce) {

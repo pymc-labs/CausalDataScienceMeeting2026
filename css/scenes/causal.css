@@ -30,13 +30,12 @@
 /* Type. */
 .cz-mono { font-family: var(--f-mono); font-size: 17px; letter-spacing: .04em; color: rgba(12, 31, 64, .55); }
 .cz-mono.cz-sm { font-size: 15px; }
-.cz-mono .katex { font-size: 1.12em; color: var(--navy); letter-spacing: 0; }
+.cz-mono .katex { font-size: 1.27em; color: var(--navy); letter-spacing: 0; }
 .cz-name { font-family: var(--f-body); font-size: 23px; font-weight: 500; color: var(--navy); }
 .cz-name.cz-sm { font-size: 18px; }
 .cz-kind { font-family: var(--f-mono); font-size: 15px; letter-spacing: .04em; color: rgba(12, 31, 64, .55); }
 .cz-sales { font-family: var(--f-body); font-size: 18px; font-weight: 500; color: var(--white); }
 .cz-tex { font-size: 26px; color: var(--navy); }
-.cz-tex.cz-sm { font-size: 21px; }
 .cz-tex .katex { font-size: 1em; }
 .cz-tag {
   display: inline-block;

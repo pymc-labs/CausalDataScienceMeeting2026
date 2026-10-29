@@ -705,11 +705,20 @@
     });
     var wins = text(svg, X0, 580, 'joint wins over both: ' + first.wins, 't-mono');
 
-    // --- state 1: dot plot
+    // --- state 1: dot plot. Rows come in condition groups, one row per horizon.
     var ROW = 48;
-    var PAIR = 112;
+    var GROUP = (CTX.length - 1) * ROW + 64;
     var RY0 = 152;
-    function rowY(i) { return RY0 + Math.floor(i / 2) * PAIR + (i % 2) * ROW; }
+    var LABEL_X = 222;
+    var CTX_X = 280;
+    var groupOf = [];
+    var posOf = [];
+    rows.forEach(function (r, i) {
+      var starts = i === 0 || rows[i - 1].condition !== r.condition;
+      groupOf.push(i === 0 ? 0 : groupOf[i - 1] + (starts ? 1 : 0));
+      posOf.push(starts ? 0 : posOf[i - 1] + 1);
+    });
+    function rowY(i) { return RY0 + groupOf[i] * GROUP + posOf[i] * ROW; }
     var axisY = rowY(rows.length - 1) + 40;
     var grid = svgEl('g', null, svg);
     [0, 0.1, 0.2].forEach(function (v) {
@@ -719,7 +728,7 @@
     });
     svgEl('line', { x1: X0, x2: X1, y1: axisY, y2: axisY, stroke: C.ink3, 'stroke-width': 1 }, grid);
     text(grid, X0, axisY + 72, 'query channel CRPS \u00b7 lower is better', 't-mono');
-    text(grid, 272, RY0 - 40, 'context', 't-mono t-small', { 'text-anchor': 'end' });
+    text(grid, CTX_X, RY0 - 40, 'context', 't-mono t-small', { 'text-anchor': 'end' });
 
     var legend = METHODS.map(function (m, k) {
       var g = svgEl('g', null, svg);
@@ -730,9 +739,23 @@
     var dotRows = rows.map(function (r, i) {
       var y = rowY(i);
       var labels = svgEl('g', null, svg);
-      if (i % 2 === 0) text(labels, 222, y + 7, r.condition, 't-lab t-ink', { 'text-anchor': 'end' });
-      else if (oop.indexOf(r.condition) !== -1) tint(text(labels, 222, y + 6, 'out of prior', 't-mono t-small', { 'text-anchor': 'end' }), C.peachDeep);
-      text(labels, 272, y + 6, String(r.context), 't-mono', { 'text-anchor': 'end' });
+      if (posOf[i] === 0) {
+        // The condition label sits on its group of rows; an out-of-prior condition is tagged
+        // under its name and bracketed across all of its rows.
+        var last = i;
+        while (last + 1 < rows.length && rows[last + 1].condition === r.condition) last++;
+        var mid = (y + rowY(last)) / 2;
+        var outOfPrior = oop.indexOf(r.condition) !== -1;
+        text(labels, LABEL_X, mid + (outOfPrior ? -3 : 7), r.condition, 't-lab t-ink', { 'text-anchor': 'end' });
+        if (outOfPrior) {
+          tint(text(labels, LABEL_X, mid + 19, 'out of prior', 't-mono t-small', { 'text-anchor': 'end' }), C.peachDeep);
+          svgEl('path', {
+            d: 'M238 ' + (y - 12) + 'H233V' + (rowY(last) + 12) + 'H238',
+            fill: 'none', stroke: C.peachDeep, 'stroke-width': 1.5, 'stroke-linejoin': 'round'
+          }, labels);
+        }
+      }
+      text(labels, CTX_X, y + 6, String(r.context), 't-mono', { 'text-anchor': 'end' });
       var range = svgEl('line', { x1: X0, x2: X0, y1: y, y2: y, stroke: C.hair, 'stroke-width': 2 }, svg);
       var dots = METHODS.map(function (m) {
         return svgEl('circle', { cx: X0, cy: y, r: 8, fill: m.fill, opacity: 0 }, svg);
@@ -891,7 +914,10 @@
       var ratio = text(svg, xe + 16, yR + 9, '\u00f7 ' + pm.channelRatio[gi].toFixed(1), 't-ratio');
       return { title: title, bars: [mmm, river], quarters: quarters, link: link, linkLen: linkLen, tip: tip, ratio: ratio };
     });
-    var note = text(svg, X0 + 2, 680, 'PyMC-Marketing ' + pm.version + ' \u00b7 fitted once per world and horizon', 't-mono');
+    // The paper's caveat for the reference: its settings, and that every fit failed a health check.
+    var note = svgEl('g', null, svg);
+    text(note, X0 + 2, 666, 'PyMC-Marketing ' + pm.version + ' \u00b7 default priors \u00b7 fitted once per world and horizon', 't-mono t-small');
+    text(note, X0 + 2, 690, pm.unhealthyFits + ' fits failed \u2265 1 health check \u00b7 none excluded', 't-mono t-small');
 
     P.duration = 3600;
     P.render = function (t) {

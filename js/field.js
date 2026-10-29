@@ -618,7 +618,8 @@
   function measure() {
     var vw = window.innerWidth, vh = window.innerHeight;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var s = window.Deck && window.Deck.scale ? window.Deck.scale() : Math.min(vw / W, vh / H);
+    // The fit scale, not Deck.scale(): the point zoom scales the active slide only.
+    var s = Math.min(vw / W, vh / H);
     var bw = Math.max(1, Math.round(vw * dpr)), bh = Math.max(1, Math.round(vh * dpr));
     if (canvas.width !== bw) canvas.width = bw;
     if (canvas.height !== bh) canvas.height = bh;

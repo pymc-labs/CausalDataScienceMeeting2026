@@ -3,7 +3,7 @@
 Slides for the talk **“Foundation Models for Causal Effect Estimation and Conditional Discovery in Marketing”**
 by Carlos Trujillo and Teemu Säilynoja (PyMC Labs), Causal Data Science Meeting 2026, 5 November 2026.
 
-The talk presents the causal capabilities of **River**, the first Marketing Foundational Model (MFM).
+The talk presents the causal capabilities of **River**, the first Marketing Foundational Model (MFM) that PyMC Labs trained.
 River samples graphs of direct effects for a new dataset and then draws the contributions for each graph.
 It needs no new fit.
 
@@ -19,9 +19,10 @@ python3 -m http.server 8000
 ```
 
 Open <http://localhost:8000> in Chrome, then press **F** for full screen.
-Use a local web server: the browser does not load the video and the fonts reliably from `file://`.
 
-Any static server works, for example `npx serve .`.
+In Chrome you can also open `index.html` directly (double-click it); the fonts, the film and the navigation work from `file://`.
+Use Chrome or Edge: `python3 -m http.server` does not support byte-range requests, which Safari needs to play the film.
+For Safari, use a server with range support, for example `npx serve .`.
 
 ## Controls
 
@@ -62,7 +63,7 @@ js/deck.js            engine: navigation, build steps, transitions, notes, overv
 js/field.js           background flow lines and contours that morph between slides
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results)
-assets/               fonts, team photos, brand logo, film
+assets/               fonts, team photos, official PyMC Labs logos, film
 vendor/katex/         KaTeX 0.16.11 for equations
 ```
 
@@ -71,9 +72,13 @@ vendor/katex/         KaTeX 0.16.11 for equations
 - Numbers: academic paper draft, pymc-labs/MarketingFoundationalModels pull request #28 (commit `1f0bfbc`).
   `js/data.js` names the section or table for each value.
   The reliability diagram uses the bins of the structure-accuracy run in the same pull request.
+  The paper reruns some comparisons (MMM baseline, timing). Check `js/data.js` against the final paper before the talk.
 - Style and colours: the PyMC Labs white paper template (Deep Navy `#0C1F40`, Pastel Aqua `#B4E7DD`,
   Soft Periwinkle `#9FAAE2`, Soft White `#F7F7F7`, Peach Orange `#F6AE72`; Archivo Expanded, Inter, Fira Mono).
+- Logos: the official PyMC Labs full logo (white and navy) and short mark (aqua; favicon).
 - Narrative elements: the ODSC West 2026 talk and the white paper.
-- Film: `slides/elements/video/river_causal_cdsm2026.mp4` from the MarketingFoundationalModels repository.
+- Film: `slides/elements/video/river_causal_cdsm2026.mp4` from the MarketingFoundationalModels repository,
+  cut at 40.0 s into `assets/video/river_causal_cdsm2026_40s.mp4` so that it ends on “This is just the start.”
+  (the event card is removed; the music fades out).
 
 River is an early research prototype. The paper evaluates it on simulated data only.

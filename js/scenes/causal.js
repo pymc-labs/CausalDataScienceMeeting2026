@@ -81,8 +81,9 @@
   function adstock(x, decay) { var c = 0; return x.map(function (v) { c = v + decay * c; return c; }); }
 
   /* ---- Animation: eased properties and one rAF loop per scene --------------- */
-  // Reduced motion: every delay and duration shrinks to at most 200 ms.
-  function calm(ms) { return Deck.reducedMotion ? Math.min(ms || 0, 200) : (ms || 0); }
+  // Reduced motion: delays and durations shrink to at most `cap` ms (200 by
+  // default; labels use 400 so they still land after the graphics they name).
+  function calm(ms, cap) { return Deck.reducedMotion ? Math.min(ms || 0, cap || 200) : (ms || 0); }
   function Prop(v) { this.v = v; this.a = v; this.b = v; this.t0 = 0; this.d = 0; this.e = ease.inOut; this.live = false; }
   Prop.prototype.set = function (v) { this.v = this.a = this.b = v; this.live = false; return this; };
   // Ease from the current value to `v`. Repeating the current target is a no-op,
@@ -197,7 +198,7 @@
   Surface.prototype.leave = function () { this.root.classList.add('cz-out'); };
 
   function show(el, on, delay) {
-    if (on) el.style.setProperty('--d', calm(delay) + 'ms');
+    if (on) el.style.setProperty('--d', calm(delay, 400) + 'ms');
     el.classList.toggle('is-on', !!on);
   }
 
@@ -657,16 +658,22 @@
     function makeWorld(seed) {
       var R = rng(seed);
       var n = [2, 3, 3, 4, 4, 5, 5, 5][R.int(0, 7)];
-      var pool = [0, 1, 2, 3, 4];
-      for (var i = 4; i > 0; i--) { var j = R.int(0, i), t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
-      var inputs = pool.slice(0, n).sort(function (a, b) { return a - b; });
+      // As in River's prior: at least one channel (TV, Search, Social) and one
+      // control (Promo, Holiday) among the inputs, each with a direct effect.
+      var nCo = R.int(Math.max(1, n - 3), Math.min(2, n - 1));
+      var channels = [0, 1, 2], controls = [3, 4];
+      for (var i = 2; i > 0; i--) { var j = R.int(0, i), t = channels[i]; channels[i] = channels[j]; channels[j] = t; }
+      if (R.u() < 0.5) controls.reverse();
+      var inputs = channels.slice(0, n - nCo).concat(controls.slice(0, nCo)).sort(function (a, b) { return a - b; });
       var on = inputs.map(function () { return R.u() < 0.6; });
-      var count = on.filter(Boolean).length;
-      if (count === 0) on[R.int(0, n - 1)] = true;
-      if (n === 5) {                   // a lifted card shows both kinds of edge
-        if (count === 5) on[R.int(1, 4)] = false;
-        if (count <= 1) on[on.indexOf(false)] = true;
-      }
+      [[0, 1, 2], [3, 4]].forEach(function (kind) {
+        var idx = [];
+        inputs.forEach(function (k, q) { if (kind.indexOf(k) >= 0) idx.push(q); });
+        if (!idx.some(function (q) { return on[q]; })) on[idx[R.int(0, idx.length - 1)]] = true;
+      });
+      // A five-input card also shows an absent edge when it is lifted out;
+      // dropping one of five still leaves a channel and a control on.
+      if (n === 5 && on.every(Boolean)) on[R.int(0, 4)] = false;
       var level = R.range(9, 15), slope = R.range(-0.006, 0.02), amp = R.range(1.5, 4), ph = R.range(0, 6.28);
       var base = fill(WEEKS, function (w) { return level + slope * w + amp * (0.5 + 0.5 * Math.sin(2 * Math.PI * w / 52 + ph)); });
       var byType = [null, null, null, null, null];
@@ -873,7 +880,7 @@
       var busy = tickAll(all, t);
       var dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0;
       lastT = t;
-      riverT += dt * P.speed.v * (Deck.reducedMotion ? 0.25 : 1);
+      if (!Deck.reducedMotion) riverT += dt * P.speed.v;
       updateRiver();
       // Release the card once it is back in the river.
       if (hero >= 0 && slots[hero].held && !P.hero.live && P.hero.v === 0) {
@@ -920,7 +927,7 @@
       mount: function (section) {
         S = new Surface(section.querySelector('.scene-root'), 940, 800);
         loop = new Loop(frame);
-        loop.always = true;
+        loop.always = !Deck.reducedMotion;  // the river drifts; under reduced motion it holds still
         mask = S.ctx.createLinearGradient(0, 0, S.w, 0);
         mask.addColorStop(0, 'rgba(0,0,0,0)');
         mask.addColorStop(0.13, 'rgba(0,0,0,1)');
@@ -1056,7 +1063,6 @@
     function draw(t) {
       var c = S.begin(), j;
       var en = P.ent.v, dp = P.dop.v, xp = P.exc.v;
-      var flow = (t || performance.now()) / 1000 * (Deck.reducedMotion ? 0.08 : 0.32);
 
       // Edges: present solid with arrowheads, Social dashed and faint.
       for (j = 0; j < 5; j++) {
@@ -1064,9 +1070,10 @@
         if (PRESENT[j]) drawEdge(c, edges[j], ep, { width: 2.5, head: 11 });
         else drawEdge(c, edges[j], ep, { width: 1.8, dash: [6, 6], alpha: 0.36 });
       }
-      // Data flow along present edges; TV's stops under do(TV = 0).
-      var pa = seg(en, 0.62, 0.85);
+      // Data flow along present edges; TV's stops under do(TV = 0). No particles under reduced motion.
+      var pa = Deck.reducedMotion ? 0 : seg(en, 0.62, 0.85);
       if (pa > 0) {
+        var flow = (t || performance.now()) / 1000 * 0.32;
         for (j = 0; j < 5; j++) {
           if (!PRESENT[j]) continue;
           var a = pa * (j === 0 ? 1 - dp : 1);
@@ -1201,7 +1208,7 @@
       mount: function (section) {
         S = new Surface(section.querySelector('.scene-root'), 940, 800);
         loop = new Loop(frame);
-        loop.always = true;
+        loop.always = !Deck.reducedMotion;  // particles flow; under reduced motion the loop settles
         NODES.forEach(function (nd, j) {
           edges.push(new Edge(nd.x, nd.y, R_IN + 4, SALES.x, SALES.y, SALES.r + 5, BENDS[j]));
           var inp = INPUTS[j], lx = nd.x - R_IN - 18;

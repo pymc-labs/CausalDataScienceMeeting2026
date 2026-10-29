@@ -189,6 +189,15 @@ body.nav-back { --enter-y: -28px; --leave-y: 18px; }
 .slide .fade[data-step-only]:not(.is-shown),
 .slide .fade[data-until]:not(.is-shown) { transform: none; filter: none; }
 .slide .dim-past.is-past { opacity: .32; filter: saturate(.6); }
+/* Shown fragments fade out with the leaving slide, like the .r elements. */
+.slide.is-leaving [data-step].is-shown,
+.slide.is-leaving [data-step-only].is-shown,
+.slide.is-leaving [data-until].is-shown {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity var(--t-leave) var(--ease-out), filter var(--t-leave) var(--ease-out);
+  transition-delay: 0ms;
+}
 
 /* --- Chrome (header, footer, progress) ------------------------------------- */
 .chrome {
@@ -469,4 +478,9 @@ strong, b { font-weight: 600; color: var(--fg); }
 
 @media (prefers-reduced-motion: reduce) {
   :root { --t-enter: .35s; --t-leave: .2s; --stagger: 0ms; --enter-y: 0px; --leave-y: 0px; }
+  .slide { transition: none; }
+  .slide [data-step], .slide [data-step-only], .slide [data-until] { transition-duration: .2s; }
+  .slide [data-step]:not(.is-shown),
+  .slide [data-step-only]:not(.is-shown),
+  .slide [data-until]:not(.is-shown) { transform: none; filter: none; }
 }
