@@ -178,6 +178,15 @@
 /* --- 15 Test design ------------------------------------------------------------------------ */
 .slide-test .test-flow { position: absolute; left: var(--mx); right: var(--mx); top: 350px; display: grid; grid-template-columns: 1fr 48px 1fr 48px 1.2fr 48px 1fr; align-items: start; column-gap: 24px; }
 .slide-test .test-flow .arrow { padding-top: 58px; text-align: center; font-size: 24px; color: var(--fg-4); }
+.slide-test .methods ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; font-size: 18px; line-height: 1.4; color: var(--fg-2); }
+.slide-test .methods li b { color: var(--fg); font-weight: 600; }
+.slide-test .methods li:first-child b { color: var(--accent); }
+.slide-test .test-design { position: absolute; left: var(--mx); right: var(--mx); display: grid; grid-template-columns: 360px 1fr; align-items: center; }
+.slide-test .test-design.td-1 { top: 730px; }
+.slide-test .test-design.td-2 { top: 805px; }
+.slide-test .test-design .chips { margin-top: 0; }
+.slide-test .td-k { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+
 /* --- 18 Stats --------------------------------------------------------------------------- */
 .slide-stats .stats { margin-top: 40px; }
 .slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 26px 0; }
@@ -188,16 +197,6 @@
 .slide-stats .stat-tex { font-size: 68px; line-height: 1; }
 .slide-stats .stat-tex .katex { font-size: 1em; }
 .slide-stats .stat-body .katex { white-space: nowrap; }
-.slide-test .td-k { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
-
-/* --- 18 Stats --------------------------------------------------------------------------- */
-.slide-stats .stats { margin-top: 52px; }
-.slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 30px 0; }
-.slide-stats .stat-num { font-size: 84px; }
-.slide-stats .stat-num sup { font-size: .5em; vertical-align: .9em; letter-spacing: 0; }
-.slide-stats .stat-body { max-width: 1040px; }
-.slide-stats .stat-tex { font-size: 76px; line-height: 1; }
-.slide-stats .stat-tex .katex { font-size: 1em; }
 
 /* --- 19 Limits ----------------------------------------------------------------------------- */
 .slide-limits .points { margin-top: 48px; }

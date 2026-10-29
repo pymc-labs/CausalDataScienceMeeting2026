@@ -184,16 +184,16 @@
   var ink = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   var tint = [0, 0, 0];
 
-  /* ---- Quiet zones: the lines fade out behind text ------------------------------- */
-  // The deck sends the boxes of every text run, equation, card and scene of the
-  // active slide (Field.quiet). They are rasterised into a coarse stage mask:
-  // full clearance on the text, then a soft fade into the lines. The mask is
-  // upscaled with smoothing and erases the lines (destination-out) each frame.
+  /* ---- Text fade: lines thin out and vanish as they approach text ------------------ */
+  // The deck sends one entry per text run of the active slide (Field.quiet):
+  // [x, y, w, h, strength, reach] in stage px. Each run fades the lines around it
+  // with a cosine fall-off over `reach`: no edge, no plain patch, the line just
+  // thins out as it nears the words. Small text gets full strength and a long
+  // reach; large display text, whose strokes are much thicker than a hairline,
+  // keeps a faint trace of the lines. The coarse mask is upscaled with smoothing
+  // and applied to the lines each frame (destination-out).
   var QC = 8;                         // stage px per mask cell
   var QW = W / QC, QH = H / QC;       // 240 x 135 cells
-  var Q_CORE = 12;                    // full clearance around each box, stage px
-  var Q_REACH = 28;                   // dilation before the blur, stage px
-  var Q_BLUR = 3;                     // box-blur radius in cells, applied twice
   var Q_MS = 700;                     // crossfade between slides
   var quietPrev = new Float32Array(QW * QH);
   var quietNext = new Float32Array(QW * QH);
@@ -513,13 +513,10 @@
     c.stamp = t;
   }
 
-  function drawContour(c, alpha, tm, t) {
-    if (c.version !== view.version || Math.abs(t - c.stamp) >= CONTOUR_DT) computeContours(c, t);
-    var maxA = lerp(MAX_ALPHA[0], MAX_ALPHA[1], tm) * alpha;
-    var glow = lerp(GLOW[0], GLOW[1], tm);
-
-    // Soft light under the mode, as on the white-paper cover; the same tilted
-    // ellipse as the landscape.
+  // Soft light under the mode, as on the white-paper cover; the same tilted
+  // ellipse as the landscape. A fill, not a line: the text fade never touches
+  // it, so no patch appears around the text (render draws it last, behind).
+  function drawHalo(c, alpha, tm) {
     mixInto(tint, HALO[0], HALO[1], tm);
     var ha = lerp(HALO_ALPHA[0], HALO_ALPHA[1], tm) * alpha;
     ctx.save();
@@ -535,6 +532,12 @@
     ctx.fillStyle = halo;
     ctx.fillRect(-760, -760, 1520, 1520);
     ctx.restore();
+  }
+
+  function drawContour(c, alpha, tm, t) {
+    if (c.version !== view.version || Math.abs(t - c.stamp) >= CONTOUR_DT) computeContours(c, t);
+    var maxA = lerp(MAX_ALPHA[0], MAX_ALPHA[1], tm) * alpha;
+    var glow = lerp(GLOW[0], GLOW[1], tm);
 
     // Iso-lines: bright near the mode, fading toward the farthest corner.
     var g = ctx.createRadialGradient(c.fx, c.fy, 0, c.fx, c.fy, c.reach);
@@ -594,8 +597,9 @@
     for (i = contours.length - 1; i >= 0; i--) {
       if (contours[i].alpha.b === 0 && !contours[i].alpha.busy(now)) contours.splice(i, 1);
     }
+    var ca;
     for (i = 0; i < contours.length; i++) {
-      var ca = contours[i].alpha.get(now);
+      ca = contours[i].alpha.get(now);
       if (ca > 0.002) drawContour(contours[i], ca, tm, t);
     }
 
@@ -606,47 +610,43 @@
       drawLines(la, tm);
     }
     ctx.globalAlpha = 1;
+    // Lines thin out near text; then the contour glow goes in behind them, whole.
     eraseQuiet(now);
+    ctx.globalCompositeOperation = 'destination-over';
+    for (i = 0; i < contours.length; i++) {
+      ca = contours[i].alpha.get(now);
+      if (ca > 0.002) drawHalo(contours[i], ca, tm);
+    }
+    ctx.globalCompositeOperation = 'source-over';
   }
 
-  /* ---- Quiet-zone mask ------------------------------------------------------------- */
-  function fillBox(m, r, pad) {
-    var x0 = Math.max(0, Math.floor((r[0] - pad) / QC));
-    var y0 = Math.max(0, Math.floor((r[1] - pad) / QC));
-    var x1 = Math.min(QW, Math.ceil((r[0] + r[2] + pad) / QC));
-    var y1 = Math.min(QH, Math.ceil((r[1] + r[3] + pad) / QC));
-    for (var y = y0; y < y1; y++) for (var x = x0; x < x1; x++) m[y * QW + x] = 1;
-  }
-  // Separable running-sum box blur, radius r cells, in place (tmp is scratch).
-  function boxBlur(m, tmp, r) {
-    var x, y, i, acc, n = 2 * r + 1;
-    for (y = 0; y < QH; y++) {
-      acc = 0;
-      for (i = -r; i <= r; i++) acc += m[y * QW + clamp(i, 0, QW - 1)];
-      for (x = 0; x < QW; x++) {
-        tmp[y * QW + x] = acc / n;
-        acc += m[y * QW + Math.min(x + r + 1, QW - 1)] - m[y * QW + Math.max(x - r, 0)];
-      }
-    }
-    for (x = 0; x < QW; x++) {
-      acc = 0;
-      for (i = -r; i <= r; i++) acc += tmp[clamp(i, 0, QH - 1) * QW + x];
-      for (y = 0; y < QH; y++) {
-        m[y * QW + x] = acc / n;
-        acc += tmp[Math.min(y + r + 1, QH - 1) * QW + x] - tmp[Math.max(y - r, 0) * QW + x];
-      }
-    }
-  }
-  function buildQuiet(rects, out) {
-    var core = new Float32Array(QW * QH), tmp = new Float32Array(QW * QH), i;
+  /* ---- Text-fade mask --------------------------------------------------------------- */
+  // Fade of one text run at cell centres: strength * (1 + cos(pi * d / reach)) / 2,
+  // where d is the distance to the run's box (0 inside it). Runs combine by max.
+  function buildQuiet(runs, out) {
     out.fill(0);
-    for (i = 0; i < rects.length; i++) {
-      fillBox(core, rects[i], Q_CORE);
-      fillBox(out, rects[i], Q_REACH);
+    for (var i = 0; i < runs.length; i++) {
+      var r = runs[i];
+      var rx0 = r[0], ry0 = r[1], rx1 = r[0] + r[2], ry1 = r[1] + r[3];
+      var s = r[4], reach = r[5];
+      var cx0 = Math.max(0, Math.floor((rx0 - reach) / QC));
+      var cy0 = Math.max(0, Math.floor((ry0 - reach) / QC));
+      var cx1 = Math.min(QW - 1, Math.ceil((rx1 + reach) / QC));
+      var cy1 = Math.min(QH - 1, Math.ceil((ry1 + reach) / QC));
+      for (var cy = cy0; cy <= cy1; cy++) {
+        var py = (cy + 0.5) * QC;
+        var dy = py < ry0 ? ry0 - py : py > ry1 ? py - ry1 : 0;
+        for (var cx = cx0; cx <= cx1; cx++) {
+          var px = (cx + 0.5) * QC;
+          var dx = px < rx0 ? rx0 - px : px > rx1 ? px - rx1 : 0;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d >= reach) continue;
+          var e = s * 0.5 * (1 + Math.cos(Math.PI * d / reach));
+          var k = cy * QW + cx;
+          if (e > out[k]) out[k] = e;
+        }
+      }
     }
-    boxBlur(out, tmp, Q_BLUR);
-    boxBlur(out, tmp, Q_BLUR);
-    for (i = 0; i < out.length; i++) if (core[i] > out[i]) out[i] = core[i];
   }
   function paintQuiet(now) {
     if (!quietCanvas) {
@@ -793,15 +793,15 @@
     kick();
   }
 
-  // rects: [[x, y, w, h], ...] in stage px. The mask crossfades from what is on
-  // screen now, so quick slide changes never jump.
-  function quiet(rects, opts) {
+  // runs: [[x, y, w, h, strength, reach], ...] in stage px. The mask crossfades
+  // from what is on screen now, so quick slide changes never jump.
+  function quiet(runs, opts) {
     if (!ensure()) return;
     var now = performance.now();
     var instant = !!(opts && opts.instant);
     var k = quietMix.get(now);
     for (var i = 0; i < quietShown.length; i++) quietPrev[i] = quietPrev[i] + (quietNext[i] - quietPrev[i]) * k;
-    buildQuiet(rects || [], quietNext);
+    buildQuiet(runs || [], quietNext);
     quietMix.a = 0;
     quietMix.b = 1;
     quietMix.t0 = now;

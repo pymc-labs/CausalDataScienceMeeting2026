@@ -37,7 +37,8 @@ In Chrome or Edge you can also open `index.html` directly (double-click it); the
 
 The address bar keeps the position as `#/slide/step`, for example `#/12/4`. A reload keeps the position.
 
-The background lines fade out behind every text, equation and figure, so that text always sits on a plain background.
+The background lines thin out gradually as they approach text and vanish next to small text.
+Large titles keep a faint trace of the lines. Nothing is painted behind the text.
 
 ## Narrative
 
@@ -59,7 +60,7 @@ css/deck.css          design system: brand palette, type, transitions, chrome
 css/slides.css        slide layouts
 css/scenes/*.css      styles of the animated scenes
 js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom
-js/field.js           background flow lines and contours; they morph between slides and fade out behind text
+js/field.js           background flow lines and contours; they morph between slides and thin out near text
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results)
 assets/               fonts, team photos, official PyMC Labs logos

@@ -158,44 +158,53 @@
     catch (e) { console.error('[field]', e); }
   }
 
-  /* ---- Quiet zones: the background lines fade out behind text ------------------ */
-  // Text is the protagonist. Every text run, equation, card and scene area of the
-  // active slide, and the visible chrome, goes to the background field as a box
-  // in stage px. The field clears its lines there and fades them in around it.
-  // Blocks are cleared as a whole, so a list or a group of notes sits on one
-  // plain area instead of lines running between its rows.
-  var QUIET_BLOCKS = '.katex, .card, .chip, .close-col, .boundary, .scene-root, .proc i, .splitbar, ' +
-    '.points, .stats, .trio, .scope, .test-flow, .test-design, .choices, .splits, .bma, .pfn-eqs, .eq-stage, ' +
-    '.flow-text, .facts, .chips, .title-block, .close-cols, .thanks, .arch-head, .process';
+  /* ---- Text fade: background lines thin out and vanish near text -------------- */
+  // Text is the protagonist. Every text run of the active slide (and of the
+  // visible chrome) goes to the background field with a fade strength and reach.
+  // The field lowers its lines smoothly toward each run; nothing is painted
+  // behind the text.
+  // Small text has strokes as thin as a line, so lines vanish fully around it.
+  // Large display text keeps a faint trace of the lines.
+  function fadeFor(fontPx) {
+    var t = clamp((fontPx - 28) / (90 - 28), 0, 1);
+    return [lerp(1, 0.5, t), lerp(150, 100, t)];
+  }
   var quietTimer = null;
   function quietZones(slide) {
     var base = document.querySelector('.stage-main').getBoundingClientRect();
     var k = baseScale();
     var out = [];
     var range = document.createRange();
-    function add(r) {
-      if (r.width >= 1 && r.height >= 1) out.push([(r.left - base.left) / k, (r.top - base.top) / k, r.width / k, r.height / k]);
+    function add(r, fade) {
+      if (r.width < 1 || r.height < 1) return;
+      out.push([(r.left - base.left) / k, (r.top - base.top) / k, r.width / k, r.height / k, fade[0], fade[1]]);
     }
     function addText(root) {
       var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
         acceptNode: function (n) {
           if (!/\S/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
-          return n.parentElement.closest('.notes, .katex, .scene-root') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+          return n.parentElement.closest('.notes, .katex') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
         }
       });
       while (walker.nextNode()) {
+        var fade = fadeFor(parseFloat(getComputedStyle(walker.currentNode.parentElement).fontSize) || 20);
         range.selectNodeContents(walker.currentNode);
         var rs = range.getClientRects();
-        for (var i = 0; i < rs.length; i++) add(rs[i]);
+        for (var i = 0; i < rs.length; i++) add(rs[i], fade);
       }
     }
     addText(slide.el);
-    slide.el.querySelectorAll(QUIET_BLOCKS).forEach(function (el) { add(el.getBoundingClientRect()); });
+    // Equations draw thin strokes: fade as for text at about 60 % of their size.
+    slide.el.querySelectorAll('.katex').forEach(function (el) {
+      add(el.getBoundingClientRect(), fadeFor(0.6 * (parseFloat(getComputedStyle(el).fontSize) || 40)));
+    });
+    // Scenes draw their own lines: dim the background behind them, with a long soft edge.
+    slide.el.querySelectorAll('.scene-root').forEach(function (el) { add(el.getBoundingClientRect(), [0.55, 200]); });
     if (slide.chrome !== 'off') {
       addText(document.querySelector('.chrome-foot'));
       if (slide.chrome !== 'min') {
         addText(document.querySelector('.chrome-head'));
-        add(document.querySelector('.chrome-head .brand-logo').getBoundingClientRect());
+        add(document.querySelector('.chrome-head .brand-logo').getBoundingClientRect(), fadeFor(18));
       }
     }
     return out;
