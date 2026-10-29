@@ -37,8 +37,9 @@ In Chrome or Edge you can also open `index.html` directly (double-click it); the
 
 The address bar keeps the position as `#/slide/step`, for example `#/12/4`. A reload keeps the position.
 
-The background lines thin out gradually as they approach text and vanish next to small text.
-Large titles keep a faint trace of the lines. Nothing is painted behind the text.
+The background lines work like the flow-line assets in `slides/elements/mono/flow_lines` of the main repository:
+each form enters from an edge or a corner of the slide and fades out on its own before it reaches the text.
+Each slide places its form in its empty space (`data-field` in `index.html`); text-heavy slides have none.
 
 ## Narrative
 
@@ -60,7 +61,7 @@ css/deck.css          design system: brand palette, type, transitions, chrome
 css/slides.css        slide layouts
 css/scenes/*.css      styles of the animated scenes
 js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom
-js/field.js           background flow lines and contours; they morph between slides and thin out near text
+js/field.js           background flow lines and contours; edge-anchored forms that fade out and morph between slides
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results)
 assets/               fonts, team photos, official PyMC Labs logos

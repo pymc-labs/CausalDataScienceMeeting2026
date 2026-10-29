@@ -38,12 +38,12 @@
   font-family: var(--f-display); font-stretch: 125%; font-weight: 400;
   font-size: 90px; line-height: 1.06; letter-spacing: -.018em; margin: 0; color: var(--fg);
 }
-.slide-title .title-sub { margin: 40px 0 0; max-width: 1080px; font-size: 29px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
+.slide-title .title-sub { margin: 40px 0 0; max-width: 940px; font-size: 29px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
 .slide-title .title-foot {
   position: absolute; left: 0; right: 0; bottom: 0; height: 170px;
   padding: 36px var(--mx) 0;
   border-top: 1px solid rgba(243, 246, 251, .18);
-  background: linear-gradient(180deg, rgba(6, 17, 42, .55), rgba(6, 17, 42, .85));
+  background: #07142F;   /* solid band, as on the white-paper cover: the art ends above it */
   display: grid; grid-template-columns: 380px 1fr; gap: 60px;
 }
 .slide-title .who { display: flex; flex-direction: column; gap: 10px; font-size: 21px; line-height: 1.45; color: var(--fg); }

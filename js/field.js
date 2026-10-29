@@ -6,21 +6,28 @@
    The deck calls Field.set(Object.assign({theme}, slide.field), {instant})
    on every slide change and Field.resize() on window resize.
 
-   data-field modes. Positions are fractions of the 1920 x 1080 stage (the
-   window itself at 16:9); the art always covers the whole window, letterbox
-   included. intensity (default 1) scales the layer alpha.
-     {"mode":"contour","focus":[x,y]}  nested iso-lines of a posterior landscape
-                                       with a peach point + ring at its mode
-     {"mode":"sweep"}                  26 wavy near-parallel lines
-     {"mode":"ribbon","y":y}           25 twisting hairlines centred at height y
-     {"mode":"fan","origin":[x,y]}     33 lines leaving one point (posterior fan)
-     {"mode":"none"}                   everything fades out
+   The art never runs under text. Like the flow-line assets in the main repo
+   (slides/elements/mono/flow_lines), every form enters from an edge or a
+   corner and fades out on its own before it reaches the content. Each slide
+   places it in its empty space. Positions are fractions of the 1920 x 1080
+   stage; intensity (default 1) scales the layer alpha.
+     {"mode":"contour","focus":[x,y],"reach":px}
+         nested iso-lines of a posterior landscape around a peach point; the
+         lines fade to nothing at `reach` stage px from the point
+     {"mode":"ribbon","y":y,"x0":a,"x1":b}
+         25 twisting hairlines centred at height y, from x = a to x = b,
+         fading out at both ends
+     {"mode":"fan","origin":[x,y],"length":l,"dir":1|-1}
+         33 lines leaving one point (a posterior fan), spreading over `length`
+         of the stage width to the right (dir 1) or to the left (dir -1),
+         then fading out
+     {"mode":"none"}  everything fades out
 
    Line modes share one representation (33 lines x 220 points; a family with
    fewer lines parks its spare slots, invisible, between neighbours), so one
    line mode morphs into the next. Contour <-> line modes crossfade.
    Line maths ported from flow_lines.py (MarketingFoundationalModels repo,
-   slides/elements): sweep, ribbon and fan, recoloured to the brand palette.
+   slides/elements): ribbon and fan, recoloured to the brand palette.
    ========================================================================== */
 (function () {
   'use strict';
@@ -34,7 +41,7 @@
   var STOPS = 28;        // gradient stops per line (alpha and ink along the line)
   var RIBBON_H = 540;    // ribbon band height: the 3200 x 900 original across 1920 px
   var FAN_H = 600;       // fan band height: the 3200 x 1000 original across 1920 px
-  var LEVELS = 22;       // contour levels
+  var LEVELS = 16;       // contour levels
   var GRID = 160;        // marching-squares cells across the window
   var KAPPA = 0.88;      // level radius ~ index^KAPPA: rings widen toward the mode
 
@@ -132,13 +139,11 @@
     }
     return { n: n, c: c, a: a, z: z };
   }
-  var SWEEP = family(26, 2, function (z, r) { return 0.2 + 0.7 * Math.pow(r, 1.6); });
   var RIBBON = family(25, 6, function (z, r) { return 0.2 + 0.7 * Math.exp(-z * z / (2 * 0.55 * 0.55)) * (0.85 + 0.15 * r); }, Z25);
   var FAN = family(33, 4, function (z, r) { return 0.15 + 0.8 * Math.exp(-z * z / (2 * 0.5 * 0.5)) * (0.85 + 0.15 * r); }, Z33);
 
   // Per-point terms that do not change over time.
   var U = new Float32Array(PTS);           // -0.02 .. 1.02 across the window
-  var SWEEP_DRIFT = new Float32Array(PTS); // max(u, 0)^1.4
   var RIB_W = new Float32Array(PTS);       // ribbon width envelope
   var RIB_END = new Float32Array(PTS);     // ribbon end fades
   var FAN_SIG = new Float32Array(PTS);     // fan spread, 0 at the origin
@@ -155,7 +160,6 @@
       var u = -0.02 + 1.04 * f;
       var uc = clamp(u, 0, 1);
       U[p] = u;
-      SWEEP_DRIFT[p] = Math.pow(Math.max(u, 0), 1.4);
       RIB_W[p] = 0.04 + 0.2 * Math.pow(Math.sin(Math.PI * uc), 0.7);
       RIB_END[p] = smoothstep(0, 0.12, u) * (1 - smoothstep(0.88, 1, u));
       FAN_SIG[p] = (0.05 + 0.3 * Math.pow(f, 0.9)) * smoothstep(0, 0.08, f);
@@ -174,7 +178,7 @@
 
   var theme = new Tween(0, easeOut);   // 0 dark .. 1 light, follows the CSS crossfade
   var lineAlpha = new Tween(0);
-  var lineSpec = null;                 // {mode, y | origin, key}
+  var lineSpec = null;                 // ribbon {y, x0, x1} or fan {origin, length, dir}, plus mode and key
   var morph = null;                    // {t0, dur}
   var N = LINES * PTS;
   var LX = new Float32Array(N), LY = new Float32Array(N), LA = new Float32Array(N);   // shown
@@ -184,46 +188,9 @@
   var ink = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
   var tint = [0, 0, 0];
 
-  /* ---- Text fade: lines thin out and vanish as they approach text ------------------ */
-  // The deck sends one entry per text run of the active slide (Field.quiet):
-  // [x, y, w, h, strength, reach] in stage px. Each run fades the lines around it
-  // with a cosine fall-off over `reach`: no edge, no plain patch, the line just
-  // thins out as it nears the words. Small text gets full strength and a long
-  // reach; large display text, whose strokes are much thicker than a hairline,
-  // keeps a faint trace of the lines. The coarse mask is upscaled with smoothing
-  // and applied to the lines each frame (destination-out).
-  var QC = 8;                         // stage px per mask cell
-  var QW = W / QC, QH = H / QC;       // 240 x 135 cells
-  var Q_MS = 700;                     // crossfade between slides
-  var quietPrev = new Float32Array(QW * QH);
-  var quietNext = new Float32Array(QW * QH);
-  var quietShown = new Float32Array(QW * QH);
-  var quietMix = new Tween(1);
-  var quietCanvas = null, quietCtx = null, quietImg = null;
-  var quietDirty = false;
-  var quietAny = false;
-
   /* ---- Line modes ---------------------------------------------------------------- */
-  function genSweep(spec, t, X, Y, A) {
-    var x0 = view.x0, xw = view.x1 - view.x0, y0 = view.y0, yh = view.y1 - view.y0;
-    var ph1 = TAU * t / 60, ph2 = TAU * t / 38;   // waves travel with the flow, ~40 px/s
-    for (var k = 0; k < LINES; k++) {
-      var s = SWEEP.c[k] / (SWEEP.n - 1), str = SWEEP.a[k], o = k * PTS;
-      var lift = 0.22 * (0.35 + 0.9 * s);
-      for (var p = 0; p < PTS; p++) {
-        var u = U[p];
-        var v = -0.10 + 1.20 * s + lift * SWEEP_DRIFT[p]
-          + 0.045 * Math.sin(TAU * (0.75 * u + 0.9 * s + 0.1) - ph1)
-          + 0.018 * Math.sin(TAU * (1.6 * u + 1.7 * s + 0.4) - ph2);
-        X[o + p] = x0 + u * xw;
-        Y[o + p] = y0 + v * yh;
-        A[o + p] = str * (0.35 + 0.65 * smoothstep(0.15, 1.1, 0.75 * u + 0.45 * v));
-      }
-    }
-  }
-
   function genRibbon(spec, t, X, Y, A) {
-    var x0 = view.x0, xw = view.x1 - view.x0, yc = spec.y * H;
+    var x0 = spec.x0 * W, xw = (spec.x1 - spec.x0) * W, yc = spec.y * H;
     var phT = TAU * t / 30, phW = TAU * t / 10, phC = 0.35 * Math.sin(TAU * t / 41);   // nodes travel ~50 px/s
     var p, u, uc;
     for (p = 0; p < PTS; p++) {
@@ -246,9 +213,11 @@
     }
   }
 
+  // The fan leaves its origin and spreads over `length` of the stage width,
+  // fading out before its far end (FAN_MASK), like flow_lines_fan.png.
   function genFan(spec, t, X, Y, A) {
     var ox = spec.origin[0] * W, oy = spec.origin[1] * H;
-    var xe = view.x1 + 0.02 * (view.x1 - view.x0);
+    var reachX = spec.dir * spec.length * W;
     var phW = TAU * t / 11, breath = 1 + 0.04 * Math.sin(TAU * t / 9.5), sway = 0.03 * Math.sin(TAU * t / 19);
     for (var k = 0; k < LINES; k++) {
       var z = FAN.z[k], str = FAN.a[k], o = k * PTS;
@@ -256,14 +225,14 @@
         var f = p / (PTS - 1);
         var wig = 1 + 0.05 * Math.sin(TAU * (1.4 * f + 0.8 * z) - phW);
         var v = FAN_CEN[p] + sway * f * f + FAN_SIG[p] * z * 0.5 * wig * breath;
-        X[o + p] = ox + f * (xe - ox);
+        X[o + p] = ox + f * reachX;
         Y[o + p] = oy + v * FAN_H;
         A[o + p] = str * FAN_MASK[p];
       }
     }
   }
 
-  var GENERATORS = { sweep: genSweep, ribbon: genRibbon, fan: genFan };
+  var GENERATORS = { ribbon: genRibbon, fan: genFan };
 
   function updateLines(now, t) {
     GENERATORS[lineSpec.mode](lineSpec, t, GX, GY, GA);
@@ -296,7 +265,7 @@
       for (p = 0; p < PTS; p++) if (LA[o + p] > peak) peak = LA[o + p];
       if (peak * maxA < 0.004) continue;
       var xa = LX[o], span = LX[o + PTS - 1] - xa;
-      if (!(span > 1)) continue;
+      if (!(Math.abs(span) > 1)) continue;   // a fan pointing left has a negative span
       var g = ctx.createLinearGradient(xa, 0, xa + span, 0);
       for (var q = 0; q < STOPS; q++) {
         var i = o + Math.round(q * (PTS - 1) / (STOPS - 1));
@@ -342,8 +311,9 @@
     return rr * (1 + 0.22 * px / (rr + 60));
   }
 
-  function ContourLayer(focus) {
+  function ContourLayer(focus, limit) {
     this.focus = focus;
+    this.limit = limit;       // stage px from the focus where the lines end
     this.fx = focus[0] * W;
     this.fy = focus[1] * H;
     this.alpha = new Tween(0);
@@ -351,22 +321,16 @@
     this.stamp = -Infinity;   // drift time of the last recompute
     this.version = -1;        // view version the levels were scaled for
     this.r1 = 1;              // level scale
-    this.reach = 1;           // distance to the farthest visible corner
+    this.reach = 1;           // stroke fade radius
   }
 
-  // Scale the levels so the outermost one reaches the farthest visible corner.
+  // Scale the levels so the outermost one sits at the layer's limit; the
+  // stroke gradient fades the lines to nothing at the same distance.
   function scaleLevels(c) {
-    var far = 0, reach = 0;
-    var xs = [view.x0, view.x1], ys = [view.y0, view.y1];
-    for (var i = 0; i < 2; i++) {
-      for (var j = 0; j < 2; j++) {
-        var dx = xs[i] - c.fx, dy = ys[j] - c.fy;
-        far = Math.max(far, landscape(dx, dy, 0));
-        reach = Math.max(reach, Math.sqrt(dx * dx + dy * dy));
-      }
-    }
+    var L = c.limit;
+    var far = (landscape(L, 0, 0) + landscape(-L, 0, 0) + landscape(0, L, 0) + landscape(0, -L, 0)) / 4;
     c.r1 = far / Math.pow(LEVELS + 0.5, KAPPA);
-    c.reach = reach;
+    c.reach = L;
     c.version = view.version;
   }
 
@@ -600,7 +564,10 @@
     var ca;
     for (i = 0; i < contours.length; i++) {
       ca = contours[i].alpha.get(now);
-      if (ca > 0.002) drawContour(contours[i], ca, tm, t);
+      if (ca > 0.002) {
+        drawHalo(contours[i], ca, tm);
+        drawContour(contours[i], ca, tm, t);
+      }
     }
 
     if (morph && now >= morph.t0 + morph.dur && lineAlpha.get(now) <= 0.002) morph = null;
@@ -610,76 +577,11 @@
       drawLines(la, tm);
     }
     ctx.globalAlpha = 1;
-    // Lines thin out near text; then the contour glow goes in behind them, whole.
-    eraseQuiet(now);
-    ctx.globalCompositeOperation = 'destination-over';
-    for (i = 0; i < contours.length; i++) {
-      ca = contours[i].alpha.get(now);
-      if (ca > 0.002) drawHalo(contours[i], ca, tm);
-    }
-    ctx.globalCompositeOperation = 'source-over';
-  }
-
-  /* ---- Text-fade mask --------------------------------------------------------------- */
-  // Fade of one text run at cell centres: strength * (1 + cos(pi * d / reach)) / 2,
-  // where d is the distance to the run's box (0 inside it). Runs combine by max.
-  function buildQuiet(runs, out) {
-    out.fill(0);
-    for (var i = 0; i < runs.length; i++) {
-      var r = runs[i];
-      var rx0 = r[0], ry0 = r[1], rx1 = r[0] + r[2], ry1 = r[1] + r[3];
-      var s = r[4], reach = r[5];
-      var cx0 = Math.max(0, Math.floor((rx0 - reach) / QC));
-      var cy0 = Math.max(0, Math.floor((ry0 - reach) / QC));
-      var cx1 = Math.min(QW - 1, Math.ceil((rx1 + reach) / QC));
-      var cy1 = Math.min(QH - 1, Math.ceil((ry1 + reach) / QC));
-      for (var cy = cy0; cy <= cy1; cy++) {
-        var py = (cy + 0.5) * QC;
-        var dy = py < ry0 ? ry0 - py : py > ry1 ? py - ry1 : 0;
-        for (var cx = cx0; cx <= cx1; cx++) {
-          var px = (cx + 0.5) * QC;
-          var dx = px < rx0 ? rx0 - px : px > rx1 ? px - rx1 : 0;
-          var d = Math.sqrt(dx * dx + dy * dy);
-          if (d >= reach) continue;
-          var e = s * 0.5 * (1 + Math.cos(Math.PI * d / reach));
-          var k = cy * QW + cx;
-          if (e > out[k]) out[k] = e;
-        }
-      }
-    }
-  }
-  function paintQuiet(now) {
-    if (!quietCanvas) {
-      quietCanvas = document.createElement('canvas');
-      quietCanvas.width = QW;
-      quietCanvas.height = QH;
-      quietCtx = quietCanvas.getContext('2d');
-      quietImg = quietCtx.createImageData(QW, QH);
-    }
-    var k = quietMix.get(now), d = quietImg.data, any = false;
-    for (var i = 0; i < quietShown.length; i++) {
-      var v = quietPrev[i] + (quietNext[i] - quietPrev[i]) * k;
-      quietShown[i] = v;
-      d[i * 4 + 3] = v * 255 + 0.5 | 0;
-      if (v > 0.002) any = true;
-    }
-    quietCtx.putImageData(quietImg, 0, 0);
-    quietAny = any;
-    quietDirty = false;
-  }
-  function eraseQuiet(now) {
-    if (quietDirty || quietMix.busy(now)) paintQuiet(now);
-    if (!quietAny) return;
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(quietCanvas, 0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-over';
   }
 
   function animating(now) {
     var i;
-    if (theme.busy(now) || lineAlpha.busy(now) || quietMix.busy(now) || morph) return true;
+    if (theme.busy(now) || lineAlpha.busy(now) || morph) return true;
     for (i = 0; i < contours.length; i++) if (contours[i].alpha.busy(now)) return true;
     if (reduced()) return false;   // no drift: the last frame stays as it is
     if (lineAlpha.b > 0) return true;
@@ -758,9 +660,17 @@
 
     if (GENERATORS[mode]) {
       var spec = { mode: mode };
-      if (mode === 'ribbon') spec.y = num(params.y, 0.5);
-      if (mode === 'fan') spec.origin = pair(params.origin, [0.1, 0.62]);
-      spec.key = mode + ':' + (spec.y !== undefined ? spec.y : spec.origin ? spec.origin.join(',') : '');
+      if (mode === 'ribbon') {
+        spec.y = num(params.y, 0.5);
+        spec.x0 = num(params.x0, 0);
+        spec.x1 = num(params.x1, 1);
+        spec.key = ['ribbon', spec.y, spec.x0, spec.x1].join(':');
+      } else {
+        spec.origin = pair(params.origin, [0, 0.62]);
+        spec.length = clamp(num(params.length, 0.4), 0.05, 1.2);
+        spec.dir = num(params.dir, 1) < 0 ? -1 : 1;
+        spec.key = ['fan', spec.origin.join(','), spec.length, spec.dir].join(':');
+      }
       var shown = lineSpec && lineAlpha.get(now) > 0.01;
       if (shown && !instant && lineSpec.key !== spec.key) {
         // Morph from whatever is on screen now (possibly mid-morph) to the new form.
@@ -777,36 +687,20 @@
 
     var keep = null;
     if (mode === 'contour') {
-      var focus = pair(params.focus, [0.74, 0.8]);
+      var focus = pair(params.focus, [0.84, 0.7]);
+      var limit = clamp(num(params.reach, 480), 120, 2400);
       for (i = 0; i < contours.length; i++) {
-        if (contours[i].focus[0] === focus[0] && contours[i].focus[1] === focus[1]) keep = contours[i];
+        var c = contours[i];
+        if (c.focus[0] === focus[0] && c.focus[1] === focus[1] && c.limit === limit) keep = c;
       }
       if (!keep) {
-        keep = new ContourLayer(focus);
+        keep = new ContourLayer(focus, limit);
         contours.push(keep);
       }
       keep.alpha.to(intensity, now, dFade);
     }
     for (i = 0; i < contours.length; i++) if (contours[i] !== keep) contours[i].alpha.to(0, now, dFade);
 
-    if (instant) render(now);
-    kick();
-  }
-
-  // runs: [[x, y, w, h, strength, reach], ...] in stage px. The mask crossfades
-  // from what is on screen now, so quick slide changes never jump.
-  function quiet(runs, opts) {
-    if (!ensure()) return;
-    var now = performance.now();
-    var instant = !!(opts && opts.instant);
-    var k = quietMix.get(now);
-    for (var i = 0; i < quietShown.length; i++) quietPrev[i] = quietPrev[i] + (quietNext[i] - quietPrev[i]) * k;
-    buildQuiet(runs || [], quietNext);
-    quietMix.a = 0;
-    quietMix.b = 1;
-    quietMix.t0 = now;
-    quietMix.dur = instant ? 0 : reduced() ? REDUCED_MS : Q_MS;
-    quietDirty = true;
     if (instant) render(now);
     kick();
   }
@@ -821,5 +715,5 @@
     }
   });
 
-  window.Field = { set: set, quiet: quiet, resize: resize };
+  window.Field = { set: set, resize: resize };
 })();

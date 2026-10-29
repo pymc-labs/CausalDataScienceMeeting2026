@@ -29,7 +29,7 @@
 
 <!-- 01 · Title -->
 <section class="slide slide-title" data-title="Title" data-act="Opening" data-theme="dark" data-chrome="off"
-  data-field='{"mode":"contour","focus":[0.74,0.80],"intensity":1}'>
+  data-field='{"mode":"contour","focus":[0.86,0.66],"reach":540,"intensity":1}'>
   <header class="title-top">
     <img class="title-logo r" src="assets/brand/pymc-labs-full-white.png" alt="PyMC Labs">
     <div class="title-meta r">
@@ -61,7 +61,7 @@
 
 <!-- 02 · Team -->
 <section class="slide slide-team" data-title="The team" data-act="Opening" data-theme="light"
-  data-field='{"mode":"ribbon","y":0.565,"intensity":0.9}'>
+  data-field='{"mode":"ribbon","y":0.5,"x0":-0.02,"x1":1.02,"intensity":0.9}'>
   <div class="frame">
     <p class="eyebrow r">The team</p>
     <h2 class="h2 r">Researching foundation models<br><span class="accent-2">for marketing science</span></h2>
@@ -82,7 +82,7 @@
 
 <!-- 03 · Agenda -->
 <section class="slide slide-agenda" data-title="Five parts" data-act="Opening" data-theme="dark"
-  data-field='{"mode":"sweep","intensity":0.7}'>
+  data-field='{"mode":"fan","origin":[0,0.80],"length":0.34,"intensity":0.8}'>
   <div class="frame agenda">
     <div>
       <p class="eyebrow r">The talk</p>
@@ -108,7 +108,7 @@
 
 <!-- 04 · Same sales, different stories -->
 <section class="slide" data-title="Sales show what happened" data-act="01 · The problem" data-theme="light" data-steps="3"
-  data-scene="decomp" data-field='{"mode":"sweep","intensity":0.55}'>
+  data-scene="decomp" data-field='{"mode":"none"}'>
   <div class="frame text-col">
     <p class="eyebrow r"><span class="num">01</span>The problem</p>
     <h2 class="h1 r">Sales show what happened.<br><span class="accent-2">Not what caused it.</span></h2>
@@ -125,7 +125,7 @@
 
 <!-- 05 · The structural model -->
 <section class="slide slide-eq" data-title="A marketing mix model is a structural model" data-act="01 · The problem" data-theme="light" data-steps="4"
-  data-field='{"mode":"sweep","intensity":0.55}'>
+  data-field='{"mode":"fan","origin":[0,0.48],"length":0.24,"intensity":0.7}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">01</span>The problem</p>
     <h2 class="h2 r">A marketing mix model is a structural model</h2>
@@ -156,7 +156,7 @@
 
 <!-- 06 · One specification -->
 <section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="4"
-  data-field='{"mode":"sweep","intensity":0.55}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">01</span>The problem · We always underestimate uncertainty</p>
     <h2 class="h2 r">Each analysis commits to one specification</h2>
@@ -198,7 +198,7 @@
 
 <!-- 07 · Start backwards -->
 <section class="slide slide-inter" data-title="What if we could start backwards?" data-act="01 · The problem" data-theme="dark" data-steps="1"
-  data-field='{"mode":"ribbon","y":0.30,"intensity":0.6}'>
+  data-field='{"mode":"ribbon","y":0.32,"x0":0.62,"x1":1.04,"intensity":0.8}'>
   <div class="frame mid">
     <p class="eyebrow r">A different order of work</p>
     <h2 class="display-2 r">What if we could<br><span class="accent">start backwards?</span></h2>
@@ -228,7 +228,7 @@
 
 <!-- 08 · Worlds -->
 <section class="slide" data-title="A prior is a simulator that knows the truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
-  data-scene="worlds" data-field='{"mode":"sweep","intensity":0.5}'>
+  data-scene="worlds" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
     <h2 class="h2 r">A prior is a simulator that <span class="accent-2">knows the truth</span></h2>
@@ -254,7 +254,7 @@
 
 <!-- 09 · Interventional target -->
 <section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
-  data-scene="intervention" data-field='{"mode":"sweep","intensity":0.5}'>
+  data-scene="intervention" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">02</span>The causal target</p>
     <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
@@ -276,7 +276,7 @@
 
 <!-- 10 · Learn the posterior from the prior -->
 <section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="3"
-  data-field='{"mode":"sweep","intensity":0.5}'>
+  data-field='{"mode":"fan","origin":[1,0.44],"length":0.32,"dir":-1,"intensity":1}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">02</span>Amortized inference · prior-fitted networks</p>
     <h2 class="h2 r">Learn the posterior from the prior</h2>
@@ -313,7 +313,7 @@
 
 <!-- 11 · Not a number -->
 <section class="slide slide-inter" data-title="The output is a distribution over causal systems" data-act="02 · Causal worlds" data-theme="dark"
-  data-field='{"mode":"fan","origin":[0.1,0.62],"intensity":0.9}'>
+  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
   <div class="frame mid">
     <p class="eyebrow r">The output</p>
     <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over causal systems.</span></h2>
@@ -334,7 +334,7 @@
 
 <!-- 12 · Architecture assembly -->
 <section class="slide slide-arch" data-title="Assembling River" data-act="03 · Inside River" data-theme="dark" data-steps="8"
-  data-scene="arch" data-field='{"mode":"sweep","intensity":0.25}'>
+  data-scene="arch" data-field='{"mode":"none"}'>
   <div class="arch-head">
     <p class="eyebrow r"><span class="num">03</span>Inside River</p>
     <div class="arch-captions r">
@@ -419,7 +419,7 @@
 
 <!-- 15 · Test design -->
 <section class="slide slide-test" data-title="500 held-out cases with known truth" data-act="04 · Evidence" data-theme="light" data-steps="2"
-  data-field='{"mode":"sweep","intensity":0.5}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
     <h2 class="h2 r">500 held-out cases where <span class="accent-2">the truth is known</span></h2>
@@ -459,7 +459,7 @@
 
 <!-- 16 · Structure recovery -->
 <section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light" data-steps="3"
-  data-scene="structure" data-field='{"mode":"sweep","intensity":0.5}'>
+  data-scene="structure" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">04</span>Evidence · Structure</p>
     <h2 class="h2 r">River finds most direct effects <span class="accent-2">from the data alone</span></h2>
@@ -483,7 +483,7 @@
 
 <!-- 17 · Contribution accuracy -->
 <section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light" data-steps="2"
-  data-scene="crps" data-field='{"mode":"sweep","intensity":0.5}'>
+  data-scene="crps" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
     <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
@@ -504,7 +504,7 @@
 
 <!-- 18 · Three checks -->
 <section class="slide slide-stats" data-title="Three more checks" data-act="04 · Evidence" data-theme="dark"
-  data-field='{"mode":"sweep","intensity":0.55}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">04</span>Evidence · Checks</p>
     <h2 class="h2 r">Three more checks</h2>
@@ -527,7 +527,7 @@
 
 <!-- 19 · Limits -->
 <section class="slide slide-limits" data-title="Where River falls short" data-act="05 · Boundaries" data-theme="light"
-  data-field='{"mode":"sweep","intensity":0.5}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">05</span>Boundaries · It says where it fails</p>
     <h2 class="h2 r">Where River falls short</h2>
@@ -547,7 +547,7 @@
 
 <!-- 20 · Demonstrated vs not -->
 <section class="slide slide-scope" data-title="What is demonstrated, and what is not" data-act="05 · Boundaries" data-theme="light" data-steps="2"
-  data-field='{"mode":"sweep","intensity":0.5}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">05</span>Boundaries · The causal claim</p>
     <h2 class="h2 r">What is demonstrated, <span class="accent-2">and what is not</span></h2>
@@ -592,7 +592,7 @@
 
 <!-- 22 · Conclusions -->
 <section class="slide slide-concl" data-title="Conclusions" data-act="Conclusions" data-theme="light"
-  data-field='{"mode":"sweep","intensity":0.55}'>
+  data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r">Conclusions</p>
     <h2 class="h2 r">An initial result toward<br><span class="accent-2">causal discovery in marketing</span></h2>
@@ -611,7 +611,7 @@
 
 <!-- 23 · Closing -->
 <section class="slide slide-close" data-title="This is just the start" data-act="Closing" data-theme="dark" data-chrome="min"
-  data-field='{"mode":"contour","focus":[0.80,0.30],"intensity":0.8}'>
+  data-field='{"mode":"contour","focus":[0.88,0.26],"reach":380,"intensity":0.9}'>
   <div class="frame mid">
     <p class="eyebrow r">What comes next</p>
     <h2 class="display-2 r">This is just the start.<br><span class="accent">We will push it further.</span></h2>
