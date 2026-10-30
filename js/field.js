@@ -163,7 +163,7 @@
       RIB_W[p] = 0.04 + 0.2 * Math.pow(Math.sin(Math.PI * uc), 0.7);
       RIB_END[p] = smoothstep(0, 0.12, u) * (1 - smoothstep(0.88, 1, u));
       FAN_SIG[p] = (0.05 + 0.3 * Math.pow(f, 0.9)) * smoothstep(0, 0.08, f);
-      FAN_MASK[p] = (0.4 + 0.6 * smoothstep(0, 0.3, f)) * smoothstep(0, 0.05, f) * (1 - smoothstep(0.72, 1, f));
+      FAN_MASK[p] = (0.4 + 0.6 * smoothstep(0, 0.25, f)) * smoothstep(0, 0.05, f) * (1 - smoothstep(0.35, 0.98, f));
       FAN_CEN[p] = 0.5 + 0.11 * Math.sin(TAU * (0.85 * f + 0.1)) + 0.05 * f * Math.sin(TAU * 2.1 * f + 0.9) - c0;
     }
   })();
@@ -213,18 +213,20 @@
     }
   }
 
-  // The fan leaves its origin and spreads over `length` of the stage width,
-  // fading out before its far end (FAN_MASK), like flow_lines_fan.png.
+  // The fan leaves its origin and spreads over `length` of the stage width.
+  // It fades out gradually along its run (FAN_MASK), like flow_lines_fan.png.
+  // A long fan also opens wider, so its lines diffuse as they travel.
   function genFan(spec, t, X, Y, A) {
     var ox = spec.origin[0] * W, oy = spec.origin[1] * H;
     var reachX = spec.dir * spec.length * W;
+    var spread = clamp(0.7 + 1.1 * spec.length, 1, 1.9);
     var phW = TAU * t / 11, breath = 1 + 0.04 * Math.sin(TAU * t / 9.5), sway = 0.03 * Math.sin(TAU * t / 19);
     for (var k = 0; k < LINES; k++) {
       var z = FAN.z[k], str = FAN.a[k], o = k * PTS;
       for (var p = 0; p < PTS; p++) {
         var f = p / (PTS - 1);
         var wig = 1 + 0.05 * Math.sin(TAU * (1.4 * f + 0.8 * z) - phW);
-        var v = FAN_CEN[p] + sway * f * f + FAN_SIG[p] * z * 0.5 * wig * breath;
+        var v = FAN_CEN[p] + sway * f * f + FAN_SIG[p] * spread * z * 0.5 * wig * breath;
         X[o + p] = ox + f * reachX;
         Y[o + p] = oy + v * FAN_H;
         A[o + p] = str * FAN_MASK[p];
