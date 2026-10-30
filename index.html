@@ -238,17 +238,17 @@
       <span class="chip">1–10 channels</span><span class="chip">1–10 controls</span><span class="chip">50 prior combinations</span>
     </div>
     <div class="facts" data-step="2">
-      <p><b>57,994</b> of 200,000 worlds have only one channel with a direct effect.</p>
-      <p><b>725</b> of 1,000 sampled worlds have an input with a variance inflation factor above 5.</p>
-      <p class="accent-2">Different worlds give similar data with different contributions. The network must learn a distribution of explanations.</p>
+      <p>In the middle 90% of worlds, channels give from <b>5.1%</b> to <b>70.9%</b> of sales.</p>
+      <p>Inputs move together. In the median world, the strongest correlation between two inputs is <b>0.94</b>.</p>
+      <p class="accent-2">Similar data can come from different causal worlds. River learns a distribution of explanations, not one answer.</p>
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Section 2 of the paper. 196,000 training worlds, 4,000 holdout worlds; 50 equally weighted combinations of 10 response and carryover choices and 5 input settings.</p>
+  <p class="source r">Section 2 and Appendix A of the paper. 196,000 training worlds, 4,000 holdout worlds; 50 equally weighted combinations of 10 response and carryover choices and 5 input settings. Correlation: median over 1,000 sampled training worlds.</p>
   <aside class="notes">
     <p>We write the plausible specifications into one prior. The prior is a simulator.</p>
     <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
-    <p>Step 2: the data are hard on purpose. Many worlds have one active channel. Inputs persist and move together.</p>
+    <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
   </aside>
 </section>
 

@@ -23,8 +23,7 @@ window.DECK_DATA = {
     weeks: 208,
     channels: [1, 10],
     controls: [1, 10],
-    oneActiveChannelWorlds: 57994,       // of 200,000
-    vifWorlds: { count: 725, of: 1000 }, // at least one input with VIF > 5
+    maxInputCorrelationMedian: 0.943,    // Appendix A: median over 1,000 sampled training worlds of the largest |correlation| between two inputs
     meanShares: { channels: 36.1, controls: 36.2, baseline: 27.7 },
     channelShareMiddle90: [5.1, 70.9]
   },
