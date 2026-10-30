@@ -45,7 +45,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 
 | Part | Slides | Content |
 | --- | --- | --- |
-| Opening | 1–3 | Title, the team, the five parts |
+| Opening | 1–3 | Title, the team, the agenda |
 | 01 · The problem | 4–7 | Sales do not reveal causes; the structural model; one specification against model averaging; “What if we could start backwards?” |
 | 02 · Causal worlds | 8–11 | The prior as a simulator with known graphs; the contribution as an interventional quantity; prior-fitted networks |
 | 03 · Inside River | 12–14 | The architecture, assembled step by step with zoom; flow matching; graph sampling and graph-averaged inference |
