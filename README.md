@@ -1,6 +1,6 @@
 # Causal Data Science Meeting 2026
 
-Slides for the talk **“Foundation Models for Causal Effect Estimation and Conditional Discovery in Marketing”**
+Slides for the talk **“Foundational Models for Causal Effect Estimation and Conditional Discovery in Marketing”**
 by Carlos Trujillo and Teemu Säilynoja (PyMC Labs), Causal Data Science Meeting 2026, 5 November 2026.
 
 The talk presents the causal capabilities of **River**, the first Marketing Foundational Model (MFM) that PyMC Labs trained.

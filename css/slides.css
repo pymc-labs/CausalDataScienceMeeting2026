@@ -108,12 +108,21 @@
 .slide-eq .eq.lg { font-size: 58px; }
 .slide-eq .eq.sm { font-size: 34px; margin-top: 6px; }
 .slide-eq .eq .katex, .slide-eq .eq .katex * { transition: color .6s var(--ease); }
+.slide-eq .eq .t-b, .slide-eq .eq .t-c, .slide-eq .eq .t-u {
+  display: inline-block;
+  transform-origin: center;
+  transition: color .6s var(--ease), transform .6s var(--ease);
+}
 .slide-eq[data-step="1"] .eq .katex,
 .slide-eq[data-step="2"] .eq .katex,
 .slide-eq[data-step="3"] .eq .katex { color: var(--fg-3); }
 .slide-eq[data-step="1"] .t-b { color: var(--accent-2); }
 .slide-eq[data-step="2"] .t-c { color: var(--accent); }
 .slide-eq[data-step="3"] .t-u { color: var(--accent-2); }
+/* Enlarge the active term without reflowing the surrounding equation. */
+.slide-eq[data-step="1"] .t-b,
+.slide-eq[data-step="2"] .t-c,
+.slide-eq[data-step="3"] .t-u { transform: scale(1.12); }
 .slide-eq .eq-labels { position: relative; height: 80px; margin-top: 30px; transition: opacity .4s var(--ease); }
 .slide-eq .eq-label {
   position: absolute; left: 50%; top: 0; transform: translateX(-50%);
