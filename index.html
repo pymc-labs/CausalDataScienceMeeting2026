@@ -40,7 +40,6 @@
   <div class="title-block">
     <p class="eyebrow r">River · our first Marketing Foundational Model</p>
     <h1 class="title-h r">Foundational Models for<br>Causal Effect Estimation<br>and Conditional Discovery<br><span class="accent">in Marketing</span></h1>
-    <p class="title-sub r">River reads a marketing dataset, samples the graphs of direct effects that can explain it, and returns the contributions for each graph. It needs no new fit.</p>
   </div>
   <footer class="title-foot r">
     <div class="who">
@@ -227,11 +226,11 @@
      ===================================================================== -->
 
 <!-- 08 · Worlds -->
-<section class="slide" data-title="A prior is a simulator that knows the truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+<section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
   data-scene="worlds" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
-    <h2 class="h2 r">A prior is a simulator that <span class="accent-2">knows the truth</span></h2>
+    <h2 class="h2 r">Use the prior to generate worlds with a <span class="accent-2">known truth</span></h2>
     <p class="body r" style="margin-top:30px">Each world has its own inputs, causal links, response curves and sales. The simulator stores the graph and every contribution.</p>
     <div class="chips r">
       <span class="chip fill">200,000 worlds</span><span class="chip fill">208 weeks</span>
@@ -246,7 +245,7 @@
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
   <p class="source r">Section 2 and Appendix A of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
   <aside class="notes">
-    <p>We write the plausible specifications into one prior. The prior is a simulator.</p>
+    <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
     <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
     <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
   </aside>
@@ -315,18 +314,18 @@
 </section>
 
 <!-- 11 · Not a number -->
-<section class="slide slide-inter" data-title="The output is a distribution over causal systems" data-act="02 · Causal worlds" data-theme="dark"
+<section class="slide slide-inter" data-title="The output is a distribution over graphs and contributions" data-act="02 · Causal worlds" data-theme="dark"
   data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
   <div class="frame mid">
     <p class="eyebrow r">The output</p>
-    <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over causal systems.</span></h2>
+    <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over graphs and contributions.</span></h2>
     <ol class="points compact r" style="margin-top:56px;max-width:1240px">
       <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
       <li><span class="n">2</span><span class="t">For each graph, a posterior of contributions over time.</span></li>
     </ol>
   </div>
   <aside class="notes">
-    <p>Borrowed from our ODSC talk: the outcome is not a number, it is a system.</p>
+    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
     <p>River returns graphs and, for each graph, contributions. Now we open the network.</p>
   </aside>
 </section>

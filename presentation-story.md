@@ -1,0 +1,267 @@
+# Presentation story — chapter overview
+
+**Foundational Models for Causal Effect Estimation and Conditional Discovery in Marketing**
+
+## Scope and timing
+
+The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
+
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the existing deck’s numbers and titles. The opening subtitle removal and agreed wording changes on slides 8 and 11 are implemented; other compression and backup suggestions remain proposals, not changes to the deck.
+
+## Review workflow
+
+- Discuss proposed changes through PR comments on this document.
+- Record agreed decisions here and implement relevant HTML/CSS/JavaScript changes in the same PR.
+- Review the rendered slides as well as the Markdown diff. Cosmetic-only changes need no narrative update.
+- Keep this document focused on intent and takeaways, rather than duplicating the slide text. Renumber references when slides move.
+- Until reviewed, all slides remain in the deck; proposed backup status below is not an approved removal.
+
+**Central message:** River learns inference across simulated marketing worlds, then estimates contributions and uncertainty over permitted causal graphs without a new fit. The results are promising within a restricted setting—not evidence of unrestricted causal discovery.
+
+## Opening — What is River? · 1 minute
+
+*Current slides 1–3.*
+
+Introduce River as a marketing foundational model, briefly acknowledge the team, and pose the central question: **can we learn once how to infer what drove sales, rather than build and fit a new model for every dataset?**
+
+Keep the team introduction and agenda brief. The audience needs the question more than a detailed roadmap.
+
+## 1. The problem — Sales do not reveal causes · 3 minutes
+
+*Current slides 4–7.*
+
+Different contributions can produce the same sales history. A model that predicts sales well does not necessarily tell us what each channel caused. Choosing one response curve, carryover model and causal structure also hides uncertainty about those choices.
+
+Bayesian model averaging addresses that uncertainty, but repeatedly fitting many specifications is costly. This motivates River’s reversal: specify many plausible worlds first, learn inference once, then reuse it.
+
+**Keep:** the visual example of different decompositions explaining the same total, and the reversal of the usual workflow.
+
+**Compress:** the catalogue of specification choices. Explain model averaging in one sentence rather than deriving it.
+
+## 2. Simulated causal worlds — What is being learned? · 3 minutes
+
+*Current slides 8–11.*
+
+The simulator creates marketing datasets whose graphs and contributions are known. It lets us train on—and later test against—truth that is unavailable in ordinary business data.
+
+A contribution has a precise causal meaning here: the change in noise-free sales when a channel’s whole spend path is set to zero. The model learns a distribution of possible explanations rather than one answer.
+
+State the boundary alongside the definition: **the current prior permits direct input-to-sales effects, not hidden demand or paths between inputs.**
+
+**Keep:** one simulated world, the intervention example, and the idea of learning the posterior from the prior.
+
+**Optional depth:** the loss/KL derivation. For the shorter talk, give the intuition and qualify it as an intended inference target, not a guarantee of exact inference.
+
+## 3. Inside River — Graph first, contributions second · 2 minutes
+
+*Current slides 12–14.*
+
+River encodes the observed dataset, samples a permitted graph, then draws contributions conditional on that graph. Repeating this captures uncertainty both between graphs and within each graph. If an edge is absent, its contribution is exactly zero.
+
+This is the mechanism the audience needs to understand. It connects the model-averaging motivation to the results that follow.
+
+**Keep:** one architecture overview and the graph-then-contributions explanation.
+
+**Optional depth:** flow-matching equations, tensor dimensions, training-loss components and numerical integration details. The full eight-step architecture walkthrough is too much for the short version.
+
+## 4. Evidence — What does it recover? · 4 minutes
+
+*Current slides 15–18.*
+
+Explain that evaluation uses held-out simulated cases with known truth. Then answer two separate questions:
+
+- **Structure:** channel-edge precision and recall are near 0.9, but the exact set of active channels is recovered in only about half the worlds. Good individual-edge scores do not imply a correct whole graph.
+- **Contributions:** River improves channel contribution CRPS over the regression baselines across the tested conditions and horizons. The privileged oracle still performs better.
+
+Keep the comparison scope explicit: these are synthetic results, and the default-prior PyMC-Marketing comparison is not a claim against all expert-built MMMs.
+
+**Keep:** a brief test-design explanation and one clear result for each question.
+
+**Optional depth:** reliability-bin details, all condition-by-horizon comparisons, unit-invariance numbers and timing benchmarks. If timing is mentioned, retain the different-hardware caveat. Omission results do not demonstrate recovery of the missing cause.
+
+## 5. Boundaries and next steps — A first result, not the finished tool · 2 minutes
+
+*Current slides 19–23, including conclusions and closing.*
+
+Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. Uncertainty calibration needs work, contribution gains do not imply better sales prediction, and real-business causal identification is not established.
+
+Richer causal systems—mediation, interactions, hidden demand and changing graphs—require broader priors, new training and new evaluation. Unused architectural capacity is not an existing learned capability.
+
+**Keep:** one concise limits statement, the research direction, and the main takeaway: **learn inference once, preserve uncertainty over explanations, and test against known truth.**
+
+**Compress:** repeated caveats and separate conclusion summaries. End with a clear invitation for questions.
+
+## Timing budget
+
+| Section | Time |
+|---|---:|
+| Opening | 1 min |
+| Problem | 3 min |
+| Simulated worlds | 3 min |
+| Inside River | 2 min |
+| Evidence | 4 min |
+| Boundaries and closing | 2 min |
+| Questions | 5 min |
+| **Total** | **20 min** |
+
+Rehearse the main talk to 15 minutes, including transitions and animations. Protect time for interpreting the results; cut technical detail rather than rushing the evidence or dropping the causal boundaries.
+
+## Slide-by-slide editorial plan
+
+The time budgets below total **15 minutes**. Zero-time entries are proposed backup material; the current HTML still contains them. These are rehearsal targets, not measured timings.
+
+### 1 — Title · 25 seconds · Main
+
+- **Purpose:** introduce the topic and speakers without competing messages.
+- **Takeaway:** this is a talk about foundational models for causal effect estimation and conditional discovery in marketing.
+- **Visual / delivery:** let the long title stand on its own; introduce River orally.
+- **Agreed decision, implemented:** remove the explanatory paragraph beneath the title. Retain the River eyebrow, branding and presenter/author information.
+- **Rationale:** the title is already long enough; the subtitle adds unnecessary reading at the opening.
+
+### 2 — The team · 15 seconds · Main
+
+- **Purpose:** acknowledge the team and identify the presenters.
+- **Visual / delivery:** portraits and names; a brief acknowledgement rather than biographies.
+- **Proposal:** keep this quick to protect the opening minute.
+
+### 3 — Agenda · 20 seconds · Main
+
+- **Purpose:** orient the audience to problem, approach, evidence and boundaries.
+- **Visual / delivery:** the existing five-part agenda; summarize rather than read every line.
+
+### 4 — Sales show what happened · 60 seconds · Main
+
+- **Purpose:** establish why prediction does not identify contributions.
+- **Takeaway:** the same total sales can support different causal stories.
+- **Visual / delivery:** changing decompositions with an unchanged total; make this the motivating example.
+
+### 5 — A marketing mix model is a structural model · 40 seconds · Main
+
+- **Purpose:** define the components we want to infer.
+- **Takeaway:** observed sales combine baseline, channel effects, controls and noise.
+- **Visual / delivery:** highlight the equation’s terms in turn; avoid reading every bottleneck card.
+- **Existing implementation:** active terms enlarge by 12% as well as changing color.
+
+### 6 — Each analysis commits to one specification · 45 seconds · Main
+
+- **Purpose:** expose uncertainty hidden by selecting one model.
+- **Takeaway:** uncertainty includes both parameters and model choices.
+- **Visual / delivery:** two plausible analyst decompositions, followed by the model-averaging idea.
+- **Proposal:** summarize the choices and averaging equation rather than explaining each option.
+
+### 7 — What if we could start backwards? · 35 seconds · Main
+
+- **Purpose:** turn the problem into the proposed solution.
+- **Takeaway:** specify many worlds first, learn inference once, reuse it without a new fit.
+- **Visual / delivery:** contrast the repeated fitting workflow with River’s inference workflow.
+
+### 8 — Use the prior to generate worlds with a known truth · 55 seconds · Main
+
+- **Purpose:** explain where training examples and known causal truth come from.
+- **Takeaway:** diverse worlds with correlated inputs require distributions of explanations.
+- **Visual / delivery:** one world, then variation across worlds; use the updated channel-share and correlation facts only as supporting evidence.
+
+### 9 — A contribution is an interventional quantity · 60 seconds · Main
+
+- **Purpose:** define the causal target and its assumptions together.
+- **Takeaway:** remove a channel’s spend path and compare noise-free sales, within the restricted direct-effect graph family.
+- **Visual / delivery:** show the intervention; explicitly exclude hidden demand and input-to-input paths.
+
+### 10 — Learn the posterior from the prior · 40 seconds · Main, compressed
+
+- **Purpose:** connect simulated training to Bayesian model averaging.
+- **Takeaway:** the ideal objective targets the mixture-prior posterior; finite training is not a guarantee of exact inference.
+- **Proposal:** emphasize the result statement; leave the loss/KL derivation for questions.
+
+### 11 — The output is a distribution over graphs and contributions · 25 seconds · Main
+
+- **Purpose:** give the audience a simple description of the output.
+- **Takeaway:** graphs plus contributions conditional on each graph—not one number.
+- **Visual / delivery:** use this as the transition into the mechanism.
+
+### 12 — Assembling River · 60 seconds · Main, compressed
+
+- **Purpose:** show the essential architecture without a component inventory.
+- **Takeaway:** encode data, sample a graph, condition the contribution decoder on that graph.
+- **Proposal:** replace the full walkthrough with a concise overview; retain training/inference distinctions. This simplification is not implemented yet.
+
+### 13 — Flow matching turns noise into draws · 0 seconds · Proposed backup
+
+- **Purpose:** answer how a flow head produces posterior draws.
+- **Takeaway:** learned velocities transform coherent noise into contribution paths.
+- **Proposal:** reserve the equations and integration details for Q&A.
+
+### 14 — At inference, River samples the causal graph · 60 seconds · Main
+
+- **Purpose:** explain how structure uncertainty enters contributions.
+- **Takeaway:** repeated graph-and-contribution draws capture uncertainty between and within graphs; absent edges give exact zeros.
+- **Visual / delivery:** sample graphs and show their contributions. Call this discovery conditional on the permitted family.
+
+### 15 — 500 held-out cases with known truth · 45 seconds · Main
+
+- **Purpose:** make the evaluation interpretable before showing results.
+- **Takeaway:** methods are tested against known synthetic truth, with different scopes for different comparisons.
+- **Visual / delivery:** world → observed table → methods → scores. Mention the oracle’s privileged information.
+
+### 16 — Structure is partly recovered · 90 seconds · Main
+
+- **Purpose:** evaluate the conditional-discovery claim.
+- **Takeaway:** strong marginal edge scores are not whole-graph recovery.
+- **Visual / delivery:** contrast precision/recall near 0.9 with exact channel-set recovery in about half the worlds; retain the marginal-calibration qualification.
+
+### 17 — Contributions: lower error in every condition · 105 seconds · Main
+
+- **Purpose:** establish the practical contribution-inference result.
+- **Takeaway:** lower contribution CRPS than the regression baselines across tested conditions, while the oracle remains better.
+- **Visual / delivery:** explain what CRPS measures before comparisons. Bound the default-prior PyMC-Marketing claim and mention fit-health caveats.
+
+### 18 — Three more checks · 0 seconds · Proposed backup
+
+- **Purpose:** support questions about units, runtime and omitted inputs.
+- **Takeaway:** invariance and omission robustness are useful, but timings are indicative and missing causes are not recovered.
+- **Proposal:** keep these checks available for questions rather than adding three more headline results.
+
+### 19 — Where River falls short · 35 seconds · Main, compressed
+
+- **Purpose:** prevent contribution gains from becoming a general superiority claim.
+- **Takeaway:** oracle gap, sales prediction and interval calibration remain limitations; the source of the gains is not isolated.
+- **Proposal:** summarize rather than read all numerical comparisons.
+
+### 20 — What is demonstrated, and what is not · 35 seconds · Main
+
+- **Purpose:** state the exact scope of the causal claim.
+- **Takeaway:** restricted synthetic direct-effect inference is demonstrated; unrestricted discovery and real-business identification are not.
+- **Visual / delivery:** contrast current evidence with non-claims, without repeating all earlier caveats.
+
+### 21 — The graph slots are already in the network · 20 seconds · Main, compressed
+
+- **Purpose:** motivate the next research stage.
+- **Takeaway:** richer mechanisms need new priors, new training and new evaluation; capacity is not a learned capability.
+- **Proposal:** one sentence on richer and time-varying graphs, no slot-count walkthrough.
+
+### 22 — Conclusions · 20 seconds · Main
+
+- **Purpose:** restate the three contributions in bounded form.
+- **Takeaway:** contribution inference, constrained structure learning and reusable inference.
+- **Visual / delivery:** concise recap, no repeated result tables.
+
+### 23 — This is just the start · 10 seconds · Main
+
+- **Purpose:** close and invite discussion.
+- **Visual / delivery:** paper/contact information; transition directly to the five-minute Q&A.
+
+## Agreed annotation follow-up
+
+- **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Design the formula-to-DAG transition and merge the bottlenecks with branching specification choices. Not implemented yet.
+- **Slide 8:** title changed to “Use the prior to generate worlds with a known truth,” highlighting “known truth.” Speaker notes now distinguish the prior from the simulator it defines.
+- **Slides 10, 12, 13 and 16:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Separate agent-session handoff; no fact-checking performed in this session. Sources: `../MarketingFoundationalModels/`, `../pymc-generator/`, `../pymc-mfm/`, and Modal run/configuration/result artifacts. Includes context-conditioned flow matching, the final noise-coherence claim, the edge threshold, and calibration versus recalibration.
+- **Slide 11:** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
+- **Slide 17:** [Issue #4 — converged PyMC-Marketing results](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/4). Locate and validate comparable converged results before revising the figures or claims; availability is not assumed.
+- **Slide 20:** retain the current title, “What is demonstrated, and what is not.”
+
+## Decisions for review
+
+1. Does the proposed 15-minute talk / 5-minute Q&A split work?
+2. Is the main emphasis contribution inference, conditional structure discovery, or an equal balance?
+3. For the short version, can the full flow-matching explanation and detailed architecture walkthrough move to backup?
+4. Which two result visuals should the audience remember?
