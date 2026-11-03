@@ -16,7 +16,8 @@
    Steps run 0..N. Next advances the step, then the slide. Previous goes back
    one step; from step 0 it lands on the last step of the previous slide.
    Backup slides (data-backup) come after the main talk and stay hidden during it:
-   Next, End and the overview never reach them; only the address (#/22) opens one.
+   Next, End, swipes, the overview and slide numbers in the address never reach
+   them. Only their own address opens one: #/backup/1, #/backup/2 (step: #/backup/1/2).
    They are numbered B1, B2, … and do not count in the page total or the progress bar.
 
    Scene contract (js/scenes/*.js)
@@ -264,14 +265,21 @@
   }
 
   /* ---- Hash -------------------------------------------------------------------- */
+  // Main slides: #/slide/step. Backup slides: #/backup/n/step, and only that form opens them.
   function writeHash() {
-    var h = '#/' + (cur + 1) + (curStep ? '/' + curStep : '');
+    var head = cur < mainCount ? '#/' + (cur + 1) : '#/backup/' + (cur - mainCount + 1);
+    var h = head + (curStep ? '/' + curStep : '');
     if (location.hash !== h) history.replaceState(null, '', h);
   }
   function readHash() {
-    var m = /^#\/(\d+)(?:\/(\d+))?/.exec(location.hash || '');
+    var hash = location.hash || '';
+    var b = /^#\/backup\/(\d+)(?:\/(\d+))?/.exec(hash);
+    if (b && mainCount < slides.length) {
+      return { index: Math.min(mainCount + Math.max(1, Number(b[1])) - 1, slides.length - 1), step: Number(b[2] || 0) };
+    }
+    var m = /^#\/(\d+)(?:\/(\d+))?/.exec(hash);
     if (!m) return null;
-    return { index: Number(m[1]) - 1, step: Number(m[2] || 0) };
+    return { index: Math.min(Number(m[1]) - 1, mainCount - 1), step: Number(m[2] || 0) };
   }
 
   /* ---- Overlays: notes, overview, blackout, hint ------------------------------ */
@@ -510,6 +518,7 @@
     window.addEventListener('hashchange', function () {
       var h = readHash();
       if (h && (h.index !== cur || h.step !== curStep)) go(h.index, h.step);
+      else writeHash();   // an address past the main talk falls back to the current slide
     });
 
     started = true;

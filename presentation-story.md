@@ -14,7 +14,7 @@ This is the shared editorial plan: chapter intent, slide purpose and agreed narr
 - Record agreed decisions here and implement relevant HTML/CSS/JavaScript changes in the same PR.
 - Review the rendered slides as well as the Markdown diff. Cosmetic-only changes need no narrative update.
 - Keep this document focused on intent and takeaways, rather than duplicating the slide text. Renumber references when slides move.
-- Backup slides B1 and B2 follow the closing slide but stay hidden during the talk (Carlos, 3 November 2026): arrows, End and the overview never reach them. They open only by address (`#/22`, `#/23`) if a question needs them.
+- Backup slides B1 and B2 stay hidden during the talk (Carlos, 3 November 2026): arrows, End, swipes, the overview and slide numbers in the address never reach them. The arrows stop at the closing slide. A backup slide opens only by its own address, `#/backup/1` or `#/backup/2`, if a question needs it.
 
 **Central message:** River learns inference across simulated marketing worlds, then estimates contributions and uncertainty over permitted causal graphs without a new fit. The results are promising within a restricted setting—not evidence of unrestricted causal discovery.
 

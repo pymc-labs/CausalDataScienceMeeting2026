@@ -52,7 +52,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
 | 05 · Boundaries | 17–19 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
 | Close | 20–21 | Conclusions and contact |
-| Backup | B1–B2 | Flow matching; units, cost and omitted inputs. Hidden during the talk: arrows, End and the overview never reach them. Open them by address only: `#/22` and `#/23` |
+| Backup | B1–B2 | Flow matching; units, cost and omitted inputs. Hidden during the talk: arrows, End, swipes, the overview and slide numbers in the address never reach them. Open them only by their own address: `#/backup/1` and `#/backup/2` |
 
 ## Structure
 
