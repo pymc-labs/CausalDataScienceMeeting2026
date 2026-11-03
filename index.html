@@ -123,7 +123,7 @@
 </section>
 
 <!-- 05 · The structural model -->
-<section class="slide slide-eq" data-title="A marketing mix model is a structural model" data-act="01 · The problem" data-theme="light" data-steps="4"
+<section class="slide slide-eq" data-title="A marketing mix model is a structural model" data-act="01 · The problem" data-theme="light" data-steps="5"
   data-field='{"mode":"fan","origin":[0,0.48],"length":1.0,"intensity":0.9}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">01</span>The problem</p>
@@ -139,17 +139,79 @@
       <div class="eq-label" data-step-only="3"><b>Control contributions.</b> Price, holidays and other measured factors that are not media.</div>
     </div>
   </div>
-  <div class="trio" data-step="4">
-    <div class="card"><p class="card-label">Channels run together</p><p>TV and search rise and fall in the same weeks. Sales cannot say which one worked.</p></div>
-    <div class="card peri"><p class="card-label">Spend follows demand</p><p>Budgets go up when the season goes up. Part of the “effect” is the season. River’s prior does not include this yet.</p></div>
-    <div class="card peach"><p class="card-label">Promotions move with campaigns</p><p>Price cuts land in the same weeks as media and claim the same sales.</p></div>
-  </div>
-  <p class="source r">Eq. (3) of the paper. Bottleneck examples from the white paper.</p>
+  <!-- Steps 4-5: the equation as a graph, then three alternative graphs that the
+       same data cannot tell apart. Arrow: assumed direct effect. Dashed line:
+       observed dependency. Dashed circle: hidden variable. Peach: a path that
+       River's prior does not contain. Fork centres: 293, 880, 1467 (stage px). -->
+  <svg class="dags" viewBox="0 0 1760 256" width="1760" height="256" aria-hidden="true">
+    <defs>
+      <marker id="dag-head" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dag-head" d="M0,0 L10,5 L0,10 z"/></marker>
+      <marker id="dag-head-hot" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dag-head hot" d="M0,0 L10,5 L0,10 z"/></marker>
+      <g id="dag-base">
+        <path class="dag-edge" d="M-108 113 L-18 183"/>
+        <path class="dag-edge" d="M0 119 L0 174"/>
+        <path class="dag-edge" d="M108 113 L18 183"/>
+        <circle class="dag-node n-tv" cx="-120" cy="104" r="15"/>
+        <circle class="dag-node n-se" cx="0" cy="104" r="15"/>
+        <circle class="dag-node n-pr" cx="120" cy="104" r="15"/>
+        <circle class="dag-node n-sales" cx="0" cy="196" r="18"/>
+        <text class="dag-name" x="-143" y="109" text-anchor="end">TV</text>
+        <text class="dag-name" x="0" y="78" text-anchor="middle">Search</text>
+        <text class="dag-name" x="143" y="109">Promo</text>
+        <text class="dag-name" x="28" y="202">Sales</text>
+      </g>
+    </defs>
+    <g class="dag-fork dag-start" data-step-only="4">
+      <g transform="translate(880 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">The equation as a graph</text>
+        <use href="#dag-base"/>
+        <text class="dag-tag" x="0" y="246" text-anchor="middle">Each arrow assumes that an input acts on sales directly</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:587px">
+      <g transform="translate(293 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">1 · Channels run together</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <path class="dag-dep" d="M-104 104 L-16 104"/>
+          <text class="dag-note" x="-60" y="94" text-anchor="middle">ρ</text>
+        </g>
+        <text class="dag-tag in" x="0" y="246" text-anchor="middle">● Correlated inputs · inside River’s prior</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:0px">
+      <g transform="translate(880 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">2 · Spend follows demand</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <circle class="dag-hidden" cx="-120" cy="46" r="15"/>
+          <text class="dag-name" x="-143" y="51" text-anchor="end">Hidden demand</text>
+          <path class="dag-edge hot" d="M-120 61 L-120 87"/>
+          <path class="dag-edge hot" d="M-133 54 C-260 100 -150 196 -24 196"/>
+        </g>
+        <text class="dag-tag out" x="0" y="246" text-anchor="middle">× Hidden demand · outside River’s prior</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:-587px">
+      <g transform="translate(1467 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">3 · Promotions move with campaigns</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <path class="dag-edge hot" d="M110 92 C70 30 -70 30 -107 89"/>
+        </g>
+        <text class="dag-tag out" x="0" y="246" text-anchor="middle">× A path between inputs · outside River’s prior</text>
+      </g>
+    </g>
+  </svg>
+  <p class="source r">Eq. (3) of the paper. Graphs are illustrative. Arrow: assumed direct effect. Dashed line: observed dependency. Dashed circle: hidden variable.</p>
   <aside class="notes">
     <p>The model writes sales as a sum. Baseline, each channel, each control, plus noise.</p>
     <p>Each term is a latent quantity. We never observe it. We observe only the sum.</p>
-    <p>Step 4: three reasons why the sum is hard to split. Inputs that move together (collinearity), spend that follows demand (hidden confounding), and promotions that overlap with media.</p>
-    <p>River's prior covers inputs that move together. It does not yet include hidden demand confounding; part 5 comes back to this.</p>
+    <p>Step 4: the same equation is a causal graph. Every arrow is an assumption: this input acts on sales directly.</p>
+    <p>Step 5: three graphs that fit the same weekly data. Dashed lines are what the data show. Arrows are what we assume.</p>
+    <p>One: TV and search move together. The data show the correlation, not which arrow carries the effect. River's prior contains this case.</p>
+    <p>Two: hidden demand drives both the budget and sales. Part of the "TV effect" is demand. River's prior does not contain hidden demand yet.</p>
+    <p>Three: the TV plan follows the promotion calendar. That is a path between two inputs. River's prior has no paths between inputs. Part 5 comes back to both.</p>
   </aside>
 </section>
 
@@ -166,7 +228,7 @@
     <div class="choice-row"><span class="choice-k">Diminishing returns</span>
       <span class="chip" data-pick="a">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip">Michaelis–Menten</span></div>
     <div class="choice-row"><span class="choice-k">Causal structure</span>
-      <span class="chip" data-pick="a">Price as control</span><span class="chip" data-pick="b">Price as confounder</span><span class="chip">No price</span></div>
+      <span class="chip" data-pick="a">Correlated inputs</span><span class="chip" data-pick="b">Hidden demand</span><span class="chip">Promo → TV</span></div>
     <div class="choice-row"><span class="choice-k">Constraints</span>
       <span class="chip" data-pick="a">Positive effects</span><span class="chip" data-pick="b">ROI range</span><span class="chip">Last year’s priors</span></div>
   </div>
@@ -188,7 +250,7 @@
     </div>
   </div>
   <aside class="notes">
-    <p>Every analysis makes four kinds of choices. One of them is the causal structure.</p>
+    <p>Every analysis makes four kinds of choices. One of them is the causal structure: the three graphs from the previous slide.</p>
     <p>Steps 1 and 2: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
     <p>Step 3: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
     <p>Step 4: the principled answer is model averaging. But each specification needs its own MCMC fit, and nothing checks the choices against the truth.</p>

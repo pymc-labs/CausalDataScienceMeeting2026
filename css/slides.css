@@ -130,8 +130,33 @@
 }
 .slide-eq .eq-label:not(.is-shown) { transform: translate(-50%, 12px); }
 .slide-eq .eq-label b { color: var(--fg); font-weight: 600; }
-.slide-eq .trio { position: absolute; left: var(--mx); right: var(--mx); top: 750px; }
-.slide-eq[data-step="4"] .eq-labels { opacity: 0; }
+/* Steps 4-5: the equation as a graph, then three forks. A fork starts at the centre
+   (--from) and moves out to its column; its extra assumption draws in after it.
+   The shared base graph is a <use> clone: its rules must not depend on ancestors. */
+.slide-eq .eq-stage { transition: transform .8s var(--ease); }
+.slide-eq[data-step="4"] .eq-stage,
+.slide-eq[data-step="5"] .eq-stage { transform: translateY(-34px); }
+.slide-eq .dags { position: absolute; left: var(--mx); top: 668px; overflow: visible; }
+.slide.slide-eq .dags .dag-fork[data-step]:not(.is-shown) { transform: translateX(var(--from)); filter: none; }
+.dags text { font-family: var(--f-body); }
+.dag-title { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; fill: var(--fg-2); }
+.dag-name { font-size: 16px; fill: var(--fg-3); }
+.dag-note { font-size: 17px; font-style: italic; fill: var(--fg-3); }
+.dag-tag { font-size: 18px; fill: var(--fg-2); }
+.dag-tag.in { fill: var(--accent); }
+.dag-tag.out { fill: var(--hot); }
+.dag-edge { fill: none; stroke: var(--fg); stroke-width: 2; marker-end: url(#dag-head); }
+.dag-edge.hot { stroke: var(--hot); marker-end: url(#dag-head-hot); }
+.dag-head { fill: var(--fg); }
+.dag-head.hot { fill: var(--hot); }
+.dag-dep { fill: none; stroke: var(--fg-3); stroke-width: 2; stroke-dasharray: 5 6; }
+.dag-hidden { fill: none; stroke: var(--fg-3); stroke-width: 2; stroke-dasharray: 4 4; }
+.dag-node.n-tv { fill: #3E9C8C; }
+.dag-node.n-se { fill: #62B5A6; }
+.dag-node.n-pr { fill: var(--peri-deep); }
+.dag-node.n-sales { fill: var(--fg); }
+.slide-eq[data-step="4"] .eq-labels,
+.slide-eq[data-step="5"] .eq-labels { opacity: 0; }
 
 /* --- 06 Specification choices ------------------------------------------------------ */
 .slide-choices .choices { position: absolute; left: var(--mx); top: 360px; width: 1020px; display: flex; flex-direction: column; gap: 30px; transition: opacity .7s var(--ease); }
