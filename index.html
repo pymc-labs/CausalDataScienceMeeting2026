@@ -345,7 +345,7 @@
   </div>
   <div class="pfn-eqs">
     <div class="pfn-eq r">
-      <span class="eq-tag">train</span>
+      <span class="eq-tag">ideal</span>
       <div class="eq" data-tex="\mathcal{L}(\varphi) = \mathbb{E}_{(\mathcal{D}, C) \sim p(\mathcal{D}, C)}\big[-\log q_\varphi(C \mid \mathcal{D})\big]" data-display></div>
     </div>
     <div class="pfn-eq" data-step="1">
@@ -357,21 +357,22 @@
       <div class="eq" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
       <div class="pfn-claim">
         <p class="card-label">The result</p>
-        <p>If the network is flexible enough, the loss is smallest at <span class="accent-2">the model-averaged posterior of the mixture prior</span>.</p>
+        <p>If the network is flexible enough, the ideal loss is smallest at <span class="accent-2">the model-averaged posterior of the mixture prior</span>.</p>
+        <p class="pfn-claim-note">River trains with a flow-matching loss instead. With exact training and exact sampling, it reaches the same posterior.</p>
       </div>
     </div>
   </div>
   <div class="trio" data-step="3">
     <div class="card"><p class="card-label">1 · Simulate</p><p>Draw worlds from the prior. Store the graph and the contributions.</p></div>
-    <div class="card peri"><p class="card-label">2 · Train</p><p>Teach one network to return the stored truth from what an analyst would see.</p></div>
-    <div class="card peach"><p class="card-label">3 · Use</p><p>Read a new dataset with fixed weights. Outside the prior, no guarantee holds.</p></div>
+    <div class="card peri"><p class="card-label">2 · Train</p><p>Train one network on what an analyst would see. The stored graph and contributions are its training targets.</p></div>
+    <div class="card peach"><p class="card-label">3 · Use</p><p>Read a new dataset with fixed weights. The target holds only inside the prior and is not guaranteed.</p></div>
   </div>
-  <p class="source r">Eqs. (1), (2) and Appendix B.1 of the paper; prior-fitted networks (Müller et al., 2022).</p>
+  <p class="source r">Eqs. (1), (2) and Appendices B.1 and B.9 of the paper; prior-fitted networks (Müller et al., 2022).</p>
   <aside class="notes">
-    <p>This is the prior-fitted network argument. Train on pairs of datasets and contributions from the prior. Minimize the negative log density of the truth.</p>
-    <p>Step 1: the loss is an expected KL divergence to the true posterior, plus a constant.</p>
-    <p>Step 2: so the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once.</p>
-    <p>Step 3: the honest part. Finite data and optimization do not guarantee the ideal. River uses flow matching, which has the same intended target. Outside the prior, there is no such result.</p>
+    <p>This is the prior-fitted network argument in its ideal form. Train on pairs of datasets and contributions from the prior. Minimize the negative log density of the truth. River does not use this loss; the result note explains.</p>
+    <p>Step 1: this loss is an expected KL divergence to the true posterior, plus a constant.</p>
+    <p>Step 2: so, if the network can represent it, the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but its ideal minimizer, followed exactly from the noise, gives the same posterior.</p>
+    <p>Step 3: the limits. The ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds for about 3.4 passes and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. Outside the prior, there is no such result.</p>
   </aside>
 </section>
 
@@ -651,23 +652,24 @@
     <p class="eyebrow r"><span class="num">B1</span>Backup · Inside River · How a head draws</p>
     <h2 class="h2 r">Flow matching turns <span class="accent">noise into draws</span></h2>
     <div class="flow-text">
-      <div data-step-only="0"><p class="body">A flow head starts from random noise and moves it, in small steps, toward a plausible value of the contributions.</p></div>
-      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network learns the velocity toward the truth.</p>
+      <div data-step-only="0"><p class="body">A flow head starts from random noise. In 16 small steps it moves the noise to one draw. Each step reads the encoded dataset h: the noise selects the draw, the data control the distribution of the draws.</p></div>
+      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network sees that point and the encoded data, not the truth. It learns the expected velocity toward the truth.</p>
         <div class="eq sm" data-tex="z_\tau = (1-\tau)\,z_0 + \tau\,z_1, \qquad u_\tau = z_1 - z_0" data-display></div>
-        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div></div>
+        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div>
+        <p class="small">h: encoded dataset (for the decoder, after the graph conditioner). κ: shared noise of the draw. W: mask weights.</p></div>
       <div data-step-only="2"><p class="body">At inference, the head follows its learned velocities from fresh noise. Sixteen Euler steps. Different noise gives different draws.</p>
         <div class="eq sm" data-tex="z \leftarrow z + \tfrac{1}{16}\, v_\varphi(z, \tau;\, h, \kappa)" data-display></div></div>
-      <div data-step-only="3"><p class="body">The noise is coherent over time, so weeks within one draw move together.</p>
+      <div data-step-only="3"><p class="body">The base noise has a shared part over weeks. So each draw starts as one coherent path, not as independent weekly values.</p>
         <div class="eq sm" data-tex="z_{0,t,a} = \sqrt{\rho}\,\kappa_{t,a} + \sqrt{1-\rho}\,e_{t,a}, \qquad \rho = 0.98" data-display></div></div>
     </div>
   </div>
   <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
-  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023).</p>
+  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023). Checked against pymc-mfm 32587ac.</p>
   <aside class="notes">
-    <p>Both heads are flow-matching heads. Here is how one head makes a draw.</p>
-    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions.</p>
-    <p>Step 2: inference. Start from new noise. Follow the field for 16 steps. The target here has two modes, one for each graph. The flow finds both.</p>
-    <p>Step 3: the noise has a shared time component, so a draw is a coherent path over weeks, not independent weekly values.</p>
+    <p>Both heads are flow-matching heads. Here is how one head makes a draw. The router reads the encoded dataset and draws a graph and contributions together; we keep only the graph. The decoder reads the encoded dataset after the graph conditioner, and the support mask of that graph. It draws the contributions for that graph.</p>
+    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions. W gives zero weight to padded or forbidden coordinates. For the router, the decomposition and each graph family get equal weight per world.</p>
+    <p>Step 2: inference. Start from new noise. Follow the field for 16 Euler steps. The picture uses the exact velocity field of a target with two modes, one for each graph. The router meets such targets; the decoder sees one graph at a time. River's network learns only an approximation of this field.</p>
+    <p>Step 3: the noise has a shared time component. So each draw starts as a coherent path over weeks. The head computes the week pattern of this component from the encoded data: four week patterns, with random weights for each coordinate and draw.</p>
   </aside>
 </section>
 
