@@ -1,11 +1,14 @@
 /* ==========================================================================
    Scene "arch" (slide 12, dark theme): River's architecture assembles.
 
-   One SVG in world units. In the full view (steps 7 and 8) one unit is one
-   stage px; steps 0-6 move a camera (the SVG viewBox) onto the part being
+   One SVG in world units. In the full view (views 7 and 8) one unit is one
+   stage px; views 0-6 move a camera (the SVG viewBox) onto the part being
    explained. Text has two levels of detail: block titles for the full view
    and small internal labels for the zoomed views, each at least 15 stage px
    on screen. Particles (aqua dots) travel along the active connectors.
+   The slide shows a short overview: its five steps map to views 1, 3, 5, 7
+   and 8 (VIEWS). Every view is a function of its index alone, so skipped
+   views need no handling.
 
    Every paper number comes from DECK_DATA.network. Synthetic values (token
    grid, graph draws, decomposition) are labelled "illustrative" on screen.
@@ -42,7 +45,10 @@
     [0, 0, W],         // 7 full view, training
     [0, 0, W]          // 8 full view, inference
   ];
-  var FULL = 7;                                        // first full-view step
+  var FULL = 7;                                        // first full-view view
+  // Deck step -> view: encoder, sampled graph, conditional decoder, training, inference.
+  var VIEWS = [1, 3, 5, 7, 8];
+  function viewOf(deckStep) { return VIEWS[Math.max(0, Math.min(VIEWS.length - 1, deckStep | 0))]; }
   var FS = { title: 18, sub: 15.5, mono: 15, hdr: 5.8, lab: 6, tag: 6.4 };
 
   // Illustrative dataset and graph draws.
@@ -489,10 +495,8 @@
       el('path', { d: qd(q), 'class': SETTLED[k] ? 'gpres' : 'gabs' }, gr);
       if (SETTLED[k]) msgs.push({ q: q, node: null });
     });
-    [S, Bn].forEach(function (t, i) {
-      var q = edgeTo([U[0] + 7, U[1]], t, i ? 8 : 11, 0.1);
-      el('path', { d: qd(q), 'class': 'goff' }, gr);
-    });
+    // Latent demand reaches sales only through the baseline node (slot db); there is no latent -> sales slot.
+    el('path', { d: qd(edgeTo([U[0] + 7, U[1]], Bn, 8, 0.1)), 'class': 'goff' }, gr);
     xMark(gr, lx + 30, 223, 1.8);
     nodes.forEach(function (y, k) { el('circle', { cx: lx, cy: y, r: 6, fill: INPUTS[k].color }, gr); });
     el('circle', { cx: U[0], cy: U[1], r: 6, 'class': 'node-latent' }, gr);
@@ -697,12 +701,12 @@
 
     tags(N, 526, 164, [
       NET.encoderBlocks + ' blocks · width ' + NET.width + ' · ' + NET.heads + ' heads × ' + NET.headWidth,
-      fmtInt(NET.params) + ' parameters'
+      fmtInt(NET.params) + ' parameters in the full network'
     ], { only: [1], order: 9 });
     tags(N, 776, 158, [
       ['z', ['1'], ' = (d', ['t'], ', 2G − 1)'],
       NET.routerCoordsPerWeek + ' coordinates / week',
-      'velocity nets: baseline · entity · edge'
+      'velocity nets: baseline · entity · fixed · edge'
     ], { only: [2], order: 6 });
     tags(N, 962, 160, ['edge ⇔ mean signed state', 'over query weeks > 0', 'illustrative draws'], { only: [3], order: 8, peach: true, dimLast: true });
     tags(N, 1200, 164, [
@@ -1035,7 +1039,7 @@
     enter: function (ctx) {
       reduced = !!Deck.reducedMotion;
       svg.classList.toggle('reduced', reduced);
-      step = ctx.step;
+      step = viewOf(ctx.step);
       var now = performance.now();
       stepT0 = now;
       resetHidden();
@@ -1060,7 +1064,7 @@
 
     step: function (ctx) {
       var prev = step;
-      step = ctx.step;
+      step = viewOf(ctx.step);
       var now = performance.now();
       stepT0 = now;
       if (ctx.instant) svg.classList.add('instant');
