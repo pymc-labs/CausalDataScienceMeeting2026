@@ -9,7 +9,7 @@
 .text-col .h1 { font-size: 80px; }
 .text-col .h2 { font-size: 54px; line-height: 1.1; }
 .text-col .body { font-size: 25px; }
-.text-col .chips { margin-top: 30px; }
+.text-col .chips { margin-top: 22px; }
 .text-col .eq.sm .katex-display { text-align: left; margin: 0; }
 .text-col .eq.sm .katex-display > .katex { text-align: left; }
 
@@ -21,8 +21,8 @@
 .flow-text .eq .katex-display > .katex { text-align: left; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 36px; }
-.facts { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); }
-.facts p { font-size: 23px; line-height: 1.5; font-weight: 300; color: var(--fg-2); margin: 0 0 14px; }
+.facts { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.facts p { font-size: 23px; line-height: 1.42; font-weight: 300; color: var(--fg-2); margin: 0 0 8px; }
 .facts b { font-family: var(--f-display); font-stretch: 125%; font-weight: 500; font-size: 28px; color: var(--fg); margin-right: 6px; }
 .facts .accent-2 { color: var(--accent-2); font-weight: 400; }
 
