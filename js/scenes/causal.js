@@ -1,8 +1,8 @@
 /* ==========================================================================
    Causal scenes (light slides)
-     decomp        slide 5   one weekly sales line, three decompositions
-     worlds        slide 9   the prior as a river of simulated worlds
-     intervention  slide 10  a contribution as do(TV = 0)
+     decomp        slide 4   one weekly sales line, three decompositions
+     worlds        slide 8   the prior as a river of simulated worlds
+     intervention  slide 9   a contribution as do(TV = 0)
    Graphics are Canvas 2D sized to the scene root (stage px x Deck.scale() x
    devicePixelRatio); text sits in an HTML layer so labels share the deck's
    type and KaTeX. Every series here is synthetic and labelled "illustrative".

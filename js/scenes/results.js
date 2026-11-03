@@ -1,10 +1,10 @@
 /* ==========================================================================
    Results scenes, LIGHT theme.
-     structure · slide 17   0 the hidden true graph beside River's draws
+     structure · slide 15   0 the hidden true graph beside River's draws
                             1 edge-by-edge precision and recall
                             2 reliability of the edge probabilities
                             3 exact-set recovery, one cell per world
-     crps      · slide 18   0 full inputs, 99 context weeks: three bars
+     crps      · slide 16   0 full inputs, 99 context weeks: three bars
                             1 the bars fold into a dot plot of every condition
                             2 River against PyMC-Marketing
    Every number on screen is read from window.DECK_DATA. The graph of
@@ -14,7 +14,7 @@
    a pure function of a clock t (ms). Showing a panel runs t forward; hiding it
    lifts it out and freezes t; a panel hidden for longer than RESET_MS builds
    again from t = 0. Steps, jumps, reversals and re-entries therefore only
-   choose the visible panel (and, on slide 18, a morph parameter).
+   choose the visible panel (and, on slide 16, a morph parameter).
    ========================================================================== */
 (function () {
   'use strict';

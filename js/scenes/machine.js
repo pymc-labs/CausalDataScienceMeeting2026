@@ -1,11 +1,11 @@
 /* ==========================================================================
    Scenes on the dark slides of "Inside River" and "The next stage".
-     flow   (slide 14)  conditional flow matching: noise, training pairs,
+     flow   (backup B1) conditional flow matching: noise, training pairs,
                         16 Euler steps on the exact marginal velocity field,
                         coherent noise over weeks
-     graphs (slide 15)  router graph draws, edge probabilities and the
+     graphs (slide 13)  router graph draws, edge probabilities and the
                         spike-and-slab contribution posteriors
-     slots  (slide 22)  one graph for every week, the unused graph slots,
+     slots  (slide 19)  one graph for every week, the unused graph slots,
                         research mechanisms, time-varying graphs
    A canvas draws each figure; small DOM labels sit on top for the text.
    Every frame is a function of the current step and of the times at which
@@ -401,7 +401,7 @@
   }
 
   /* ==========================================================================
-     flow (slide 14): conditional flow matching on a two-mode target
+     flow (backup B1): conditional flow matching on a two-mode target
      ========================================================================== */
   function flowScene() {
     var K = NET.eulerSteps;            // uniform explicit Euler steps at inference
@@ -1020,7 +1020,7 @@
   }
 
   /* ==========================================================================
-     graphs (slide 15): the router samples graphs; contributions given a graph
+     graphs (slide 13): the router samples graphs; contributions given a graph
      ========================================================================== */
   function graphsScene() {
     var N = NET.draws;                 // graph draws per prediction
@@ -1355,7 +1355,7 @@
   }
 
   /* ==========================================================================
-     slots (slide 22): one graph for every week; the slots beyond River's prior
+     slots (slide 19): one graph for every week; the slots beyond River's prior
      ========================================================================== */
   function slotsScene() {
     var IX = [266, 373, 480, 587, 694];

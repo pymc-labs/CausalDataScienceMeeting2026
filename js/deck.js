@@ -5,7 +5,7 @@
    Slide markup
      <section class="slide" data-title="…" data-act="…" data-theme="dark|light"
               data-steps="N" data-scene="name" data-chrome="on|min|off"
-              data-field='{"mode":"contour", …}'>
+              data-field='{"mode":"contour", …}' data-backup>
        … elements with class "r" reveal with a stagger when the slide enters
        … [data-step="k"]        shown from step k onward
        … [data-until="k"]       shown before step k
@@ -15,6 +15,8 @@
      </section>
    Steps run 0..N. Next advances the step, then the slide. Previous goes back
    one step; from step 0 it lands on the last step of the previous slide.
+   Backup slides (data-backup) come after the main talk. They are numbered
+   B1, B2, … and do not count in the page total or the progress bar.
 
    Scene contract (js/scenes/*.js)
      Deck.registerScene('name', {
@@ -40,6 +42,7 @@
   var scenes = Object.create(null);
   var listeners = Object.create(null);
   var slides = [];
+  var mainCount = 0;   // slides before the first backup slide
   var cur = -1;
   var curStep = 0;
   var started = false;
@@ -164,7 +167,9 @@
     document.body.classList.toggle('chrome-off', slide.chrome === 'off');
     document.body.classList.toggle('chrome-min', slide.chrome === 'min');
     if (chrome.page) {
-      chrome.page.innerHTML = String(index + 1).padStart(2, '0') + '<span class="of"> / ' + String(slides.length).padStart(2, '0') + '</span>';
+      chrome.page.innerHTML = slide.backup
+        ? pageLabel(index) + '<span class="of"> · backup</span>'
+        : pageLabel(index) + '<span class="of"> / ' + String(mainCount).padStart(2, '0') + '</span>';
     }
     if (chrome.act && chrome.actWant !== slide.act) {
       // Track the wanted act, not the label text: a quick overshoot and return
@@ -182,8 +187,11 @@
   function updateProgress() {
     var s = slides[cur];
     if (!s) return;
-    var frac = slides.length <= 1 ? 1 : (cur + (s.steps ? curStep / (s.steps + 1) : 0)) / (slides.length - 1);
+    var frac = mainCount <= 1 ? 1 : (cur + (s.steps ? curStep / (s.steps + 1) : 0)) / (mainCount - 1);
     document.documentElement.style.setProperty('--progress', clamp(frac, 0, 1).toFixed(4));
+  }
+  function pageLabel(index) {
+    return index < mainCount ? String(index + 1).padStart(2, '0') : 'B' + (index - mainCount + 1);
   }
 
   /* ---- Navigation ------------------------------------------------------------ */
@@ -285,7 +293,7 @@
         act = s.act;
         html += '<h3>' + act + '</h3><ol>';
       }
-      html += '<li><button data-go="' + idx + '"><span class="k">' + String(idx + 1).padStart(2, '0') + '</span>' + s.title + '</button></li>';
+      html += '<li><button data-go="' + idx + '"><span class="k">' + pageLabel(idx) + '</span>' + s.title + '</button></li>';
     });
     html += '</ol>';
     root.innerHTML = html;
@@ -382,7 +390,7 @@
       case 'ArrowLeft': case 'ArrowUp': case 'PageUp': case 'Backspace':
         e.preventDefault(); prev(); break;
       case 'Home': e.preventDefault(); go(0, 0); break;
-      case 'End': e.preventDefault(); go(slides.length - 1, 0); break;
+      case 'End': e.preventDefault(); go(mainCount - 1, 0); break;
       case 'f': case 'F': toggleFullscreen(); break;
       case 'n': case 'N': toggleNotes(); break;
       case 'o': case 'O': case 'Escape': e.preventDefault(); toggleOverview(true); break;
@@ -470,9 +478,12 @@
         field: field,
         frags: Array.prototype.slice.call(el.querySelectorAll('[data-step], [data-until], [data-step-only]')),
         pasts: Array.prototype.slice.call(el.querySelectorAll('[data-past]')),
-        mounted: false
+        mounted: false,
+        backup: el.hasAttribute('data-backup')
       };
     });
+    mainCount = slides.length;
+    for (var b = 0; b < slides.length; b++) if (slides[b].backup) { mainCount = b; break; }
 
     // Static math.
     document.querySelectorAll('[data-tex]').forEach(function (el) {

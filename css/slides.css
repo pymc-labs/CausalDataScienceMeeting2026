@@ -212,7 +212,7 @@
 .slide-arch .arch-cap .h3 { font-size: 36px; margin: 0 0 12px; }
 .slide-arch .arch-cap p { margin: 0; font-size: 23px; line-height: 1.55; font-weight: 300; color: var(--fg-2); max-width: 1440px; }
 
-/* --- 15 Test design ------------------------------------------------------------------------ */
+/* --- 14 Test design ------------------------------------------------------------------------ */
 .slide-test .test-flow { position: absolute; left: var(--mx); right: var(--mx); top: 350px; display: grid; grid-template-columns: 1fr 48px 1fr 48px 1.2fr 48px 1fr; align-items: start; column-gap: 24px; }
 .slide-test .test-flow .arrow { padding-top: 58px; text-align: center; font-size: 24px; color: var(--fg-4); }
 .slide-test .methods ul { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 9px; font-size: 18px; line-height: 1.4; color: var(--fg-2); }
@@ -224,7 +224,7 @@
 .slide-test .test-design .chips { margin-top: 0; }
 .slide-test .td-k { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
 
-/* --- 18 Stats --------------------------------------------------------------------------- */
+/* --- B2 Stats (backup) --------------------------------------------------------------------- */
 .slide-stats .stats { margin-top: 40px; }
 .slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 26px 0; }
 .slide-stats .stat-num { font-size: 76px; }
@@ -235,22 +235,22 @@
 .slide-stats .stat-tex .katex { font-size: 1em; }
 .slide-stats .stat-body .katex { white-space: nowrap; }
 
-/* --- 19 Limits ----------------------------------------------------------------------------- */
+/* --- 17 Limits ----------------------------------------------------------------------------- */
 .slide-limits .points { margin-top: 48px; }
 .slide-limits .points li { padding: 22px 0; }
 .slide-limits .points .t { font-size: 30px; }
 .slide-limits .points .t small { font-size: 21px; max-width: 1440px; }
 
-/* --- 20 Scope ------------------------------------------------------------------------------- */
+/* --- 18 Scope ------------------------------------------------------------------------------- */
 .slide-scope .scope { position: absolute; left: var(--mx); right: var(--mx); top: 400px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 96px; }
 .slide-scope .card p:last-child { font-size: 21px; }
 .slide-scope .scope-note { position: absolute; left: var(--mx); right: var(--mx); top: 760px; margin: 0; padding-top: 28px; border-top: 1px solid var(--line); font-size: 25px; line-height: 1.5; font-weight: 300; color: var(--fg); max-width: 1480px; }
 
-/* --- 22 Conclusions --------------------------------------------------------------------------- */
+/* --- 20 Conclusions --------------------------------------------------------------------------- */
 .slide-concl .points { margin-top: 48px; }
 .slide-concl .concl-note { margin-top: 40px; font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--accent-2); max-width: 1440px; }
 
-/* --- 23 Closing ------------------------------------------------------------------------------- */
+/* --- 21 Closing ------------------------------------------------------------------------------- */
 .close-cols { display: grid; grid-template-columns: 420px 560px 360px; gap: 72px; margin-top: 72px; }
 .close-col { position: relative; padding-top: 26px; }
 .close-col::before { content: ''; position: absolute; left: 0; top: 0; width: 32px; height: 3px; border-radius: 2px; background: var(--band); }

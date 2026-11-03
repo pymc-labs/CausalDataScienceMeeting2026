@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Scene "arch" (slide 13, dark theme): River's architecture assembles.
+   Scene "arch" (slide 12, dark theme): River's architecture assembles.
 
    One SVG in world units. In the full view (steps 7 and 8) one unit is one
    stage px; steps 0-6 move a camera (the SVG viewBox) onto the part being

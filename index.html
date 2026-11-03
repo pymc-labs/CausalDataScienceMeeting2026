@@ -425,34 +425,7 @@
   </aside>
 </section>
 
-<!-- 13 · Flow matching -->
-<section class="slide" data-title="Flow matching turns noise into draws" data-act="03 · Inside River" data-theme="dark" data-steps="3"
-  data-scene="flow" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
-    <p class="eyebrow r"><span class="num">03</span>Inside River · How a head draws</p>
-    <h2 class="h2 r">Flow matching turns <span class="accent">noise into draws</span></h2>
-    <div class="flow-text">
-      <div data-step-only="0"><p class="body">A flow head starts from random noise and moves it, in small steps, toward a plausible value of the contributions.</p></div>
-      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network learns the velocity toward the truth.</p>
-        <div class="eq sm" data-tex="z_\tau = (1-\tau)\,z_0 + \tau\,z_1, \qquad u_\tau = z_1 - z_0" data-display></div>
-        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div></div>
-      <div data-step-only="2"><p class="body">At inference, the head follows its learned velocities from fresh noise. Sixteen Euler steps. Different noise gives different draws.</p>
-        <div class="eq sm" data-tex="z \leftarrow z + \tfrac{1}{16}\, v_\varphi(z, \tau;\, h, \kappa)" data-display></div></div>
-      <div data-step-only="3"><p class="body">The noise is coherent over time, so weeks within one draw move together.</p>
-        <div class="eq sm" data-tex="z_{0,t,a} = \sqrt{\rho}\,\kappa_{t,a} + \sqrt{1-\rho}\,e_{t,a}, \qquad \rho = 0.98" data-display></div></div>
-    </div>
-  </div>
-  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
-  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023).</p>
-  <aside class="notes">
-    <p>Both heads are flow-matching heads. Here is how one head makes a draw.</p>
-    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions.</p>
-    <p>Step 2: inference. Start from new noise. Follow the field for 16 steps. The target here has two modes, one for each graph. The flow finds both.</p>
-    <p>Step 3: the noise has a shared time component, so a draw is a coherent path over weeks, not independent weekly values.</p>
-  </aside>
-</section>
-
-<!-- 14 · Graph sampling -->
+<!-- 13 · Graph sampling -->
 <section class="slide" data-title="At inference, River samples the causal graph" data-act="03 · Inside River" data-theme="dark" data-steps="4"
   data-scene="graphs" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -481,7 +454,7 @@
      04 · EVIDENCE
      ===================================================================== -->
 
-<!-- 15 · Test design -->
+<!-- 14 · Test design -->
 <section class="slide slide-test" data-title="500 held-out cases with known truth" data-act="04 · Evidence" data-theme="light" data-steps="2"
   data-field='{"mode":"none"}'>
   <div class="frame">
@@ -521,7 +494,7 @@
   </aside>
 </section>
 
-<!-- 16 · Structure recovery -->
+<!-- 15 · Structure recovery -->
 <section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light" data-steps="3"
   data-scene="structure" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -545,7 +518,7 @@
   </aside>
 </section>
 
-<!-- 17 · Contribution accuracy -->
+<!-- 16 · Contribution accuracy -->
 <section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light" data-steps="2"
   data-scene="crps" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -566,30 +539,11 @@
   </aside>
 </section>
 
-<!-- 18 · Three checks -->
-<section class="slide slide-stats" data-title="Three more checks" data-act="04 · Evidence" data-theme="dark"
-  data-field='{"mode":"none"}'>
-  <div class="frame">
-    <p class="eyebrow r"><span class="num">04</span>Evidence · Checks</p>
-    <h2 class="h2 r">Three more checks</h2>
-    <div class="stats">
-      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="\le 8 \times 10^{-16}"></div><div><p class="stat-head">The same answer in any units</p><p class="stat-body">Rescaling sales, spend and controls by factors from 0.001 to 1,000 changes the draws by at most <span data-tex="8 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,024,000 draw pairs.</p></div></div>
-      <div class="stat-row r"><div class="stat-num">0.39<span class="unit">s</span></div><div><p class="stat-head">A fresh one-week answer, with no fit</p><p class="stat-body">Against 74 s for a new PyMC-Marketing fit and prediction: about 190 times as fast. For 109 weeks: 42 s against 55 s. Indicative only: different hardware (GPU against eight CPU cores) and a separate cohort.</p></div></div>
-      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest-effect input omitted</p><p class="stat-body">River still has the lowest error of the three methods on the visible inputs. It does not recover the hidden cause.</p></div></div>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>Units: the decomposition is invariant to the units of the data.</p>
-    <p>Cost: twelve-channel cohort, 1,200 draws. River 0.39 s for one week, 42 s for 109 weeks. PyMC-Marketing fit plus prediction 74 s and 55 s. After a fit, the MMM prediction call alone takes about 0.4 s. A matched re-run is pending. Read these times as indicative.</p>
-    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause.</p>
-  </aside>
-</section>
-
 <!-- =====================================================================
      05 · BOUNDARIES AND THE NEXT STAGE
      ===================================================================== -->
 
-<!-- 19 · Limits -->
+<!-- 17 · Limits -->
 <section class="slide slide-limits" data-title="Where River falls short" data-act="05 · Boundaries" data-theme="light"
   data-field='{"mode":"none"}'>
   <div class="frame">
@@ -609,7 +563,7 @@
   </aside>
 </section>
 
-<!-- 20 · Demonstrated vs not -->
+<!-- 18 · Demonstrated vs not -->
 <section class="slide slide-scope" data-title="What is demonstrated, and what is not" data-act="05 · Boundaries" data-theme="light" data-steps="2"
   data-field='{"mode":"none"}'>
   <div class="frame">
@@ -632,7 +586,7 @@
   </aside>
 </section>
 
-<!-- 21 · Graph slots -->
+<!-- 19 · Graph slots -->
 <section class="slide" data-title="The graph slots are already in the network" data-act="05 · Next stage" data-theme="dark" data-steps="3"
   data-scene="slots" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -654,7 +608,7 @@
   </aside>
 </section>
 
-<!-- 22 · Conclusions -->
+<!-- 20 · Conclusions -->
 <section class="slide slide-concl" data-title="Conclusions" data-act="Conclusions" data-theme="light"
   data-field='{"mode":"none"}'>
   <div class="frame">
@@ -673,7 +627,7 @@
   </aside>
 </section>
 
-<!-- 23 · Closing -->
+<!-- 21 · Closing -->
 <section class="slide slide-close" data-title="This is just the start" data-act="Closing" data-theme="dark" data-chrome="min"
   data-field='{"mode":"contour","focus":[0.88,0.26],"reach":380,"intensity":0.9}'>
   <div class="frame mid">
@@ -688,6 +642,56 @@
   </div>
   <aside class="notes">
     <p>Close on the research direction. The next test keeps real marketing inputs and simulates their effects, so the truth stays known. After that, real campaigns.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     BACKUP · for questions; not part of the 15-minute talk
+     ===================================================================== -->
+
+<!-- B1 · Flow matching -->
+<section class="slide" data-title="Flow matching turns noise into draws" data-act="Backup" data-backup data-theme="dark" data-steps="3"
+  data-scene="flow" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">B1</span>Backup · Inside River · How a head draws</p>
+    <h2 class="h2 r">Flow matching turns <span class="accent">noise into draws</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">A flow head starts from random noise and moves it, in small steps, toward a plausible value of the contributions.</p></div>
+      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network learns the velocity toward the truth.</p>
+        <div class="eq sm" data-tex="z_\tau = (1-\tau)\,z_0 + \tau\,z_1, \qquad u_\tau = z_1 - z_0" data-display></div>
+        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div></div>
+      <div data-step-only="2"><p class="body">At inference, the head follows its learned velocities from fresh noise. Sixteen Euler steps. Different noise gives different draws.</p>
+        <div class="eq sm" data-tex="z \leftarrow z + \tfrac{1}{16}\, v_\varphi(z, \tau;\, h, \kappa)" data-display></div></div>
+      <div data-step-only="3"><p class="body">The noise is coherent over time, so weeks within one draw move together.</p>
+        <div class="eq sm" data-tex="z_{0,t,a} = \sqrt{\rho}\,\kappa_{t,a} + \sqrt{1-\rho}\,e_{t,a}, \qquad \rho = 0.98" data-display></div></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
+  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023).</p>
+  <aside class="notes">
+    <p>Both heads are flow-matching heads. Here is how one head makes a draw.</p>
+    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions.</p>
+    <p>Step 2: inference. Start from new noise. Follow the field for 16 steps. The target here has two modes, one for each graph. The flow finds both.</p>
+    <p>Step 3: the noise has a shared time component, so a draw is a coherent path over weeks, not independent weekly values.</p>
+  </aside>
+</section>
+
+<!-- B2 · Three checks -->
+<section class="slide slide-stats" data-title="Three more checks" data-act="Backup" data-backup data-theme="dark"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">B2</span>Backup · Evidence · Checks</p>
+    <h2 class="h2 r">Three more checks</h2>
+    <div class="stats">
+      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="\le 8 \times 10^{-16}"></div><div><p class="stat-head">The same answer in any units</p><p class="stat-body">Rescaling sales, spend and controls by factors from 0.001 to 1,000 changes the draws by at most <span data-tex="8 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,024,000 draw pairs.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">0.39<span class="unit">s</span></div><div><p class="stat-head">A fresh one-week answer, with no fit</p><p class="stat-body">Against 74 s for a new PyMC-Marketing fit and prediction: about 190 times as fast. For 109 weeks: 42 s against 55 s. Indicative only: different hardware (GPU against eight CPU cores) and a separate cohort.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest-effect input omitted</p><p class="stat-body">River still has the lowest error of the three methods on the visible inputs. It does not recover the hidden cause.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Units: the decomposition is invariant to the units of the data.</p>
+    <p>Cost: twelve-channel cohort, 1,200 draws. River 0.39 s for one week, 42 s for 109 weeks. PyMC-Marketing fit plus prediction 74 s and 55 s. After a fit, the MMM prediction call alone takes about 0.4 s. A matched re-run is pending. Read these times as indicative.</p>
+    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause.</p>
   </aside>
 </section>
 
