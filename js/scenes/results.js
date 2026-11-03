@@ -43,7 +43,7 @@
     ols: 'rgba(12, 31, 64, .35)'
   };
 
-  // The two horizons in paper order (99, then 207 context weeks): aqua, then peri.
+  // The two plotted horizons (99 and 207 context weeks): aqua, then peri. The paper also reports 185 (not plotted).
   var CTX = D.evaluation.horizons.map(function (h) { return h.context; });
   var SERIES = [{ deep: C.aquaDeep, light: C.aqua }, { deep: C.periDeep, light: C.peri }];
   var WORLDS = D.evaluation.casesPerCondition;
@@ -273,7 +273,7 @@
   }
 
   /* ==========================================================================
-     Slide 17 · structure
+     Slide 15 · structure
      ========================================================================== */
   var INPUTS = [
     { name: 'TV', color: '#3E9C8C' },
@@ -668,7 +668,7 @@
   })();
 
   /* ==========================================================================
-     Slide 18 · crps
+     Slide 16 · crps
      ========================================================================== */
   var METHODS = [
     { key: 'mfm', name: 'River', fill: C.aquaDeep },
@@ -857,7 +857,7 @@
     return P;
   }
 
-  // Step 2: channel CRPS of River against PyMC-Marketing at both horizons.
+  // Step 2: channel CRPS of River against PyMC-Marketing at the two plotted horizons.
   function buildMmm(host) {
     var P = new Panel(host);
     var svg = P.svg;
@@ -874,8 +874,8 @@
     // The takeaway sits under the bars and arrives last, after the ratios.
     var rule = svgEl('line', { x1: 0, x2: VIEW_W, y1: 488, y2: 488, stroke: C.hair, 'stroke-width': 1 }, svg);
     var head = svgEl('g', null, svg);
-    var h = text(head, X0, 572, 'about ', 't-head');
-    tint(svgEl('tspan', null, h), C.aquaDeep).textContent = 'a quarter';
+    var h = text(head, X0, 572, 'less than ', 't-head');
+    tint(svgEl('tspan', null, h), C.aquaDeep).textContent = 'half';
     text(head, X0 + 2, 616, 'River\u2019s channel CRPS against the MMM\u2019s \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
 
     var groups = rows.map(function (r, gi) {
@@ -889,9 +889,9 @@
         rect: svgEl('rect', { x: X0, y: yM - BAR / 2, width: 0, height: BAR, fill: C.ink }, svg),
         val: text(svg, X0, yM + 8, '', 't-val')
       };
-      // Quarter marks on the MMM bar make "about a quarter" readable at a glance.
+      // A half mark on the MMM bar makes "less than half" readable at a glance.
       var quarters = svgEl('g', null, svg);
-      [1, 2, 3].forEach(function (q) {
+      [2].forEach(function (q) {
         var xq = x(r.pymc * q / 4);
         svgEl('line', { x1: xq, x2: xq, y1: yM - BAR / 2, y2: yM + BAR / 2, stroke: '#F7F7F7', 'stroke-width': 3 }, quarters);
       });
@@ -911,12 +911,12 @@
       var linkLen = (yR - (yM + BAR / 2 + 6)) + (xe - xs);
       link.setAttribute('stroke-dasharray', px2(linkLen) + ' ' + px2(linkLen + 2));
       var tip = svgEl('path', { d: 'M' + px2(xs - 1) + ' ' + yR + 'l9 -5v10z', fill: C.ink3 }, svg);
-      var ratio = text(svg, xe + 16, yR + 9, '\u00f7 ' + pm.channelRatio[gi].toFixed(1), 't-ratio');
+      var ratio = text(svg, xe + 16, yR + 9, '\u00f7 ' + pm.channelRatio[r.context].toFixed(2), 't-ratio');
       return { title: title, bars: [mmm, river], quarters: quarters, link: link, linkLen: linkLen, tip: tip, ratio: ratio };
     });
-    // The paper's caveat for the reference: its settings, and that every fit failed a health check.
+    // The paper's caveat for the reference: its settings, and how many fits failed a health check.
     var note = svgEl('g', null, svg);
-    text(note, X0 + 2, 666, 'PyMC-Marketing ' + pm.version + ' \u00b7 default priors \u00b7 fitted once per world and horizon', 't-mono t-small');
+    text(note, X0 + 2, 666, 'PyMC-Marketing ' + pm.version + ' \u00b7 default priors \u00b7 time-varying intercept', 't-mono t-small');
     text(note, X0 + 2, 690, pm.unhealthyFits + ' fits failed \u2265 1 health check \u00b7 none excluded', 't-mono t-small');
 
     P.duration = 3600;

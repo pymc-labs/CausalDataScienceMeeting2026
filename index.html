@@ -111,14 +111,14 @@
   <div class="frame text-col">
     <p class="eyebrow r"><span class="num">01</span>The problem</p>
     <h2 class="h1 r">Sales show what happened.<br><span class="accent-2">Not what caused it.</span></h2>
-    <p class="lede r" style="margin-top:48px">Marketing teams plan TV, search and promotions as one system. The inputs move together, so different splits of sales fit the same history.</p>
+    <p class="lede r" style="margin-top:48px">Different specifications can explain similar sales histories. They can give different contributions to the same channel.</p>
     <p class="lede fade" data-step="3" style="margin-top:28px"><strong>A good sales forecast does not tell you what each channel caused.</strong></p>
   </div>
   <div class="scene-root" style="left:900px;top:200px;width:900px;height:720px"></div>
   <aside class="notes">
     <p>Step 0: weekly sales. One line. This is all that the data show.</p>
     <p>Steps 1 to 3: three decompositions. The total stays the same in every one. Only the split changes.</p>
-    <p>Key point: predicting sales does not determine contributions. The central problem is contribution inference under structural uncertainty.</p>
+    <p>Key point: predicting sales does not determine contributions. The paper names two problems: structural uncertainty and repeated inference. This slide shows the first.</p>
   </aside>
 </section>
 
@@ -203,7 +203,7 @@
       </g>
     </g>
   </svg>
-  <p class="source r">Eq. (3) of the paper. Graphs are illustrative. Arrow: assumed direct effect. Dashed line: observed dependency. Dashed circle: hidden variable.</p>
+  <p class="source r">Eq. (1) in Section 2.2 of the paper. Graphs are illustrative. Arrow: assumed direct effect. Dashed line: observed dependency. Dashed circle: hidden variable.</p>
   <aside class="notes">
     <p>The model writes sales as a sum. Baseline, each channel, each control, plus noise.</p>
     <p>Each term is a latent quantity. We never observe it. We observe only the sum.</p>
@@ -219,25 +219,25 @@
 <section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="4"
   data-field='{"mode":"none"}'>
   <div class="frame">
-    <p class="eyebrow r"><span class="num">01</span>The problem · We always underestimate uncertainty</p>
+    <p class="eyebrow r"><span class="num">01</span>The problem · One specification hides model uncertainty</p>
     <h2 class="h2 r">Each analysis commits to one specification</h2>
   </div>
   <div class="choices r">
     <div class="choice-row"><span class="choice-k">Carryover</span>
       <span class="chip" data-pick="a">2 weeks</span><span class="chip">6 weeks</span><span class="chip" data-pick="b">10 weeks</span></div>
     <div class="choice-row"><span class="choice-k">Diminishing returns</span>
-      <span class="chip" data-pick="a">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip">Michaelis–Menten</span></div>
+      <span class="chip">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip" data-pick="a">Michaelis–Menten</span></div>
     <div class="choice-row"><span class="choice-k">Causal structure</span>
       <span class="chip" data-pick="a">Correlated inputs</span><span class="chip" data-pick="b">Hidden demand</span><span class="chip">Promo → TV</span></div>
     <div class="choice-row"><span class="choice-k">Constraints</span>
-      <span class="chip" data-pick="a">Positive effects</span><span class="chip" data-pick="b">ROI range</span><span class="chip">Last year’s priors</span></div>
+      <span class="chip">Positive effects</span><span class="chip" data-pick="a">ROAS range</span><span class="chip" data-pick="b">Last year’s priors</span></div>
   </div>
   <div class="splits">
     <div class="split-row" data-step="1"><span class="who">Analyst 1 · illustrative</span>
       <div class="splitbar"><span style="--w:45%" class="s-tv">TV 45%</span><span style="--w:30%" class="s-se">Search 30%</span><span style="--w:25%" class="s-so">Social 25%</span></div></div>
     <div class="split-row" data-step="2"><span class="who">Analyst 2</span>
       <div class="splitbar"><span style="--w:20%" class="s-tv">TV 20%</span><span style="--w:50%" class="s-se">Search 50%</span><span style="--w:30%" class="s-so">Social 30%</span></div></div>
-    <p class="small" data-step="2" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers from the white paper.</p>
+    <p class="small" data-step="2" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers from the white paper; the structure choices follow slide 5.</p>
   </div>
   <div class="bma">
     <div class="bma-eq" data-step="3">
@@ -253,7 +253,7 @@
     <p>Every analysis makes four kinds of choices. One of them is the causal structure: the three graphs from the previous slide.</p>
     <p>Steps 1 and 2: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
     <p>Step 3: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
-    <p>Step 4: the principled answer is model averaging. But each specification needs its own MCMC fit, and nothing checks the choices against the truth.</p>
+    <p>Step 4: the principled answer is model averaging. But each specification needs its own fit. Observed data do not give the true contributions, and experiments cover only some effects.</p>
   </aside>
 </section>
 
@@ -278,8 +278,8 @@
   </div>
   <aside class="notes">
     <p>The usual order: assume one thing, fit, check, change, fit again. It is sequential.</p>
-    <p>We reverse it. We assume many things at the start, in a prior. We learn inference once. Then each dataset is a forward pass.</p>
-    <p>A shorter loop is a goal. Part 4 gives the measured cost and its caveats.</p>
+    <p>We reverse it. We assume many things at the start, in a prior. We learn inference once. Then each new dataset needs only sampling with fixed weights, not a new fit.</p>
+    <p>A shorter loop is a goal. Backup B2 and Section 4.5 of the paper give the measured cost and its caveats.</p>
   </aside>
 </section>
 
@@ -305,7 +305,7 @@
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Section 2 and Appendix A of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
+  <p class="source r">Sections 2.1 and 2.3, Table 1 and Appendix A.2 of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
   <aside class="notes">
     <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
     <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
@@ -327,7 +327,7 @@
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Section 2.2 and Appendix A.1.1 of the paper.</p>
+  <p class="source r">Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
   <aside class="notes">
     <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
     <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
@@ -358,7 +358,7 @@
       <div class="pfn-claim">
         <p class="card-label">The result</p>
         <p>If the network is flexible enough, the ideal loss is smallest at <span class="accent-2">the model-averaged posterior of the mixture prior</span>.</p>
-        <p class="pfn-claim-note">River trains with a flow-matching loss instead. With exact training and exact sampling, it reaches the same posterior.</p>
+        <p class="pfn-claim-note">River trains with a flow-matching loss instead. The same posterior is its intended target; finite training and numerical sampling do not guarantee exact draws.</p>
       </div>
     </div>
   </div>
@@ -367,12 +367,12 @@
     <div class="card peri"><p class="card-label">2 · Train</p><p>Train one network on what an analyst would see. The stored graph and contributions are its training targets.</p></div>
     <div class="card peach"><p class="card-label">3 · Use</p><p>Read a new dataset with fixed weights. The target holds only inside the prior and is not guaranteed.</p></div>
   </div>
-  <p class="source r">Eqs. (1), (2) and Appendices B.1 and B.9 of the paper; prior-fitted networks (Müller et al., 2022).</p>
+  <p class="source r">Eqs. (19), (21) and (22) in Appendix B.1, and Appendix B.9 of the paper; prior-fitted networks (Müller et al., 2022).</p>
   <aside class="notes">
     <p>This is the prior-fitted network argument in its ideal form. Train on pairs of datasets and contributions from the prior. Minimize the negative log density of the truth. River does not use this loss; the result note explains.</p>
     <p>Step 1: this loss is an expected KL divergence to the true posterior, plus a constant.</p>
-    <p>Step 2: so, if the network can represent it, the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but its ideal minimizer, followed exactly from the noise, gives the same posterior.</p>
-    <p>Step 3: the limits. The ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds for about 3.4 passes and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. Outside the prior, there is no such result.</p>
+    <p>Step 2: so, if the network can represent it, the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence. The paper treats the same posterior as its intended target; Appendix B.9 gives the limits of this argument.</p>
+    <p>Step 3: the limits. The ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views. It samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. Outside the prior, there is no such result.</p>
   </aside>
 </section>
 
@@ -384,7 +384,7 @@
     <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over graphs and contributions.</span></h2>
     <ol class="points compact r" style="margin-top:56px;max-width:1240px">
       <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
-      <li><span class="n">2</span><span class="t">For each graph, a posterior of contributions over time.</span></li>
+      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
     </ol>
   </div>
   <aside class="notes">
@@ -430,19 +430,19 @@
     <div class="flow-text">
       <div data-step-only="0"><p class="body">The prior permits one edge from each input to sales. The true graph is not given. River infers which edges are present.</p></div>
       <div data-step-only="1"><p class="body">Each draw starts with a graph from the router.</p><div class="eq sm" data-tex="G^{(s)} \sim q^{\text{router}}_\varphi(G \mid \mathcal{D}), \quad s = 1, \dots, 256" data-display></div></div>
-      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, the calibration error of the channel-edge probabilities is 0.04 to 0.07.</p></div>
+      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, the calibration error of the channel-edge probabilities is 0.04 to 0.07. This does not prove calibration.</p></div>
       <div data-step-only="3"><p class="body">For each graph, the decoder draws contributions. An input without an edge contributes exactly zero, so each contribution posterior mixes a point mass at zero with a continuous part.</p></div>
       <div data-step-only="4"><p class="body">Together, they form the learned posterior: variation between graphs and within each graph.</p>
         <div class="eq sm" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{G} \htmlClass{tex-hot}{q^{\text{router}}_\varphi(G \mid \mathcal{D})}\; \htmlClass{tex-accent}{q^{\text{cond}}_\varphi(C \mid \mathcal{D}, G)}" data-display></div></div>
     </div>
   </div>
   <div class="scene-root" style="left:780px;top:170px;width:1020px;height:800px"></div>
-  <p class="source r">Section 3.4, Eq. (4) of the paper.</p>
+  <p class="source r">Sections 3, 4.3 and B.6.1, Eq. (32) of the paper.</p>
   <aside class="notes">
     <p>This is the causal core of River. It is conditional discovery: structure inferred from the data, conditional on the prior's graph family.</p>
     <p>Step 1: 256 graph draws, the setting of the contribution evaluation; the structure study used 2,048 router draws per view. Step 2: their frequencies are edge probabilities.</p>
     <p>Step 3: absent edges give exact zeros. A channel's contribution posterior is a spike at zero plus a slab. Graph uncertainty enters the contribution draws.</p>
-    <p>Step 4: Eq. (4) is the network's counterpart of model averaging, with graphs in place of specifications. Response functions and input settings enter through the training mixture.</p>
+    <p>Step 4: Eq. (32) is the network's counterpart of the model-averaged posterior in Eq. (19). Graphs take the place of specifications. Response functions, carryover choices and input settings enter through the training mixture of 50 combinations.</p>
   </aside>
 </section>
 
@@ -465,7 +465,7 @@
     <div class="card r methods"><p class="card-label">3 · Five methods</p>
       <ul>
         <li><b>River</b> · graph not supplied</li>
-        <li><b>PyMC-Marketing 1.2</b> · default priors · full inputs</li>
+        <li><b>PyMC-Marketing 1.2</b> · default priors · time-varying intercept</li>
         <li><b>PathMC</b> · Bayesian regression, logistic response, carryover</li>
         <li><b>OLS</b> · linear regression</li>
         <li><b>Oracle</b> · told the true graph and mechanisms · full inputs</li>
@@ -478,14 +478,14 @@
     <div class="chips"><span class="chip fill">Full inputs</span><span class="chip fill">In-sample saturation</span><span class="chip fill">Smooth baseline</span><span class="chip peach">Omitted channel · out of prior</span><span class="chip peach">Omitted control · out of prior</span></div>
   </div>
   <div class="test-design td-2" data-step="2">
-    <div class="td-k">Two horizons</div>
-    <div class="chips"><span class="chip">99 context weeks → 109 query weeks</span><span class="chip">207 context weeks → 1 query week</span><span class="chip fill">1,000 scored views</span></div>
+    <div class="td-k">Three horizons</div>
+    <div class="chips"><span class="chip">99 context weeks → 109 query weeks</span><span class="chip">185 context weeks → 23 query weeks</span><span class="chip">207 context weeks → 1 query week</span><span class="chip fill">1,500 scored views</span></div>
   </div>
   <p class="source r">Section 4.1 of the paper. 300 distinct held-out worlds; the full-input and both omission conditions share 100 base worlds.</p>
   <aside class="notes">
-    <p>The design keeps the truth known. Every method gets the same table and nothing else.</p>
+    <p>The design keeps the truth known. Every method gets the same table. Only the oracle also gets more information.</p>
     <p>The oracle is a fitted reference with privileged information: the generating graph, the mechanism families and prior information. No analyst has it. It is not a guaranteed best case.</p>
-    <p>PyMC-Marketing and the oracle run on the 100 full-input worlds only.</p>
+    <p>The oracle runs on the 100 full-input worlds only. PyMC-Marketing runs in all five conditions. A separate PyMC-Marketing study also uses the 100 full-input worlds.</p>
     <p>Two of the five conditions are out of prior: we hide the largest-effect channel or control.</p>
   </aside>
 </section>
@@ -499,18 +499,18 @@
     <div class="flow-text">
       <div data-step-only="0"><p class="body">The true graph is not supplied at inference. We score the sampled graphs on the 100 full-input worlds. Two questions stay separate.</p></div>
       <div data-step-only="1"><p class="body"><b>Edge by edge.</b> An edge counts when its marginal probability is at least 0.5. Channel edges reach a precision and recall near 0.9.</p></div>
-      <div data-step-only="2"><p class="body"><b>Calibration of single edges.</b> Points near the diagonal mean that a stated edge probability matches how often the edge is present. Edge-pooled calibration error for channel edges: 0.04 to 0.07. This is a measurement only; there is no recalibration.</p></div>
-      <div data-step-only="3"><p class="body"><b>Whole set.</b> The exact set of live channels is right in about half of the worlds. The full graph, with controls, in fewer than one in five.</p>
+      <div data-step-only="2"><p class="body"><b>Calibration of single edges.</b> Points near the diagonal mean that a stated edge probability matches how often the edge is present. Edge-pooled calibration error for channel edges: 0.04 to 0.07. These values are measurements, not proof of calibration. We apply no recalibration.</p></div>
+      <div data-step-only="3"><p class="body"><b>Whole set.</b> The exact set of live channels is right in about half of the worlds. The exact set of channels and controls is right in fewer than one in five. The true complete graph is among the 2,048 draws in 82 to 86 of 100 worlds.</p>
         <p class="body accent-2" style="margin-top:20px">Partial structure recovery, under the specified prior.</p></div>
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Section 4.3 and Appendix C.9 of the paper; reliability bins from structure run structure-91de88629ca3 (router, channel edges, 2,048 draws per view).</p>
+  <p class="source r">Section 4.3, Figure 3 and Appendix C.10 of the paper; reliability bins from the structure study of run pr29-final-full-e35866e (router, channel edges, 2,048 draws per view).</p>
   <aside class="notes">
     <p>The headline causal result. Good edge-level scores do not mean every graph is right. We report both.</p>
     <p>Step 1: precision and recall 0.89 and 0.90 with 99 context weeks; 0.92 and 0.87 with 207. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
     <p>Step 2: reliability diagram from the actual bins of the structure run. Channel edges only. In the lowest bin the probabilities are too low: edges with a probability of about 0.03 are present in about 11% of cases. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
-    <p>Step 3: exact channel set in 45% and 49% of worlds; channels and controls together in 17% and 19%. Full-graph calibration is not established.</p>
+    <p>Step 3: exact channel set in 45% and 49% of worlds; channels and controls together in 17% and 19%. The paper also reports 185 context weeks: precision 0.89, recall 0.91, exact channel set 51%. The true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
   </aside>
 </section>
 
@@ -521,17 +521,18 @@
     <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
     <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
     <div class="flow-text">
-      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest error, and a lower score than both regressions in 75 of 100 worlds.</p></div>
-      <div data-step-only="1"><p class="body">River has the lowest error in all five conditions and at both horizons, also when the largest-effect channel or control is hidden.</p></div>
-      <div data-step-only="2"><p class="body">Against a PyMC-Marketing model with library-default priors on the 100 full-input worlds, River’s channel CRPS is about a quarter of the MMM’s.</p></div>
+      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest mean error. It has a lower score than both regressions in 63 of 100 worlds.</p></div>
+      <div data-step-only="1"><p class="body">River has the lowest mean error in all five conditions and at all three horizons, also when the largest-effect channel or control is hidden. The plot shows 99 and 207 context weeks.</p></div>
+      <div data-step-only="2"><p class="body">Against a PyMC-Marketing model with default priors and a time-varying intercept, River’s mean channel CRPS is less than half of the MMM’s. The test uses the 100 full-input worlds.</p></div>
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Tables 1 and 2 of the paper. CRPS of window-mean contributions on the context sales scale; lower is better.</p>
+  <p class="source r">Section 4.2 and Tables 12 and 20 of the paper. CRPS of window-mean contributions on the context sales scale. Lower is better. The plots show 99 and 207 of the three context lengths.</p>
   <aside class="notes">
     <p>CRPS scores a whole distribution against the true value. Lower is better.</p>
-    <p>Step 1: five conditions, two horizons. River is lower than PathMC and OLS in every row.</p>
-    <p>Step 2: PyMC-Marketing 1.2 with eight-lag geometric adstock, logistic saturation and default priors, fitted once per world and horizon. The ratio is 3.9 at 99 context weeks and 4.7 at 207. All 200 MMM fits failed at least one health criterion; none was excluded.</p>
+    <p>Step 0: with full inputs and 99 context weeks, the means are 0.0295 for River, 0.0370 for PathMC, 0.2136 for OLS and 0.0659 for the native MMM.</p>
+    <p>Step 1: five conditions. The plot shows 99 and 207 context weeks; the paper also reports 185. River has a lower mean than PathMC, OLS and the native MMM in all 15 rows of Table 12. A lower mean is not a win in every world: River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
+    <p>Step 2: a separate study on the 100 full-input worlds. PyMC-Marketing 1.2 uses a time-varying intercept, eight-lag geometric adstock, logistic saturation and library-default priors. Each fit uses eight chains of 500 draws. The MMM/River ratio of mean channel CRPS is 2.11 at 99 context weeks, 2.44 at 185 and 2.20 at 207. These are ratios of cohort means, not typical world-level ratios. 288 of the 300 MMM fits fail at least one health criterion. None is excluded. The scores describe this configured procedure, not a converged MMM. River runs separately in this study, so its values differ slightly from step 1.</p>
   </aside>
 </section>
 
@@ -546,16 +547,18 @@
     <p class="eyebrow r"><span class="num">05</span>Boundaries · It says where it fails</p>
     <h2 class="h2 r">Where River falls short</h2>
     <ol class="points limits">
-      <li class="r"><span class="n">01</span><span class="t">The oracle still does better<small>Told the true graph and mechanisms, the oracle has lower channel CRPS: 0.0185 against River’s 0.0294 with 99 context weeks.</small></span></li>
-      <li class="r"><span class="n">02</span><span class="t">Contributions improve; one-week sales do not<small>For the one-week query, total-sales CRPS is 0.0384 for River, 0.0188 for PathMC and 0.0290 for OLS.</small></span></li>
-      <li class="r"><span class="n">03</span><span class="t">Uncertainty is not yet calibrated<small>One-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. Long-query contribution intervals are too narrow.</small></span></li>
+      <li class="r"><span class="n">01</span><span class="t">The oracle still does better<small>The oracle uses the true graph and the mechanism families. Its mean channel CRPS is lower at all three context lengths. With 99 context weeks, it is 0.0185 against 0.0295 for River.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Contributions improve; one-week sales do not<small>For the one-week query, mean total-sales CRPS is 0.0384 for River, 0.0213 for PathMC, 0.0290 for OLS and 0.0085 for the native MMM. All three references are lower in all five conditions.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Uncertainty is not yet calibrated<small>One-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. Long-query 80% contribution intervals contain the true value less often than 80%.</small></span></li>
       <li class="r"><span class="n">04</span><span class="t">The gain is not yet attributed<small>The comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</small></span></li>
     </ol>
   </div>
-  <p class="source r">Sections 4.2, 4.5, 4.6 and 5.1 of the paper.</p>
+  <p class="source r">Sections 4.2, 4.3, 4.6, 4.8 and 5, Tables 12, 16, 18 and 20, and Figure 2 of the paper.</p>
   <aside class="notes">
     <p>The advantage is in the decomposition. It is not general prediction superiority.</p>
     <p>Wide bands that cover the truth are not evidence of a better predictive distribution.</p>
+    <p>With 23 query weeks, River's mean weekly total CRPS is also higher: 0.0422 against 0.0312 for PathMC, 0.0388 for OLS and 0.0206 for the native MMM. With 109 query weeks, River has the lowest mean in all five conditions.</p>
+    <p>With full inputs and 99 context weeks, River's 80% intervals contain 58.9% of the channel and 68.0% of the control window means. Bias, not only width, can cause this under-coverage. The oracle is a fitted reference, not simulator truth; its score is not a lower bound.</p>
   </aside>
 </section>
 
@@ -575,7 +578,7 @@
       <p>Mediation, awareness, funnel effects and interactions. Each needs a broader prior, new weights and new evaluation.</p></div>
   </div>
   <p class="scope-note r">Graph draws describe structural uncertainty under the prior’s assumptions. They do not establish causal identification from business data.</p>
-  <p class="source r">Sections 5.1 and 5.3 of the paper.</p>
+  <p class="source r">Sections 5 and 5.2 of the paper.</p>
   <aside class="notes">
     <p>We keep three statements separate: what is demonstrated, what is not, and the research goal.</p>
     <p>The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
@@ -596,7 +599,7 @@
     </div>
   </div>
   <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
-  <p class="source r">Appendix B.5 and Sections 5.1 and 5.3 of the paper. Time-varying graphs: our research direction, not part of the paper.</p>
+  <p class="source r">Appendix B.5 and Sections 5 and 5.2 of the paper. Time-varying graphs: our research direction, not part of the paper.</p>
   <aside class="notes">
     <p>The architecture is ahead of the prior. Slots for latent demand and input-to-input edges exist, with zero training targets.</p>
     <p>Mediation: an input acts through another variable. Awareness: marketing builds a state that affects later sales. Funnel: stages from awareness to purchase. Interactions: one input changes another's effect.</p>
@@ -609,13 +612,13 @@
   data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r">Conclusions</p>
-    <h2 class="h2 r">An initial result toward<br><span class="accent-2">causal discovery in marketing</span></h2>
+    <h2 class="h2 r">Three bounded results<br><span class="accent-2">in the tested synthetic setting</span></h2>
     <ol class="points">
-      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower channel CRPS than both regressions in all five conditions and at both horizons. About a quarter of the error of a PyMC-Marketing model with default priors.</small></span></li>
-      <li class="r"><span class="n">02</span><span class="t">Constrained causal structure learning<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds.</small></span></li>
-      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves every dataset, with no new fit, and the same answer in any units.</small></span></li>
+      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than both regressions in all five conditions and at all three horizons. Less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Constrained structure recovery<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds; the sampled graphs contain the true graph in most worlds.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves new datasets with no new fit. Tested positive changes of units do not change the answer.</small></span></li>
     </ol>
-    <p class="concl-note r">River shows that structure learning occurs in the tested direct-effect setting. It does not show that the current weights handle richer causal systems.</p>
+    <p class="concl-note r">River partly recovers direct-effect structure in the tested synthetic setting. Its current weights do not support richer mechanisms, such as mediation or interactions.</p>
   </div>
   <aside class="notes">
     <p>Three contributions, each with its limit.</p>
@@ -664,7 +667,7 @@
     </div>
   </div>
   <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
-  <p class="source r">Section 3.3 and Appendix B.6 of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023). Checked against pymc-mfm 32587ac.</p>
+  <p class="source r">Section 3 and Appendix B.6 (Eqs. (28)–(30)) of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023). Checked against pymc-mfm 32587ac (training) and 44521b6 (inference in the paper's evaluation).</p>
   <aside class="notes">
     <p>Both heads are flow-matching heads. Here is how one head makes a draw. The router reads the encoded dataset and draws a graph and contributions together; we keep only the graph. The decoder reads the encoded dataset after the graph conditioner, and the support mask of that graph. It draws the contributions for that graph.</p>
     <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions. W gives zero weight to padded or forbidden coordinates. For the router, the decomposition and each graph family get equal weight per world.</p>
@@ -680,15 +683,16 @@
     <p class="eyebrow r"><span class="num">B2</span>Backup · Evidence · Checks</p>
     <h2 class="h2 r">Three more checks</h2>
     <div class="stats">
-      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="\le 8 \times 10^{-16}"></div><div><p class="stat-head">The same answer in any units</p><p class="stat-body">Rescaling sales, spend and controls by factors from 0.001 to 1,000 changes the draws by at most <span data-tex="8 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,024,000 draw pairs.</p></div></div>
-      <div class="stat-row r"><div class="stat-num">0.39<span class="unit">s</span></div><div><p class="stat-head">A fresh one-week answer, with no fit</p><p class="stat-body">Against 74 s for a new PyMC-Marketing fit and prediction: about 190 times as fast. For 109 weeks: 42 s against 55 s. Indicative only: different hardware (GPU against eight CPU cores) and a separate cohort.</p></div></div>
-      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest-effect input omitted</p><p class="stat-body">River still has the lowest error of the three methods on the visible inputs. It does not recover the hidden cause.</p></div></div>
+      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="8.0 \times 10^{-16}"></div><div><p class="stat-head">The same answer in different units</p><p class="stat-body">We rescale sales, spend and controls by positive factors from 0.001 to 1,000. The largest change in a draw is <span data-tex="8.0 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,536,000 draw pairs.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">1.25<span class="unit">s</span></div><div><p class="stat-head">A first one-week answer, with no fit</p><p class="stat-body">Against 387.30 s for a new native MMM fit and first prediction. For 109 weeks: 113.78 s against 238.66 s. A fitted MMM then repeats the 109-week query in 4.04 s. Device-specific: GPU against eight CPU cores, on a separate twelve-channel cohort.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest-effect input omitted</p><p class="stat-body">River still has the lowest mean contribution error of the four methods on the visible inputs. It does not recover the hidden cause.</p></div></div>
     </div>
   </div>
+  <p class="source r">Sections 4.5 and 4.8, Tables 12, 13, 14 and 22, and Appendices C.9.1, C.10 and C.12 of the paper.</p>
   <aside class="notes">
-    <p>Units: the decomposition is invariant to the units of the data.</p>
-    <p>Cost: twelve-channel cohort, 1,200 draws. River 0.39 s for one week, 42 s for 109 weeks. PyMC-Marketing fit plus prediction 74 s and 55 s. After a fit, the MMM prediction call alone takes about 0.4 s. A matched re-run is pending. Read these times as indicative.</p>
-    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause.</p>
+    <p>Units: in the test, positive changes of units do not change the decomposition. The test does not cover offsets, nonpositive factors, other inputs or all random seeds. It uses 600 views, ten unit systems and 256 draws per call.</p>
+    <p>Cost: 100 twelve-channel worlds, 4,000 trajectories per call, medians over worlds. First call: River 1.25 s for one week, 22.81 s for 23 weeks and 113.78 s for 109 weeks. A new native MMM fit plus first prediction: 387.30 s, 355.82 s and 238.66 s. Warm calls: River 1.25 s, 22.77 s and 113.61 s; an already fitted MMM 2.08 s, 2.47 s and 4.04 s. River removes the fit. It is not faster for every repeated prediction. River uses CUDA and the MMM uses eight CPU cores, in paired L4 containers. 290 of the 300 timed MMM fits fail the sampler health rule. The paper does not time the main benchmark worlds. These times replace the old 190× figure.</p>
+    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause. With an omitted channel and 99 context weeks, the paired interval against PathMC includes zero.</p>
   </aside>
 </section>
 

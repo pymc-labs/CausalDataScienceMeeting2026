@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the existing deck’s numbers and titles. The opening subtitle removal and agreed wording changes on slides 8 and 11 are implemented; other compression and backup suggestions remain proposals, not changes to the deck.
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the current deck’s numbers and titles: 21 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
 
 ## Review workflow
 
@@ -14,7 +14,7 @@ This is the shared editorial plan: chapter intent, slide purpose and agreed narr
 - Record agreed decisions here and implement relevant HTML/CSS/JavaScript changes in the same PR.
 - Review the rendered slides as well as the Markdown diff. Cosmetic-only changes need no narrative update.
 - Keep this document focused on intent and takeaways, rather than duplicating the slide text. Renumber references when slides move.
-- Until reviewed, all slides remain in the deck; proposed backup status below is not an approved removal.
+- Backup slides follow the closing slide. They are numbered B1 and B2 and do not count in the page total.
 
 **Central message:** River learns inference across simulated marketing worlds, then estimates contributions and uncertainty over permitted causal graphs without a new fit. The results are promising within a restricted setting—not evidence of unrestricted causal discovery.
 
@@ -54,7 +54,7 @@ State the boundary alongside the definition: **the current prior permits direct 
 
 ## 3. Inside River — Graph first, contributions second · 2 minutes
 
-*Current slides 12–14.*
+*Current slides 12–13; flow matching is backup B1.*
 
 River encodes the observed dataset, samples a permitted graph, then draws contributions conditional on that graph. Repeating this captures uncertainty both between graphs and within each graph. If an edge is absent, its contribution is exactly zero.
 
@@ -66,7 +66,7 @@ This is the mechanism the audience needs to understand. It connects the model-av
 
 ## 4. Evidence — What does it recover? · 4 minutes
 
-*Current slides 15–18.*
+*Current slides 14–16; the three further checks are backup B2.*
 
 Explain that evaluation uses held-out simulated cases with known truth. Then answer two separate questions:
 
@@ -81,7 +81,7 @@ Keep the comparison scope explicit: these are synthetic results, and the default
 
 ## 5. Boundaries and next steps — A first result, not the finished tool · 2 minutes
 
-*Current slides 19–23, including conclusions and closing.*
+*Current slides 17–21, including conclusions and closing.*
 
 Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. Uncertainty calibration needs work, contribution gains do not imply better sales prediction, and real-business causal identification is not established.
 
@@ -108,7 +108,7 @@ Rehearse the main talk to 15 minutes, including transitions and animations. Prot
 
 ## Slide-by-slide editorial plan
 
-The time budgets below total **15 minutes**. Zero-time entries are proposed backup material; the current HTML still contains them. These are rehearsal targets, not measured timings.
+The time budgets below total **15 minutes**. Backup slides B1 and B2 have no time in the main talk. These are rehearsal targets, not measured timings.
 
 ### 1 — Title · 25 seconds · Main
 
@@ -137,16 +137,16 @@ The time budgets below total **15 minutes**. Zero-time entries are proposed back
 
 ### 5 — A marketing mix model is a structural model · 40 seconds · Main
 
-- **Purpose:** define the components we want to infer.
-- **Takeaway:** observed sales combine baseline, channel effects, controls and noise.
-- **Visual / delivery:** highlight the equation’s terms in turn; avoid reading every bottleneck card.
-- **Existing implementation:** active terms enlarge by 12% as well as changing color.
+- **Purpose:** define the components we want to infer, then show that the same equation hides causal choices.
+- **Takeaway:** observed sales combine baseline, channel effects, controls and noise; the same data fit several causal graphs.
+- **Visual / delivery:** highlight the equation’s terms in turn. Step 4 shows the equation as a graph of direct effects. Step 5 forks it into three graphs: correlated channels (inside River’s prior), hidden demand, and a promotion → TV path between inputs (both outside River’s prior). Arrows are assumptions; dashed lines are observed dependencies; a dashed circle is a hidden variable.
+- **Agreed decision, implemented ([issue #2](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2), option A):** the DAGs replace the three bottleneck notes. Active terms still enlarge by 12% as well as changing color.
 
 ### 6 — Each analysis commits to one specification · 45 seconds · Main
 
 - **Purpose:** expose uncertainty hidden by selecting one model.
 - **Takeaway:** uncertainty includes both parameters and model choices.
-- **Visual / delivery:** two plausible analyst decompositions, followed by the model-averaging idea.
+- **Visual / delivery:** two plausible analyst decompositions, followed by the model-averaging idea. The causal-structure row names the three graphs of slide 5.
 - **Proposal:** summarize the choices and averaging equation rather than explaining each option.
 
 ### 7 — What if we could start backwards? · 35 seconds · Main
@@ -170,8 +170,8 @@ The time budgets below total **15 minutes**. Zero-time entries are proposed back
 ### 10 — Learn the posterior from the prior · 40 seconds · Main, compressed
 
 - **Purpose:** connect simulated training to Bayesian model averaging.
-- **Takeaway:** the ideal objective targets the mixture-prior posterior; finite training is not a guarantee of exact inference.
-- **Proposal:** emphasize the result statement; leave the loss/KL derivation for questions.
+- **Takeaway:** the ideal likelihood loss targets the mixture-prior posterior. River’s flow-matching loss has the same ideal target. Finite training and 16-step sampling do not guarantee exact inference.
+- **Implemented:** the result statement stands apart at the left margin. The first equation is tagged “ideal”, because River does not train on the negative log density (verified in [issue #3](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3)).
 
 ### 11 — The output is a distribution over graphs and contributions · 25 seconds · Main
 
@@ -183,85 +183,85 @@ The time budgets below total **15 minutes**. Zero-time entries are proposed back
 
 - **Purpose:** show the essential architecture without a component inventory.
 - **Takeaway:** encode data, sample a graph, condition the contribution decoder on that graph.
-- **Proposal:** replace the full walkthrough with a concise overview; retain training/inference distinctions. This simplification is not implemented yet.
+- **Agreed decision, implemented:** a five-step overview: encode one dataset, sample a graph, decode contributions for that graph, training, inference. The training and inference views stay separate.
 
-### 13 — Flow matching turns noise into draws · 0 seconds · Proposed backup
-
-- **Purpose:** answer how a flow head produces posterior draws.
-- **Takeaway:** learned velocities transform coherent noise into contribution paths.
-- **Proposal:** reserve the equations and integration details for Q&A.
-
-### 14 — At inference, River samples the causal graph · 60 seconds · Main
+### 13 — At inference, River samples the causal graph · 60 seconds · Main
 
 - **Purpose:** explain how structure uncertainty enters contributions.
 - **Takeaway:** repeated graph-and-contribution draws capture uncertainty between and within graphs; absent edges give exact zeros.
 - **Visual / delivery:** sample graphs and show their contributions. Call this discovery conditional on the permitted family.
 
-### 15 — 500 held-out cases with known truth · 45 seconds · Main
+### 14 — 500 held-out cases with known truth · 45 seconds · Main
 
 - **Purpose:** make the evaluation interpretable before showing results.
 - **Takeaway:** methods are tested against known synthetic truth, with different scopes for different comparisons.
 - **Visual / delivery:** world → observed table → methods → scores. Mention the oracle’s privileged information.
 
-### 16 — Structure is partly recovered · 90 seconds · Main
+### 15 — Structure is partly recovered · 90 seconds · Main
 
 - **Purpose:** evaluate the conditional-discovery claim.
 - **Takeaway:** strong marginal edge scores are not whole-graph recovery.
-- **Visual / delivery:** contrast precision/recall near 0.9 with exact channel-set recovery in about half the worlds; retain the marginal-calibration qualification.
+- **Visual / delivery:** contrast channel-edge precision and recall with exact channel-set recovery; report the measured calibration error, not a calibration claim. There is no recalibration step.
 
-### 17 — Contributions: lower error in every condition · 105 seconds · Main
+### 16 — Contributions: lower error in every condition · 105 seconds · Main
 
 - **Purpose:** establish the practical contribution-inference result.
 - **Takeaway:** lower contribution CRPS than the regression baselines across tested conditions, while the oracle remains better.
 - **Visual / delivery:** explain what CRPS measures before comparisons. Bound the default-prior PyMC-Marketing claim and mention fit-health caveats.
 
-### 18 — Three more checks · 0 seconds · Proposed backup
-
-- **Purpose:** support questions about units, runtime and omitted inputs.
-- **Takeaway:** invariance and omission robustness are useful, but timings are indicative and missing causes are not recovered.
-- **Proposal:** keep these checks available for questions rather than adding three more headline results.
-
-### 19 — Where River falls short · 35 seconds · Main, compressed
+### 17 — Where River falls short · 35 seconds · Main, compressed
 
 - **Purpose:** prevent contribution gains from becoming a general superiority claim.
 - **Takeaway:** oracle gap, sales prediction and interval calibration remain limitations; the source of the gains is not isolated.
 - **Proposal:** summarize rather than read all numerical comparisons.
 
-### 20 — What is demonstrated, and what is not · 35 seconds · Main
+### 18 — What is demonstrated, and what is not · 35 seconds · Main
 
 - **Purpose:** state the exact scope of the causal claim.
 - **Takeaway:** restricted synthetic direct-effect inference is demonstrated; unrestricted discovery and real-business identification are not.
 - **Visual / delivery:** contrast current evidence with non-claims, without repeating all earlier caveats.
 
-### 21 — The graph slots are already in the network · 20 seconds · Main, compressed
+### 19 — The graph slots are already in the network · 20 seconds · Main, compressed
 
 - **Purpose:** motivate the next research stage.
 - **Takeaway:** richer mechanisms need new priors, new training and new evaluation; capacity is not a learned capability.
 - **Proposal:** one sentence on richer and time-varying graphs, no slot-count walkthrough.
 
-### 22 — Conclusions · 20 seconds · Main
+### 20 — Conclusions · 20 seconds · Main
 
 - **Purpose:** restate the three contributions in bounded form.
-- **Takeaway:** contribution inference, constrained structure learning and reusable inference.
+- **Takeaway:** contribution inference, constrained structure recovery and reusable inference.
 - **Visual / delivery:** concise recap, no repeated result tables.
 
-### 23 — This is just the start · 10 seconds · Main
+### 21 — This is just the start · 10 seconds · Main
 
 - **Purpose:** close and invite discussion.
 - **Visual / delivery:** paper/contact information; transition directly to the five-minute Q&A.
 
+### B1 — Flow matching turns noise into draws · Backup
+
+- **Purpose:** answer how a flow head produces posterior draws.
+- **Takeaway:** learned velocities, conditioned on the encoded dataset, turn coherent noise into draws. The router draws graphs; the decoder draws contributions for one graph.
+- **Agreed decision, implemented:** moved to backup for questions.
+
+### B2 — Three more checks · Backup
+
+- **Purpose:** support questions about units, runtime and omitted inputs.
+- **Takeaway:** tested unit invariance and omission robustness are useful, but timings are device-specific (a fitted MMM answers repeated long queries faster) and missing causes are not recovered.
+- **Agreed decision, implemented:** moved to backup for questions.
+
 ## Agreed annotation follow-up
 
-- **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Design the formula-to-DAG transition and merge the bottlenecks with branching specification choices. Not implemented yet.
+- **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Implemented as option A (agreed with Carlos): the formula becomes a DAG on slide 5, then three alternative DAGs; slide 6 names them. DAG 3 is a promotion → TV path between inputs.
 - **Slide 8:** title changed to “Use the prior to generate worlds with a known truth,” highlighting “known truth.” Speaker notes now distinguish the prior from the simulator it defines.
-- **Slides 10, 12, 13 and 16:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Separate agent-session handoff; no fact-checking performed in this session. Sources: `../MarketingFoundationalModels/`, `../pymc-generator/`, `../pymc-mfm/`, and Modal run/configuration/result artifacts. Includes context-conditioned flow matching, the final noise-coherence claim, the edge threshold, and calibration versus recalibration.
+- **Slides 10, 12, 13, 15 and B1:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Verified against pymc-mfm `32587ac` (the training revision of River-1), run `profile-c-9add72ea6d35` and the structure run; corrections applied. The issue comment holds the claim-by-claim checklist.
 - **Slide 11:** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
-- **Slide 17:** [Issue #4 — converged PyMC-Marketing results](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/4). Locate and validate comparable converged results before revising the figures or claims; availability is not assumed.
-- **Slide 20:** retain the current title, “What is demonstrated, and what is not.”
+- **Slide 16:** [Issue #4 — converged PyMC-Marketing results](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/4). No converged MMM rerun exists. Carlos decided that the deck follows the latest paper (MarketingFoundationalModels PR #36, commit `499be45`), with its fit-health caveats.
+- **Slide 18:** retain the current title, “What is demonstrated, and what is not.”
 
 ## Decisions for review
 
 1. Does the proposed 15-minute talk / 5-minute Q&A split work?
 2. Is the main emphasis contribution inference, conditional structure discovery, or an equal balance?
-3. For the short version, can the full flow-matching explanation and detailed architecture walkthrough move to backup?
+3. ~~For the short version, can the full flow-matching explanation and detailed architecture walkthrough move to backup?~~ Yes (Carlos, 3 November 2026): flow matching and the three checks are backup B1 and B2; slide 12 is a five-step overview.
 4. Which two result visuals should the audience remember?

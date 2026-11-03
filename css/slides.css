@@ -226,8 +226,8 @@
 .slide-test .td-k { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
 
 /* --- B2 Stats (backup) --------------------------------------------------------------------- */
-.slide-stats .stats { margin-top: 40px; }
-.slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 26px 0; }
+.slide-stats .stats { margin-top: 28px; }
+.slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 20px 0; }
 .slide-stats .stat-num { font-size: 76px; }
 .slide-stats .stat-num sup { font-size: .5em; vertical-align: .9em; letter-spacing: 0; }
 .slide-stats .stat-head { font-size: 25px; }
