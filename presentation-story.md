@@ -14,7 +14,7 @@ This is the shared editorial plan: chapter intent, slide purpose and agreed narr
 - Record agreed decisions here and implement relevant HTML/CSS/JavaScript changes in the same PR.
 - Review the rendered slides as well as the Markdown diff. Cosmetic-only changes need no narrative update.
 - Keep this document focused on intent and takeaways, rather than duplicating the slide text. Renumber references when slides move.
-- Backup slides follow the closing slide. They are numbered B1 and B2 and do not count in the page total.
+- Backup slides B1 and B2 follow the closing slide but stay hidden during the talk (Carlos, 3 November 2026): arrows, End and the overview never reach them. They open only by address (`#/22`, `#/23`) if a question needs them.
 
 **Central message:** River learns inference across simulated marketing worlds, then estimates contributions and uncertainty over permitted causal graphs without a new fit. The results are promising within a restricted setting—not evidence of unrestricted causal discovery.
 
@@ -201,13 +201,13 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** evaluate the conditional-discovery claim.
 - **Takeaway:** strong marginal edge scores are not whole-graph recovery.
-- **Visual / delivery:** contrast channel-edge precision and recall with exact channel-set recovery; report the measured calibration error, not a calibration claim. There is no recalibration step.
+- **Visual / delivery:** contrast channel-edge precision and recall with exact channel-set recovery; report the measured calibration error, not a calibration claim. There is no recalibration step. All panels show the three context lengths, 99, 185 and 207 weeks.
 
 ### 16 — Contributions: lower error in every condition · 105 seconds · Main
 
 - **Purpose:** establish the practical contribution-inference result.
-- **Takeaway:** lower contribution CRPS than the regression baselines across tested conditions, while the oracle remains better.
-- **Visual / delivery:** explain what CRPS measures before comparisons. Bound the default-prior PyMC-Marketing claim and mention fit-health caveats.
+- **Takeaway:** lower mean contribution CRPS than PathMC, OLS and the native PyMC-Marketing MMM in every tested condition and at all three horizons, while the oracle remains better.
+- **Visual / delivery:** explain what CRPS measures before comparisons. Every comparison shows all four methods, PyMC-Marketing included, and all three context lengths. Bound the default-prior PyMC-Marketing claim and mention fit-health caveats.
 
 ### 17 — Where River falls short · 35 seconds · Main, compressed
 

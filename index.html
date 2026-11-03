@@ -508,9 +508,9 @@
   <p class="source r">Section 4.3, Figure 3 and Appendix C.10 of the paper; reliability bins from the structure study of run pr29-final-full-e35866e (router, channel edges, 2,048 draws per view).</p>
   <aside class="notes">
     <p>The headline causal result. Good edge-level scores do not mean every graph is right. We report both.</p>
-    <p>Step 1: precision and recall 0.89 and 0.90 with 99 context weeks; 0.92 and 0.87 with 207. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
-    <p>Step 2: reliability diagram from the actual bins of the structure run. Channel edges only. In the lowest bin the probabilities are too low: edges with a probability of about 0.03 are present in about 11% of cases. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
-    <p>Step 3: exact channel set in 45% and 49% of worlds; channels and controls together in 17% and 19%. The paper also reports 185 context weeks: precision 0.89, recall 0.91, exact channel set 51%. The true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
+    <p>Step 1: precision and recall 0.89 and 0.90 with 99 context weeks, 0.89 and 0.91 with 185, and 0.92 and 0.87 with 207. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
+    <p>Step 2: reliability diagram from the actual bins of the structure study, for all three context lengths. Channel edges only. ECE is 0.040, 0.039 and 0.067. At 99 and 207 context weeks, the lowest bin is too low: edges with a probability of about 0.03 are present in about 11% of cases; at 185 weeks, in about 7%. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
+    <p>Step 3: exact channel set in 45%, 51% and 49% of worlds; channels and controls together in 17%, 19% and 19%. The true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
   </aside>
 </section>
 
@@ -521,17 +521,17 @@
     <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
     <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
     <div class="flow-text">
-      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest mean error. It has a lower score than both regressions in 63 of 100 worlds.</p></div>
-      <div data-step-only="1"><p class="body">River has the lowest mean error in all five conditions and at all three horizons, also when the largest-effect channel or control is hidden. The plot shows 99 and 207 context weeks.</p></div>
+      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest mean error of the four methods, PyMC-Marketing included. It has a lower score than both regressions in 63 of 100 worlds.</p></div>
+      <div data-step-only="1"><p class="body">River has the lowest mean error of the four methods in all five conditions and at all three horizons, also when the largest-effect channel or control is hidden.</p></div>
       <div data-step-only="2"><p class="body">Against a PyMC-Marketing model with default priors and a time-varying intercept, River’s mean channel CRPS is less than half of the MMM’s. The test uses the 100 full-input worlds.</p></div>
     </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <p class="source r">Section 4.2 and Tables 12 and 20 of the paper. CRPS of window-mean contributions on the context sales scale. Lower is better. The plots show 99 and 207 of the three context lengths.</p>
+  <p class="source r">Section 4.2 and Tables 12 and 20 of the paper. CRPS of window-mean contributions on the context sales scale. Lower is better.</p>
   <aside class="notes">
     <p>CRPS scores a whole distribution against the true value. Lower is better.</p>
     <p>Step 0: with full inputs and 99 context weeks, the means are 0.0295 for River, 0.0370 for PathMC, 0.2136 for OLS and 0.0659 for the native MMM.</p>
-    <p>Step 1: five conditions. The plot shows 99 and 207 context weeks; the paper also reports 185. River has a lower mean than PathMC, OLS and the native MMM in all 15 rows of Table 12. A lower mean is not a win in every world: River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
+    <p>Step 1: five conditions and all three context lengths: 99, 185 and 207 weeks. The fourth dot is the native PyMC-Marketing MMM of Table 12. River has a lower mean than PathMC, OLS and the native MMM in all 15 rows. A lower mean is not a win in every world: River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
     <p>Step 2: a separate study on the 100 full-input worlds. PyMC-Marketing 1.2 uses a time-varying intercept, eight-lag geometric adstock, logistic saturation and library-default priors. Each fit uses eight chains of 500 draws. The MMM/River ratio of mean channel CRPS is 2.11 at 99 context weeks, 2.44 at 185 and 2.20 at 207. These are ratios of cohort means, not typical world-level ratios. 288 of the 300 MMM fits fail at least one health criterion. None is excluded. The scores describe this configured procedure, not a converged MMM. River runs separately in this study, so its values differ slightly from step 1.</p>
   </aside>
 </section>
@@ -614,7 +614,7 @@
     <p class="eyebrow r">Conclusions</p>
     <h2 class="h2 r">Three bounded results<br><span class="accent-2">in the tested synthetic setting</span></h2>
     <ol class="points">
-      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than both regressions in all five conditions and at all three horizons. Less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
+      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than PathMC, OLS and PyMC-Marketing in all five conditions and at all three horizons. In a separate study, less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
       <li class="r"><span class="n">02</span><span class="t">Constrained structure recovery<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds; the sampled graphs contain the true graph in most worlds.</small></span></li>
       <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves new datasets with no new fit. Tested positive changes of units do not change the answer.</small></span></li>
     </ol>

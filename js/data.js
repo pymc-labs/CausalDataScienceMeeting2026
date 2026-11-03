@@ -78,10 +78,8 @@ window.DECK_DATA = {
     casesPerCondition: 100,
     distinctWorlds: 300,     // full inputs and both omissions share 100 base worlds (Appendix C.10: 300 base worlds)
     views: 1500,             // 500 cases x 3 horizons (Section 4.1)
-    // The two horizons drawn in the result scenes (slides 15 and 16; the scenes have two colours).
-    horizons: [{ context: 99, query: 109 }, { context: 207, query: 1 }],
-    // All horizons of the paper (Section 4.1); 185 is in the tables and slide 14, not in the plots.
-    paperHorizons: [{ context: 99, query: 109 }, { context: 185, query: 23 }, { context: 207, query: 1 }],
+    // The three horizons of the paper (Section 4.1), drawn in the result scenes of slides 15 and 16.
+    horizons: [{ context: 99, query: 109 }, { context: 185, query: 23 }, { context: 207, query: 1 }],
     conditionNames: ['Full inputs', 'In-sample saturation recovery', 'Smooth baseline', 'Omitted channel', 'Omitted control'],
     outOfPrior: ['Omitted channel', 'Omitted control']
   },
@@ -90,22 +88,24 @@ window.DECK_DATA = {
   // window-mean contributions, mean over the n defined worlds, context sales scale (lower is better).
   // Run pr29-final-full-e35866e, experiments/benchmark/results at 10b785a.
   // wins: strictly lower than PathMC and OLS on the same world ("Joint wins P and O"; excludes MMM).
-  // mmm: native PyMC-Marketing column of Table 12 (not plotted).
-  // Plotted horizons only (99, 207). Table 12 rows at context 185 (River / PathMC / OLS / MMM, wins):
-  //   Full inputs 0.0241 / 0.0365 / 0.1322 / 0.0580, 52/100; In-sample saturation 0.0279 / 0.0433 / 0.1586 / 0.0647, 61/100;
-  //   Smooth baseline 0.0283 / 0.0541 / 0.0836 / 0.0438, 62/100; Omitted channel 0.0203 / 0.0356 / 0.0915 / 0.0522, 45/84;
-  //   Omitted control 0.0252 / 0.0430 / 0.1290 / 0.0611, 49/100.
+  // mmm: native PyMC-Marketing column of Table 12 (the MMM runs in all five conditions).
+  // Rows per condition in horizon order 99, 185, 207 (the dot plot groups consecutive rows).
   // Section 4.2: River beats both PathMC and OLS in a majority of worlds in 11 of 15 rows.
   crpsChannels: [
     { condition: 'Full inputs', context: 99, n: 100, mfm: 0.0295, pathmc: 0.0370, ols: 0.2136, mmm: 0.0659, wins: '63/100' },
+    { condition: 'Full inputs', context: 185, n: 100, mfm: 0.0241, pathmc: 0.0365, ols: 0.1322, mmm: 0.0580, wins: '52/100' },
     { condition: 'Full inputs', context: 207, n: 100, mfm: 0.0263, pathmc: 0.0396, ols: 0.1175, mmm: 0.0596, wins: '48/100' },
     { condition: 'In-sample saturation', context: 99, n: 100, mfm: 0.0313, pathmc: 0.0444, ols: 0.2342, mmm: 0.0699, wins: '73/100' },
+    { condition: 'In-sample saturation', context: 185, n: 100, mfm: 0.0279, pathmc: 0.0433, ols: 0.1586, mmm: 0.0647, wins: '61/100' },
     { condition: 'In-sample saturation', context: 207, n: 100, mfm: 0.0268, pathmc: 0.0477, ols: 0.1857, mmm: 0.0629, wins: '58/100' },
     { condition: 'Smooth baseline', context: 99, n: 100, mfm: 0.0325, pathmc: 0.0512, ols: 0.1065, mmm: 0.0612, wins: '70/100' },
+    { condition: 'Smooth baseline', context: 185, n: 100, mfm: 0.0283, pathmc: 0.0541, ols: 0.0836, mmm: 0.0438, wins: '62/100' },
     { condition: 'Smooth baseline', context: 207, n: 100, mfm: 0.0278, pathmc: 0.0512, ols: 0.0933, mmm: 0.0403, wins: '63/100' },
     { condition: 'Omitted channel', context: 99, n: 84, mfm: 0.0249, pathmc: 0.0286, ols: 0.1708, mmm: 0.0675, wins: '49/84' },
+    { condition: 'Omitted channel', context: 185, n: 84, mfm: 0.0203, pathmc: 0.0356, ols: 0.0915, mmm: 0.0522, wins: '45/84' },
     { condition: 'Omitted channel', context: 207, n: 84, mfm: 0.0224, pathmc: 0.0360, ols: 0.0947, mmm: 0.0543, wins: '37/84' },
     { condition: 'Omitted control', context: 99, n: 100, mfm: 0.0315, pathmc: 0.0403, ols: 0.2079, mmm: 0.0670, wins: '62/100' },
+    { condition: 'Omitted control', context: 185, n: 100, mfm: 0.0252, pathmc: 0.0430, ols: 0.1290, mmm: 0.0611, wins: '49/100' },
     { condition: 'Omitted control', context: 207, n: 100, mfm: 0.0275, pathmc: 0.0463, ols: 0.1178, mmm: 0.0575, wins: '50/100' }
   ],
 
@@ -193,7 +193,7 @@ window.DECK_DATA = {
   // Section 4.5, Appendix C.12 and Table 22 of the paper (PR #36, commit 499be45): query latency.
   // Study query_timing, run pr29-final-full-e35866e (experiments/query_timing/results at 10b785a):
   // 100 twelve-channel, three-control worlds (not the benchmark worlds); 4,000 returned trajectories
-  // per call; medians over worlds, in seconds; keys are context weeks (query weeks: evaluation.paperHorizons).
+  // per call; medians over worlds, in seconds; keys are context weeks (query weeks: evaluation.horizons).
   // River uses CUDA, the native MMM uses CPU, in paired L4 containers with eight CPU cores.
   // Device-specific: the paper says these times do not establish an end-to-end speedup.
   // The old 1,200-draw headline (0.39 s, about 190x) is historical (Appendix C.14).

@@ -4,9 +4,11 @@
                             1 edge-by-edge precision and recall
                             2 reliability of the edge probabilities
                             3 exact-set recovery, one cell per world
-     crps      · slide 16   0 full inputs, 99 context weeks: three bars
+     crps      · slide 16   0 full inputs, 99 context weeks: four bars (River,
+                              PathMC, OLS, PyMC-Marketing)
                             1 the bars fold into a dot plot of every condition
-                            2 River against PyMC-Marketing
+                              and all three horizons
+                            2 River against the separate PyMC-Marketing study
    Every number on screen is read from window.DECK_DATA. The graph of
    structure step 0 is illustrative and says so on screen.
 
@@ -43,9 +45,13 @@
     ols: 'rgba(12, 31, 64, .35)'
   };
 
-  // The two plotted horizons (99 and 207 context weeks): aqua, then peri. The paper also reports 185 (not plotted).
+  // The three horizons in paper order (99, 185, then 207 context weeks): aqua, peri, then navy.
   var CTX = D.evaluation.horizons.map(function (h) { return h.context; });
-  var SERIES = [{ deep: C.aquaDeep, light: C.aqua }, { deep: C.periDeep, light: C.peri }];
+  var SERIES = [
+    { deep: C.aquaDeep, light: C.aqua },
+    { deep: C.periDeep, light: C.peri },
+    { deep: C.ink, light: 'rgba(12, 31, 64, .22)' }
+  ];
   var WORLDS = D.evaluation.casesPerCondition;
 
   /* ---- Small helpers ------------------------------------------------------------ */
@@ -412,9 +418,11 @@
     var svg = P.svg;
     var X0 = 210;
     var X1 = 730;
-    var BAR = 46;
-    var TOP = 150;
-    var GROUP = 236;
+    var BAR = 36;
+    var TOP = 128;
+    var GROUP = 176;
+    var ROW0 = 44;     // first bar below the group title
+    var ROW = 50;      // precision to recall
     function x(v) { return X0 + (X1 - X0) * v; }
 
     var head = text(svg, X0, 62, 'channel edges \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
@@ -425,7 +433,7 @@
       var y0 = TOP + gi * GROUP;
       var title = tint(text(svg, X0, y0, ctx + ' context weeks', 't-lab t-strong'), col);
       [['precision', s.precision], ['recall', s.recall]].forEach(function (m, mi) {
-        var yc = y0 + 52 + mi * 66;
+        var yc = y0 + ROW0 + mi * ROW;
         var g = svgEl('g', null, svg);
         text(g, X0 - 20, yc + 7, m[0], 't-lab', { 'text-anchor': 'end' });
         svgEl('rect', { x: X0, y: yc - BAR / 2, width: X1 - X0, height: BAR, fill: C.wash }, g);
@@ -435,21 +443,21 @@
       });
       return title;
     });
-    var ay = TOP + GROUP + 52 + 66 + BAR / 2 + 28;
+    var ay = TOP + (CTX.length - 1) * GROUP + ROW0 + ROW + BAR / 2 + 26;
     var axis = svgEl('g', null, svg);
     svgEl('line', { x1: X0, x2: X1, y1: ay, y2: ay, stroke: C.ink3, 'stroke-width': 1 }, axis);
     [0, 0.5, 1].forEach(function (v) {
       svgEl('line', { x1: x(v), x2: x(v), y1: ay, y2: ay + 7, stroke: C.ink3, 'stroke-width': 1 }, axis);
       text(axis, x(v), ay + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
     });
-    var note = text(svg, X0, ay + 96, 'edge included when marginal probability \u2265 0.5', 't-mono');
+    var note = text(svg, X0, ay + 80, 'edge included when marginal probability \u2265 0.5', 't-mono');
 
-    P.duration = 2300;
+    P.duration = 2500;
     P.render = function (t) {
       reveal(head, seg(t, 0, 600, ease.out));
-      titles.forEach(function (e, gi) { reveal(e, seg(t, 80 + gi * 340, 600, ease.out)); });
+      titles.forEach(function (e, gi) { reveal(e, seg(t, 80 + gi * 300, 600, ease.out)); });
       rows.forEach(function (r) {
-        var st = 260 + r.gi * 340 + r.mi * 100;
+        var st = 260 + r.gi * 300 + r.mi * 100;
         alpha(r.g, seg(t, st - 160, 500, ease.out));
         var k = seg(t, st, 1300, ease.outExpo);
         setAttr(r.bar, 'width', px2((X1 - X0) * r.v * k));
@@ -457,12 +465,12 @@
         setText(r.val, (r.v * k).toFixed(2));
       });
       alpha(axis, seg(t, 300, 700, ease.out));
-      reveal(note, seg(t, 1500, 700, ease.out));
+      reveal(note, seg(t, 1900, 600, ease.out));
     };
     return P;
   }
 
-  // Step 2: reliability diagram of the channel edge probabilities, both horizons.
+  // Step 2: reliability diagram of the channel edge probabilities, all three horizons.
   function buildReliability(host) {
     var P = new Panel(host);
     var svg = P.svg;
@@ -500,7 +508,8 @@
     }, svg);
     var diagLabel = text(svg, px(1) + 26, py(1) + 5, 'calibrated', 't-mono');
 
-    var labelAt = [{ p: 0.62, f: 0.25 }, { p: 0.03, f: 0.93 }];
+    // Labels stack in the empty lower-right corner, one per horizon, top to bottom.
+    var labelAt = [{ p: 0.56, f: 0.36 }, { p: 0.56, f: 0.22 }, { p: 0.56, f: 0.08 }];
     var series = CTX.map(function (ctx, si) {
       var bins = D.structure.reliability[ctx];
       var col = SERIES[si];
@@ -524,12 +533,12 @@
       var at = labelAt[si];
       var label = svgEl('g', null, svg);
       tint(text(label, px(at.p), py(at.f), ctx + ' context weeks', 't-lab t-strong'), col.deep);
-      text(label, px(at.p), py(at.f) + 30, 'ECE ' + D.structure.channels[ctx].ece.toFixed(2), 't-val');
+      text(label, px(at.p), py(at.f) + 30, 'ECE ' + D.structure.channels[ctx].ece.toFixed(3), 't-val');
       return { path: path, dots: dots, pts: pts, frac: frac, total: total, label: label };
     });
     var note = text(svg, X0, AX + 122, 'channel edges \u00b7 point area \u221d edges in the bin', 't-mono');
 
-    P.duration = 2900;
+    P.duration = 3500;
     P.render = function (t) {
       reveal(frame, seg(t, 0, 700, ease.out));
       var kd = seg(t, 150, 1000, ease.inOut);
@@ -538,7 +547,7 @@
       alpha(diag, kd > 0 ? 1 : 0);
       alpha(diagLabel, seg(t, 950, 500, ease.out));
       series.forEach(function (s, si) {
-        var st = 520 + si * 700;
+        var st = 520 + si * 560;
         var k = seg(t, st, 1300, ease.inOut);
         alpha(s.path, k > 0 ? 1 : 0);
         setAttr(s.path, 'stroke-dashoffset', px2(s.total * (1 - k)));
@@ -550,7 +559,7 @@
         });
         reveal(s.label, seg(t, st + 1000, 600, ease.out));
       });
-      reveal(note, seg(t, 2300, 600, ease.out));
+      reveal(note, seg(t, 2900, 600, ease.out));
     };
     return P;
   }
@@ -559,12 +568,12 @@
   function buildWaffles(host) {
     var P = new Panel(host);
     var svg = P.svg;
-    var CELL = 19;
-    var GAP = 5;
+    var CELL = 15;
+    var GAP = 4;
     var N = 10;
     var SIZE = N * CELL + (N - 1) * GAP;
-    var COLX = [30, 490];
-    var TOP = [118, 432];
+    var COLX = [0, 318, 636];
+    var TOP = [120, 410];
     var STEP_MS = 14;
     var defs = [
       { title: 'Exact live-channel set', vals: CTX.map(function (c) { return D.structure.channels[c].exact; }) },
@@ -587,8 +596,8 @@
           svgEl('rect', { x: x, y: y, width: CELL, height: CELL, rx: 3, fill: C.wash }, grid);
           if (k < count) fills.push(svgEl('rect', { x: x, y: y, width: CELL, height: CELL, rx: 3, fill: SERIES[ci].deep, opacity: 0 }, svg));
         }
-        var num = text(svg, COLX[ci] + SIZE + 24, top + 48, '0', 't-count');
-        var of = text(svg, COLX[ci] + SIZE + 26, top + 78, 'of ' + WORLDS, 't-mono');
+        var num = text(svg, COLX[ci] + SIZE + 20, top + 48, '0', 't-count');
+        var of = text(svg, COLX[ci] + SIZE + 22, top + 78, 'of ' + WORLDS, 't-mono');
         waffles.push({ ri: ri, ci: ci, grid: grid, fills: fills, num: num, of: of });
       });
       return title;
@@ -670,13 +679,15 @@
   /* ==========================================================================
      Slide 16 · crps
      ========================================================================== */
+  // Every method of Table 12. The native PyMC-Marketing MMM runs in all five conditions.
   var METHODS = [
     { key: 'mfm', name: 'River', fill: C.aquaDeep },
     { key: 'pathmc', name: 'PathMC', fill: C.peri },
-    { key: 'ols', name: 'OLS', fill: C.ols }
+    { key: 'ols', name: 'OLS', fill: C.ols },
+    { key: 'mmm', name: 'PyMC-Marketing', fill: C.ink }
   ];
 
-  // Steps 0 and 1: three bars for full inputs at 99 context weeks, which fold into
+  // Steps 0 and 1: four bars for full inputs at 99 context weeks, which fold into
   // the first row of a dot plot over every condition and horizon (shared x scale).
   function buildCrps(host) {
     var P = new Panel(host);
@@ -692,8 +703,8 @@
     function x(v) { return X0 + (X1 - X0) * v / DMAX; }
 
     // --- state 0: bars
-    var BAR = 58;
-    var barY = [262, 366, 470];
+    var BAR = 50;
+    var barY = [236, 326, 416, 506];
     var head0 = svgEl('g', null, svg);
     text(head0, X0, 118, first.condition.toLowerCase() + ' \u00b7 ' + first.context + ' context weeks', 't-mono');
     text(head0, X0, 148, 'CRPS \u00b7 lower is better', 't-mono');
@@ -703,12 +714,12 @@
       var val = text(svg, X0, barY[k] + 9, '', 't-val');
       return { v: first[m.key], name: name, rect: rect, val: val };
     });
-    var wins = text(svg, X0, 580, 'joint wins over both: ' + first.wins, 't-mono');
+    var wins = text(svg, X0, 590, 'joint wins over both regressions: ' + first.wins, 't-mono');
 
     // --- state 1: dot plot. Rows come in condition groups, one row per horizon.
-    var ROW = 48;
-    var GROUP = (CTX.length - 1) * ROW + 64;
-    var RY0 = 152;
+    var ROW = 34;
+    var GROUP = (CTX.length - 1) * ROW + 40;
+    var RY0 = 140;
     var LABEL_X = 222;
     var CTX_X = 280;
     var groupOf = [];
@@ -727,13 +738,14 @@
       text(grid, x(v), axisY + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
     });
     svgEl('line', { x1: X0, x2: X1, y1: axisY, y2: axisY, stroke: C.ink3, 'stroke-width': 1 }, grid);
-    text(grid, X0, axisY + 72, 'query channel CRPS \u00b7 lower is better', 't-mono');
+    text(grid, X0, axisY + 60, 'query channel CRPS \u00b7 lower is better', 't-mono');
     text(grid, CTX_X, RY0 - 40, 'context', 't-mono t-small', { 'text-anchor': 'end' });
 
+    var LEG_X = [230, 350, 480, 580];   // name widths differ, so the legend is placed by hand
     var legend = METHODS.map(function (m, k) {
       var g = svgEl('g', null, svg);
-      svgEl('circle', { cx: X0 + 8 + k * 150, cy: 66, r: 8, fill: m.fill }, g);
-      text(g, X0 + 26 + k * 150, 73, m.name, 't-lab t-ink');
+      svgEl('circle', { cx: LEG_X[k] + 8, cy: 66, r: 8, fill: m.fill }, g);
+      text(g, LEG_X[k] + 26, 73, m.name, 't-lab t-ink');
       return g;
     });
     var dotRows = rows.map(function (r, i) {
@@ -809,10 +821,12 @@
       setAttr(top.range, 'x2', px2(hi0));
       alpha(top.range, seg(m, 0.45, 0.3) * build);
 
-      // The other nine rows arrive in reading order, their dots sliding out from zero.
+      // The other rows arrive in reading order, their dots sliding out from zero. Their
+      // starts spread over m = 0.5..0.7, so every row is complete by m = 1.
+      var spread = 0.2 / Math.max(1, dotRows.length - 2);
       for (var i = 1; i < dotRows.length; i++) {
         var row = dotRows[i];
-        var m0 = 0.5 + (i - 1) * 0.025;
+        var m0 = 0.5 + (i - 1) * spread;
         var a = seg(m, m0, 0.3, ease.inOut) * seg(t, 200 + i * 70, 600, ease.out);
         var slide = Math.min(seg(m, m0, 0.3, ease.outQuart), seg(t, 260 + i * 70, 1100, ease.outExpo));
         alpha(row.labels, a);
@@ -857,7 +871,7 @@
     return P;
   }
 
-  // Step 2: channel CRPS of River against PyMC-Marketing at the two plotted horizons.
+  // Step 2: channel CRPS of River against PyMC-Marketing at all three horizons.
   function buildMmm(host) {
     var P = new Panel(host);
     var svg = P.svg;
@@ -868,7 +882,7 @@
     var max = Math.max.apply(null, rows.map(function (r) { return r.pymc; }));
     var X0 = 230;
     var X1 = 700;
-    var BAR = 44;
+    var BAR = 36;
     function x(v) { return X0 + (X1 - X0) * v / max; }
 
     // The takeaway sits under the bars and arrives last, after the ratios.
@@ -879,9 +893,9 @@
     text(head, X0 + 2, 616, 'River\u2019s channel CRPS against the MMM\u2019s \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
 
     var groups = rows.map(function (r, gi) {
-      var y0 = 64 + gi * 224;
-      var yM = y0 + 46;
-      var yR = y0 + 108;
+      var y0 = 48 + gi * 150;
+      var yM = y0 + 40;
+      var yR = y0 + 90;
       var title = tint(text(svg, X0, y0, r.context + ' context weeks', 't-lab t-strong'), SERIES[gi].deep);
       var mmm = {
         v: r.pymc,
@@ -919,12 +933,12 @@
     text(note, X0 + 2, 666, 'PyMC-Marketing ' + pm.version + ' \u00b7 default priors \u00b7 time-varying intercept', 't-mono t-small');
     text(note, X0 + 2, 690, pm.unhealthyFits + ' fits failed \u2265 1 health check \u00b7 none excluded', 't-mono t-small');
 
-    P.duration = 3600;
+    P.duration = 3900;
     P.render = function (t) {
-      alpha(rule, seg(t, 2300, 700, ease.out));
-      reveal(head, seg(t, 2500, 800, ease.out));
+      alpha(rule, seg(t, 2600, 700, ease.out));
+      reveal(head, seg(t, 2800, 800, ease.out));
       groups.forEach(function (g, gi) {
-        var o = gi * 300;
+        var o = gi * 260;
         reveal(g.title, seg(t, 200 + o, 600, ease.out));
         g.bars.forEach(function (b, bi) {
           var st = 380 + o + bi * 360;
@@ -943,7 +957,7 @@
         alpha(g.tip, seg(kl, 0.85, 0.15));
         reveal(g.ratio, seg(t, 2150 + o, 600, ease.out));
       });
-      reveal(note, seg(t, 2900, 600, ease.out));
+      reveal(note, seg(t, 3200, 600, ease.out));
     };
     return P;
   }

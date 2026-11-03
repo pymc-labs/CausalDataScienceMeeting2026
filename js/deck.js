@@ -15,8 +15,9 @@
      </section>
    Steps run 0..N. Next advances the step, then the slide. Previous goes back
    one step; from step 0 it lands on the last step of the previous slide.
-   Backup slides (data-backup) come after the main talk. They are numbered
-   B1, B2, … and do not count in the page total or the progress bar.
+   Backup slides (data-backup) come after the main talk and stay hidden during it:
+   Next, End and the overview never reach them; only the address (#/22) opens one.
+   They are numbered B1, B2, … and do not count in the page total or the progress bar.
 
    Scene contract (js/scenes/*.js)
      Deck.registerScene('name', {
@@ -255,7 +256,7 @@
   function next() {
     var s = slides[cur];
     if (curStep < s.steps) go(cur, curStep + 1);
-    else if (cur < slides.length - 1) go(cur + 1, 0);
+    else if (cur < (cur < mainCount ? mainCount : slides.length) - 1) go(cur + 1, 0);
   }
   function prev() {
     if (curStep > 0) go(cur, curStep - 1);
@@ -287,7 +288,7 @@
     var root = chrome.overview;
     var html = '';
     var act = null;
-    slides.forEach(function (s, idx) {
+    slides.slice(0, mainCount).forEach(function (s, idx) {
       if (s.act !== act) {
         if (act !== null) html += '</ol>';
         act = s.act;
