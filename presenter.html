@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presenter screen · CDSM 2026</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/deck.css">
+<link rel="stylesheet" href="css/presenter.css">
+</head>
+<!-- Presenter screen: the deck opens it with F or P. It shows where the talk is, what the next
+     arrow press shows, and the speaker notes. js/presenter.js keeps it in step with the deck. -->
+<body class="pv" data-theme="dark">
+  <div class="bg bg-dark"></div>
+  <header class="pv-top">
+    <p class="pv-k">Presenter screen</p>
+    <p class="pv-status" data-status>Waiting for the deck</p>
+  </header>
+  <main class="pv-main">
+    <section class="pv-now">
+      <p class="pv-k">Now</p>
+      <p class="pv-page"><span data-now-label>––</span><span class="of" data-now-of></span></p>
+      <h1 class="pv-title" data-now-title></h1>
+      <p class="pv-meta" data-now-meta></p>
+      <div class="pv-dots" data-now-dots></div>
+      <p class="pv-text" data-now-text></p>
+    </section>
+    <section class="pv-next">
+      <p class="pv-k accent">Next <span aria-hidden="true">→</span></p>
+      <h2 class="pv-title-2" data-next-title></h2>
+      <p class="pv-meta" data-next-meta></p>
+      <p class="pv-text soft" data-next-text></p>
+    </section>
+    <section class="pv-notes">
+      <p class="pv-k">Speaker notes</p>
+      <div class="pv-notes-body" data-notes></div>
+    </section>
+  </main>
+  <footer class="pv-bar">
+    <button type="button" class="pv-btn" data-cmd="prev">← Previous</button>
+    <button type="button" class="pv-btn next" data-cmd="next">Next →</button>
+    <p class="pv-help">The arrow keys and a clicker also work in this window.</p>
+  </footer>
+  <script src="js/presenter.js"></script>
+</body>
+</html>

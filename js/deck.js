@@ -20,6 +20,12 @@
    them. Only their own address opens one: #/backup/1, #/backup/2 (step: #/backup/1/2).
    They are numbered B1, B2, … and do not count in the page total or the progress bar.
 
+   Presenter screen (presenter.html, opened with F or P)
+     A second window shows the current slide and step, what the next arrow press
+     shows, and the speaker notes. The two windows talk with postMessage through
+     window.opener, so the link also works from file:// and survives a reload of
+     either window. The arrows, a clicker and its buttons drive the deck too.
+
    Scene contract (js/scenes/*.js)
      Deck.registerScene('name', {
        mount(el, api),            // once, after fonts load; el is the <section>
@@ -214,6 +220,7 @@
       emit('stepchange', { index: index, step: step, prev: prevStep, dir: sdir });
       updateProgress();
       writeHash();
+      sendState();
       return;
     }
 
@@ -252,12 +259,19 @@
     updateOverviewCurrent();
     emit('slidechange', { index: index, step: step, dir: dir, slide: target.el });
     writeHash();
+    sendState();
   }
 
+  // Where Next goes from (index, step): the next step, then the next slide. The main talk and the
+  // backups each end on their own last slide (null there).
+  function nextPos(index, step) {
+    if (step < slides[index].steps) return { index: index, step: step + 1 };
+    var end = index < mainCount ? mainCount : slides.length;
+    return index + 1 < end ? { index: index + 1, step: 0 } : null;
+  }
   function next() {
-    var s = slides[cur];
-    if (curStep < s.steps) go(cur, curStep + 1);
-    else if (cur < (cur < mainCount ? mainCount : slides.length) - 1) go(cur + 1, 0);
+    var p = nextPos(cur, curStep);
+    if (p) go(p.index, p.step);
   }
   function prev() {
     if (curStep > 0) go(cur, curStep - 1);
@@ -339,9 +353,93 @@
     hintTimer = setTimeout(function () { chrome.hint.classList.remove('on'); }, ms || 3500);
   }
 
+  /* ---- Presenter screen -------------------------------------------------------- */
+  var presenter = null;   // the presenter window, once the deck opened it or it said hello
+  function presenterOpen() { return !!presenter && !presenter.closed; }
+
+  // Opens the presenter window (or reuses it by name), on a given screen when the browser can place it.
+  function openPresenter(screen) {
+    var features = screen
+      ? 'popup,left=' + screen.availLeft + ',top=' + screen.availTop + ',width=' + screen.availWidth + ',height=' + screen.availHeight
+      : 'popup,width=1280,height=800';
+    presenter = window.open('presenter.html', 'cdsm-presenter', features);
+    return presenterOpen();
+  }
+
+  // Text that appears with a step: the first HTML fragment shown at that step, such as a caption.
+  // SVG step groups are skipped: they hold labels, not sentences.
+  function stepText(slide, step) {
+    for (var j = 0; j < slide.frags.length; j++) {
+      var f = slide.frags[j];
+      if (!(f instanceof HTMLElement)) continue;
+      var on = f.hasAttribute('data-step-only')
+        ? parseList(f.getAttribute('data-step-only')).indexOf(step) !== -1
+        : f.hasAttribute('data-step') && Number(f.getAttribute('data-step')) === step;
+      var t = on ? f.textContent.replace(/\s+/g, ' ').trim() : '';
+      if (t) return t;
+    }
+    return '';
+  }
+  function position(index, step) {
+    var s = slides[index];
+    return { label: pageLabel(index), backup: s.backup, title: s.title, act: s.act, step: step, steps: s.steps, text: stepText(s, step) };
+  }
+  function sendState() {
+    if (!presenterOpen() || cur < 0) return;
+    var notes = slides[cur].el.querySelector('.notes');
+    var p = nextPos(cur, curStep);
+    presenter.postMessage({
+      cdsm: 'deck',
+      total: pageLabel(mainCount - 1),
+      now: position(cur, curStep),
+      next: p ? position(p.index, p.step) : null,
+      sameSlide: !!p && p.index === cur,
+      notes: notes ? notes.innerHTML : ''
+    }, '*');
+  }
+  function onMessage(e) {
+    var m = e.data;
+    if (!m || m.cdsm !== 'presenter') return;
+    presenter = e.source;
+    if (m.type === 'hello') sendState();
+    else if (m.type === 'next') next();
+    else if (m.type === 'prev') prev();
+  }
+
+  // Two screens and the browser's permission to place windows (Window Management API, Chrome):
+  // the deck takes the external screen and the presenter window the other one.
+  function screenPair() {
+    if (!window.getScreenDetails || !window.screen.isExtended) return Promise.resolve(null);
+    return window.getScreenDetails().then(function (d) {
+      var deck = d.screens.filter(function (s) { return !s.isPrimary; })[0] || d.currentScreen;
+      var other = d.screens.filter(function (s) { return s !== deck; })[0];
+      return other ? { deck: deck, presenter: other } : null;
+    }).catch(function () { return null; });
+  }
+
+  // F: full screen with the presenter screen. A pop-up and full screen cannot share one key press,
+  // except full screen on a chosen screen with the window permission (Chrome's fullscreen companion
+  // window). So with two screens one press does both; otherwise the first press opens the
+  // presenter window and the next press enters full screen.
   function toggleFullscreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function () {});
-    else document.exitFullscreen();
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    screenPair().then(function (pair) {
+      if (pair) {
+        return document.documentElement.requestFullscreen({ screen: pair.deck }).then(function () {
+          if (!presenterOpen() && !openPresenter(pair.presenter)) showHint('Press P for the presenter screen', 4000);
+        });
+      }
+      if (!presenterOpen()) {
+        if (openPresenter()) showHint('Presenter screen open  ·  move it to your screen, then press F here for full screen', 6000);
+        else showHint('The browser blocked the presenter screen  ·  allow pop-ups, then press F again', 6000);
+        return;
+      }
+      return document.documentElement.requestFullscreen();
+    }).catch(function () { showHint('Press F again for full screen', 3500); });
+  }
+  function showPresenter() {
+    if (presenterOpen()) presenter.focus();
+    else if (!openPresenter()) showHint('The browser blocked the presenter screen  ·  allow pop-ups, then press P again', 5000);
   }
 
   /* ---- Point zoom: Z then click (or Alt+click) zooms the slide around a point --- */
@@ -401,6 +499,7 @@
       case 'Home': e.preventDefault(); go(0, 0); break;
       case 'End': e.preventDefault(); go(mainCount - 1, 0); break;
       case 'f': case 'F': toggleFullscreen(); break;
+      case 'p': case 'P': showPresenter(); break;
       case 'n': case 'N': toggleNotes(); break;
       case 'o': case 'O': case 'Escape': e.preventDefault(); toggleOverview(true); break;
       case 'b': case 'B': case '.': toggleBlackout(); break;
@@ -515,6 +614,7 @@
     document.addEventListener('touchend', onTouchEnd, { passive: true });
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('click', onClick);
+    window.addEventListener('message', onMessage);
     window.addEventListener('hashchange', function () {
       var h = readHash();
       if (h && (h.index !== cur || h.step !== curStep)) go(h.index, h.step);
@@ -528,7 +628,7 @@
 
     var h = readHash() || { index: 0, step: 0 };
     go(h.index, h.step);
-    showHint('← →  navigate   ·   N notes   ·   O overview   ·   Z zoom   ·   F full screen', 4200);
+    showHint('← →  navigate   ·   N notes   ·   O overview   ·   Z zoom   ·   F full screen   ·   P presenter', 4200);
     document.documentElement.classList.add('deck-ready');
   }
 

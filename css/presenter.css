@@ -1,0 +1,40 @@
+/* Presenter screen (presenter.html). Uses the deck's dark theme tokens from deck.css.
+   Left: now, then next. Right: the speaker notes, which scroll. Bottom: the two arrows. */
+.pv { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 28px; padding: 32px 56px 28px; }
+.pv > :not(.bg) { position: relative; }
+
+.pv-k { margin: 0; font: 600 13px/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--fg-3); }
+.pv-k.accent { color: var(--accent); }
+
+.pv-top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.pv-status { margin: 0; font: 400 14px/1 var(--f-mono); color: var(--hot); }
+.pv-status.on { color: var(--accent); }
+
+.pv-main { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); column-gap: 64px; min-height: 0; }
+.pv-now { grid-column: 1; grid-row: 1; }
+.pv-next { grid-column: 1; grid-row: 2; margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); }
+.pv-notes { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: column; min-height: 0; padding-left: 48px; border-left: 1px solid var(--line); }
+
+.pv-page { margin: 18px 0 0; font: 500 30px/1 var(--f-mono); color: var(--fg); }
+.pv-page .of { color: var(--fg-3); }
+.pv-title { margin: 14px 0 0; font: 400 clamp(30px, 3.2vw, 52px)/1.12 var(--f-display); font-stretch: 125%; letter-spacing: -.01em; color: var(--fg); }
+.pv-title-2 { margin: 16px 0 0; font: 400 clamp(22px, 2.1vw, 34px)/1.18 var(--f-display); font-stretch: 125%; color: var(--fg); }
+.pv-meta { margin: 12px 0 0; font: 400 15px/1.4 var(--f-mono); letter-spacing: .04em; color: var(--fg-3); }
+.pv-meta:empty { display: none; }
+.pv-dots { display: flex; gap: 8px; margin-top: 18px; }
+.pv-dots:empty { display: none; }
+.pv-dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--fg-4); }
+.pv-dots i.done { background: var(--fg-3); }
+.pv-dots i.cur { background: var(--accent); }
+.pv-text { margin: 18px 0 0; max-width: 46em; font: 300 20px/1.5 var(--f-body); color: var(--fg-2); }
+.pv-text.soft { color: var(--fg-3); }
+.pv-text:empty { display: none; }
+
+.pv-notes-body { margin-top: 18px; overflow: auto; min-height: 0; font: 300 19px/1.6 var(--f-body); color: var(--fg-2); }
+.pv-notes-body p { margin: 0 0 14px; }
+
+.pv-bar { display: flex; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--line); }
+.pv-btn { padding: 14px 26px; border: 1px solid var(--line); border-radius: 999px; background: none; font: 500 17px/1 var(--f-body); color: var(--fg); cursor: pointer; }
+.pv-btn:hover { border-color: var(--fg-3); }
+.pv-btn.next { border-color: var(--accent); color: var(--accent); }
+.pv-help { margin: 0 0 0 auto; font: 400 14px/1.4 var(--f-body); color: var(--fg-3); }

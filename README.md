@@ -18,7 +18,7 @@ cd CausalDataScienceMeeting2026
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000> in Chrome, then press **F** for full screen.
+Open <http://localhost:8000> in Chrome, then press **F** for full screen and the presenter screen (see below).
 
 In Chrome or Edge you can also open `index.html` directly (double-click it); the fonts and the navigation work from `file://`.
 
@@ -29,7 +29,8 @@ In Chrome or Edge you can also open `index.html` directly (double-click it); the
 | → ↓ Space PageDown Enter | Next build step, then next slide |
 | ← ↑ PageUp Backspace | Previous build step, then previous slide |
 | Home / End | First slide / last slide of the main talk |
-| F | Full screen |
+| F | Full screen, with the presenter screen |
+| P | Open the presenter screen (or bring it to the front) |
 | N | Speaker notes for the current slide |
 | O or Esc | Overview of all slides; click a slide to go to it |
 | Z, then click (or Alt + click) | Zoom into a point of the slide; click, Z or Esc to zoom out |
@@ -40,6 +41,22 @@ The address bar keeps the position as `#/slide/step`, for example `#/12/4`. A re
 The background lines work like the flow-line assets in `slides/elements/mono/flow_lines` of the main repository:
 each form enters from an edge or a corner of the slide and fades out on its own before it reaches the text.
 Each slide places its form in its empty space (`data-field` in `index.html`); text-heavy slides have none.
+
+## Presenter screen
+
+The presenter screen is a second window for your own display. It shows:
+
+- the current slide and step;
+- what the next arrow press shows: the next step (with its caption, when the step has one) or the next slide;
+- the speaker notes of the current slide.
+
+Its arrow keys, a clicker and its **Previous** and **Next** buttons move the deck. The deck's own keys move the presenter screen too.
+
+- **Two screens, in Chrome or Edge:** press **F** in the deck. The first time, allow the browser to manage windows on all your displays, then press **F** again. The deck fills the external screen, and the presenter screen opens on the other screen.
+- **One screen, or without that permission:** the first **F** opens the presenter screen. Move it to your display, then press **F** in the deck window for full screen. A browser does not let one key press open a window and also enter full screen.
+- If the browser blocks the window, allow pop-ups for the deck's address, then press **P**.
+
+The two windows stay linked after a reload of either window, also from `file://`.
 
 ## Narrative
 
