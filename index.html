@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/deck.css">
 <link rel="stylesheet" href="css/slides.css">
+<link rel="stylesheet" href="css/scenes/test-flow-prototype.css">
 <link rel="stylesheet" href="css/scenes/arch.css">
 <link rel="stylesheet" href="css/scenes/causal.css">
 <link rel="stylesheet" href="css/scenes/machine.css">
@@ -112,7 +113,7 @@
     <p class="eyebrow r"><span class="num">01</span>The problem</p>
     <h2 class="h1 r">Sales show what happened.<br><span class="accent-2">Not what caused it.</span></h2>
     <p class="lede r" style="margin-top:48px">Different specifications can explain similar sales histories. They can give different contributions to the same channel.</p>
-    <p class="lede fade" data-step="3" style="margin-top:28px"><strong>A good sales forecast does not tell you what each channel caused.</strong></p>
+    <p class="lede fade" data-step="3" style="margin-top:28px"><strong>An accurate sales forecast does not necessarily tell you what each channel caused.</strong></p>
   </div>
   <div class="scene-root" style="left:900px;top:200px;width:900px;height:720px"></div>
   <aside class="notes">
@@ -186,7 +187,7 @@
         <g class="dag-extra" data-step="5" style="--d:700ms">
           <circle class="dag-hidden" cx="-120" cy="46" r="15"/>
           <text class="dag-name" x="-143" y="51" text-anchor="end">Hidden demand</text>
-          <path class="dag-edge hot" d="M-120 61 L-120 87"/>
+          <path class="dag-edge hot" d="M-105 46 C-65 42 -35 60 -12 90"/>
           <path class="dag-edge hot" d="M-133 54 C-260 100 -150 196 -24 196"/>
         </g>
         <text class="dag-tag out" x="0" y="246" text-anchor="middle">× Hidden demand · outside River’s prior</text>
@@ -197,7 +198,7 @@
         <text class="dag-title" x="0" y="14" text-anchor="middle">3 · Promotions move with campaigns</text>
         <use href="#dag-base"/>
         <g class="dag-extra" data-step="5" style="--d:700ms">
-          <path class="dag-edge hot" d="M110 92 C70 30 -70 30 -107 89"/>
+          <path class="dag-edge hot" d="M103 104 L17 104"/>
         </g>
         <text class="dag-tag out" x="0" y="246" text-anchor="middle">× A path between inputs · outside River’s prior</text>
       </g>
@@ -210,13 +211,13 @@
     <p>Step 4: the same equation is a causal graph. Every arrow is an assumption: this input acts on sales directly.</p>
     <p>Step 5: three graphs that fit the same weekly data. Dashed lines are what the data show. Arrows are what we assume.</p>
     <p>One: TV and search move together. The data show the correlation, not which arrow carries the effect. River's prior contains this case.</p>
-    <p>Two: hidden demand drives both the budget and sales. Part of the "TV effect" is demand. River's prior does not contain hidden demand yet.</p>
-    <p>Three: the TV plan follows the promotion calendar. That is a path between two inputs. River's prior has no paths between inputs. Part 5 comes back to both.</p>
+    <p>Two: hidden demand drives both search spending and sales. Part of the "Search effect" is demand. River's prior does not contain hidden demand yet.</p>
+    <p>Three: search spending follows the promotion calendar. That is a path between two inputs. River's prior has no paths between inputs. Part 5 comes back to both.</p>
   </aside>
 </section>
 
 <!-- 06 · One specification -->
-<section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="4"
+<section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="3"
   data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">01</span>The problem · One specification hides model uncertainty</p>
@@ -228,32 +229,32 @@
     <div class="choice-row"><span class="choice-k">Diminishing returns</span>
       <span class="chip">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip" data-pick="a">Michaelis–Menten</span></div>
     <div class="choice-row"><span class="choice-k">Causal structure</span>
-      <span class="chip" data-pick="a">Correlated inputs</span><span class="chip" data-pick="b">Hidden demand</span><span class="chip">Promo → TV</span></div>
+      <span class="chip" data-pick="a">Correlated inputs</span><span class="chip" data-pick="b">Hidden demand</span><span class="chip">Promo → Search</span></div>
     <div class="choice-row"><span class="choice-k">Constraints</span>
       <span class="chip">Positive effects</span><span class="chip" data-pick="a">ROAS range</span><span class="chip" data-pick="b">Last year’s priors</span></div>
   </div>
   <div class="splits">
-    <div class="split-row" data-step="1"><span class="who">Analyst 1 · illustrative</span>
+    <div class="split-row" data-step="0"><span class="who">Analyst 1 · illustrative</span>
       <div class="splitbar"><span style="--w:45%" class="s-tv">TV 45%</span><span style="--w:30%" class="s-se">Search 30%</span><span style="--w:25%" class="s-so">Social 25%</span></div></div>
-    <div class="split-row" data-step="2"><span class="who">Analyst 2</span>
+    <div class="split-row" data-step="1"><span class="who">Analyst 2</span>
       <div class="splitbar"><span style="--w:20%" class="s-tv">TV 20%</span><span style="--w:50%" class="s-se">Search 50%</span><span style="--w:30%" class="s-so">Social 30%</span></div></div>
-    <p class="small" data-step="2" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers from the white paper; the structure choices follow slide 5.</p>
+    <p class="small" data-step="1" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers from the white paper; the structure choices follow slide 5.</p>
   </div>
   <div class="bma">
-    <div class="bma-eq" data-step="3">
+    <div class="bma-eq" data-step="2">
       <div class="eq" data-tex="p(C \mid \mathcal{D}, \hat m)" data-display></div>
       <p class="small">One selected specification. Its intervals ignore every other model.</p>
     </div>
-    <div class="bma-eq" data-step="4">
+    <div class="bma-eq" data-step="3">
       <div class="eq" data-tex="p(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
       <p class="small">Bayesian model averaging: uncertainty within each model <em>and</em> about the model. Each term needs its own fit.</p>
     </div>
   </div>
   <aside class="notes">
     <p>Every analysis makes four kinds of choices. One of them is the causal structure: the three graphs from the previous slide.</p>
-    <p>Steps 1 and 2: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
-    <p>Step 3: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
-    <p>Step 4: the principled answer is model averaging. But each specification needs its own fit. Observed data do not give the true contributions, and experiments cover only some effects.</p>
+    <p>Initial view and step 1: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
+    <p>Step 2: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
+    <p>Step 3: the principled answer is model averaging. But each specification needs its own fit. Observed data do not give the true contributions, and experiments cover only some effects.</p>
   </aside>
 </section>
 
@@ -430,7 +431,7 @@
     <div class="flow-text">
       <div data-step-only="0"><p class="body">The prior permits one edge from each input to sales. The true graph is not given. River infers which edges are present.</p></div>
       <div data-step-only="1"><p class="body">Each draw starts with a graph from the router.</p><div class="eq sm" data-tex="G^{(s)} \sim q^{\text{router}}_\varphi(G \mid \mathcal{D}), \quad s = 1, \dots, 256" data-display></div></div>
-      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, the calibration error of the channel-edge probabilities is 0.04 to 0.07. This does not prove calibration.</p></div>
+      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, the calibration error of the channel-edge probabilities is 0.04 to 0.07.</p></div>
       <div data-step-only="3"><p class="body">For each graph, the decoder draws contributions. An input without an edge contributes exactly zero, so each contribution posterior mixes a point mass at zero with a continuous part.</p></div>
       <div data-step-only="4"><p class="body">Together, they form the learned posterior: variation between graphs and within each graph.</p>
         <div class="eq sm" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{G} \htmlClass{tex-hot}{q^{\text{router}}_\varphi(G \mid \mathcal{D})}\; \htmlClass{tex-accent}{q^{\text{cond}}_\varphi(C \mid \mathcal{D}, G)}" data-display></div></div>
@@ -487,6 +488,100 @@
     <p>The oracle is a fitted reference with privileged information: the generating graph, the mechanism families and prior information. No analyst has it. It is not a guaranteed best case.</p>
     <p>The oracle runs on the 100 full-input worlds only. PyMC-Marketing runs in all five conditions. A separate PyMC-Marketing study also uses the 100 full-input worlds.</p>
     <p>Two of the five conditions are out of prior: we hide the largest-effect channel or control.</p>
+  </aside>
+</section>
+
+<!-- Comparison prototype · evaluation flow; original slide retained above. -->
+<section class="slide slide-test-flow" data-title="Test design — flowchart comparison" data-act="04 · Evidence" data-theme="light" data-steps="1" data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r">04 · Evidence · Comparison draft</p>
+    <h2 class="h2 r">One world. <span class="accent-2">Five analysts.</span></h2>
+  </div>
+  <svg class="eval-flow r" viewBox="0 0 1680 680" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
+    <title id="eval-flow-title">Evaluation data flow</title>
+    <desc id="eval-flow-desc">Generated inputs and context sales go to analysts. True contributions and query sales go separately to evaluation. Only the oracle receives the true graph and mechanisms, and it runs on full-input cases only. The next reveal shows five test conditions.</desc>
+    <defs>
+      <marker id="eval-flow-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#53656a"/></marker>
+      <marker id="eval-flow-hot-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#ae6645"/></marker>
+    </defs>
+    <!-- World artifacts share one enclosing group, not a separate source node. -->
+    <g role="group" aria-label="Generate a world: observations, evaluation truth and true graph">
+    <rect class="ef-box ef-world" x="210" y="35" width="340" height="505"/>
+    <text class="ef-title" x="230" y="66">Generate a world</text>
+    <rect class="ef-box ef-truth" x="230" y="80" width="300" height="65"/>
+    <text class="ef-title" x="250" y="120">True graph</text>
+    <rect class="ef-box ef-observed" x="230" y="230" width="300" height="130"/>
+    <text class="ef-title" x="250" y="266">Observed data</text>
+    <text x="250" y="303">Inputs · all weeks</text>
+    <text x="250" y="337">Sales · context only</text>
+    <rect class="ef-box ef-truth" x="230" y="420" width="300" height="100"/>
+    <text class="ef-title" x="250" y="453">Evaluation truth</text>
+    <text class="ef-small" x="250" y="480">True decomposition</text>
+    <text class="ef-small" x="250" y="505">Query sales + noise-free total</text>
+    </g>
+    <!-- A direct observed-data route becomes an explicit condition stage. -->
+    <path class="ef-bus" data-until="1" d="M530 290 H950"/>
+    <g data-step="1" transform="translate(0 150)">
+      <path class="ef-edge" d="M530 140 H600"/>
+      <rect class="ef-box ef-condition" x="600" y="45" width="300" height="400"/>
+      <text class="ef-title" x="620" y="82">Five test conditions</text>
+      <text class="ef-small" x="620" y="111">100 cases per condition</text>
+      <text x="620" y="157">Full inputs</text>
+      <text x="620" y="205">In-sample saturation</text>
+      <text x="620" y="253">Smooth baseline</text>
+      <text x="620" y="301">Omitted channel</text>
+      <text x="620" y="349">Omitted control</text>
+      <text class="ef-small" x="620" y="396">World selection / masking</text>
+      <text class="ef-small" x="620" y="423">Omissions are out of prior</text>
+      <path class="ef-bus" d="M900 250 H950"/>
+    </g>
+    <!-- Initially all five share observations; the reveal separates oracle eligibility. -->
+    <path class="ef-bus" d="M950 210 V520"/>
+    <g data-until="1">
+      <path class="ef-edge" d="M950 210 V135 H990"/>
+    </g>
+    <path class="ef-edge" d="M950 210 H990"/>
+    <path class="ef-edge" d="M950 310 H990"/>
+    <path class="ef-edge" d="M950 410 H990"/>
+    <path class="ef-edge" d="M950 520 H990"/>
+    <text class="ef-label" x="990" y="40">FIVE ANALYSTS</text>
+    <rect class="ef-box ef-truth" x="990" y="70" width="270" height="80"/>
+    <text class="ef-title" x="1010" y="103">Oracle</text>
+    <text class="ef-small" data-until="1" x="1010" y="132">True graph supplied</text>
+    <text class="ef-small" data-step="1" x="1010" y="132">100 full-input cases only</text>
+    <rect class="ef-box" x="990" y="170" width="270" height="80"/>
+    <text class="ef-title" x="1010" y="203">River</text><text class="ef-small" x="1010" y="232">Graph not supplied</text>
+    <rect class="ef-box" x="990" y="270" width="270" height="80"/>
+    <text class="ef-title" x="1010" y="303">PyMC-Marketing</text><text class="ef-small" x="1010" y="332">Default-prior MMM</text>
+    <rect class="ef-box" x="990" y="370" width="270" height="80"/>
+    <text class="ef-title" x="1010" y="403">PathMC</text><text class="ef-small" x="1010" y="432">Bayesian regression</text>
+    <rect class="ef-box" x="990" y="480" width="270" height="80"/>
+    <text class="ef-title" x="1010" y="513">OLS</text><text class="ef-small" x="1010" y="542">Linear regression</text>
+    <!-- Full inputs reach every analyst; only this condition also reaches the oracle. -->
+    <g data-step="1">
+      <path class="ef-edge" d="M900 307 H925 V135 H990"/>
+      <text class="ef-small" x="750" y="155">Full inputs only</text>
+    </g>
+    <path class="ef-edge ef-privileged" d="M530 110 H990"/>
+    <!-- Every method supplies estimates; evaluation truth takes a separate route. -->
+    <path class="ef-bus" d="M1260 110 H1340 V520 H1260 M1260 210 H1340 M1260 310 H1340 M1260 410 H1340"/>
+    <path class="ef-edge" d="M1340 290 H1400"/>
+    <text class="ef-small" x="1400" y="209">Estimates from each analyst</text>
+    <rect class="ef-box ef-world" x="1400" y="235" width="280" height="150"/>
+    <text class="ef-title" x="1420" y="272">Evaluate</text>
+    <text x="1420" y="311">Contributions</text>
+    <text x="1420" y="345">Sales predictions</text>
+    <text class="ef-small" x="1420" y="374">Compare with held-out truth</text>
+    <path class="ef-edge ef-score" d="M530 470 H575 V630 H1540 V385"/>
+    <text class="ef-small" x="1170" y="615">Truth goes only to scoring</text>
+  </svg>
+  <p class="eval-scope r">Contribution and prediction evaluation. <strong>Graph recovery is a separate study.</strong></p>
+  <aside class="notes">
+    <p>Comparison prototype. Keep the original test-design slide immediately before this one until the layout is reviewed.</p>
+    <p>The world supplies observations, evaluation truth, and privileged graph/mechanism information. Analysts receive input histories and context sales. They do not receive the true decomposition or query sales.</p>
+    <p>The oracle additionally knows the true graph, mechanism families and prior information. It runs only on the 100 full-input cases, not on all five conditions.</p>
+    <p>Initially all five analysts share the observed-data route. Step 1 inserts the five conditions: the four non-oracle analysts receive all five, while only the full-input condition also reaches the oracle. The first three describe world selection; the last two hide the largest-effect channel or control. They are not five transformations of every world. There are 300 distinct worlds across 500 cases.</p>
+    <p>The evaluator compares inferred contributions and sales predictions against their corresponding truth. This flow does not score River's graph recovery; the separate structure study does that. Three context/query horizons are unchanged from the original test design.</p>
   </aside>
 </section>
 

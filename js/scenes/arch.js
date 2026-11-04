@@ -699,8 +699,8 @@
     xMark(n0, 250, 172.8, 2, 'p');
     txt(n0, 256, 175, 'never enters the encoder', 'tm peacht', FS.lab);
 
-    tags(N, 526, 164, [
-      NET.encoderBlocks + ' blocks · width ' + NET.width + ' · ' + NET.heads + ' heads × ' + NET.headWidth,
+    tags(N, 470, 164, [
+      NET.encoderBlocks + ' blocks · ' + NET.heads + ' heads per block · ' + NET.headWidth + ' dimensions per head',
       fmtInt(NET.params) + ' parameters in the full network'
     ], { only: [1], order: 9 });
     tags(N, 776, 158, [

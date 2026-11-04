@@ -6,7 +6,16 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the current deck’s numbers and titles: 22 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Editorial slide references below retain the pre-comparison numbering: 22 main slides, then backup slides B1 and B2. A temporary flowchart comparison is inserted after editorial slide 14; the rendered deck now has 23 main slides, so subsequent rendered slide numbers are one higher until a version is selected. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
+
+## Walkthrough notes — pending changes
+
+- **Slide 13, step 2:** check whether inference preserves dependence between graph edges. Example: joint draws contain either edge A or edge B, never both; each edge then has marginal probability 0.5. These marginals do not imply independence. Verify that the contribution decoder receives complete sampled graphs, rather than graphs resampled from independent marginal edge probabilities. Clarify that the displayed marginal probabilities alone cannot show this dependence. This is an open verification question, not a confirmed defect.
+
+- **Slide 13:** this slide feels repetitive. Review its overlap with other slides and identify whether another slide should be removed or merged. No removal decision yet; keep the slides unchanged for now.
+
+- **Slide 10, step 3:** consider removing the final Simulate → Train → Use summary reveal; it may be unnecessary. Not removed yet.
+- **Deck-wide:** references to pages and equation numbers in the academic paper can be removed from the deck. Recorded for a later cleanup; references are unchanged for now.
 
 ## Review workflow
 
@@ -139,7 +148,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** define the components we want to infer, then show that the same equation hides causal choices.
 - **Takeaway:** observed sales combine baseline, channel effects, controls and noise; the same data fit several causal graphs.
-- **Visual / delivery:** highlight the equation’s terms in turn. Step 4 shows the equation as a graph of direct effects. Step 5 forks it into three graphs: correlated channels (inside River’s prior), hidden demand, and a promotion → TV path between inputs (both outside River’s prior). Arrows are assumptions; dashed lines are observed dependencies; a dashed circle is a hidden variable.
+- **Visual / delivery:** highlight the equation’s terms in turn. Step 4 shows the equation as a graph of direct effects. Step 5 forks it into three graphs: correlated channels (inside River’s prior), hidden demand driving Search and Sales, and a promotion → Search path between inputs (both outside River’s prior). Arrows are assumptions; dashed lines are observed dependencies; a dashed circle is a hidden variable.
 - **Agreed decision, implemented ([issue #2](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2), option A):** the DAGs replace the three bottleneck notes. Active terms still enlarge by 12% as well as changing color.
 
 ### 6 — Each analysis commits to one specification · 45 seconds · Main
@@ -196,6 +205,14 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Purpose:** make the evaluation interpretable before showing results.
 - **Takeaway:** methods are tested against known synthetic truth, with different scopes for different comparisons.
 - **Visual / delivery:** world → observed table → methods → scores. Mention the oracle’s privileged information.
+
+### Comparison draft after slide 14 — Evaluation data flow
+
+- **Status:** implemented for side-by-side review; not yet selected to replace slide 14. No additional speaking budget is approved.
+- **Initial view:** a “Generate a world” group contains observed data, evaluation truth, and the true graph/mechanisms. All five analysts share the observed-data route and send estimates to evaluation. A separate privileged graph/mechanism arrow goes to the oracle.
+- **Reveal 1:** insert the five conditions. The four non-oracle analysts receive all five conditions; the full-input condition also goes to the oracle, which receives only those 100 cases. Do not imply that full-input observations are exclusive to the oracle. Distinguish world selection from input masking.
+- **Scope:** contribution and prediction evaluation, not graph-recovery scoring. Keep the original horizon design and the separate structure study.
+- **Review:** compare both layouts before choosing one. The draft temporarily shifts subsequent rendered slide numbers by one; editorial numbering below is unchanged.
 
 ### 15 — Structure is partly recovered · 90 seconds · Main
 
@@ -258,7 +275,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 ## Agreed annotation follow-up
 
-- **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Implemented as option A (agreed with Carlos): the formula becomes a DAG on slide 5, then three alternative DAGs; slide 6 names them. DAG 3 is a promotion → TV path between inputs.
+- **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Implemented as option A (agreed with Carlos): the formula becomes a DAG on slide 5, then three alternative DAGs; slide 6 names them. DAG 3 is a promotion → Search path between inputs.
 - **Slide 8:** title changed to “Use the prior to generate worlds with a known truth,” highlighting “known truth.” Speaker notes now distinguish the prior from the simulator it defines.
 - **Slides 10, 12, 13, 15 and B1:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Verified against pymc-mfm `32587ac` (the training revision of River-1), run `profile-c-9add72ea6d35` and the structure run; corrections applied. The issue comment holds the claim-by-claim checklist.
 - **Slide 11:** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
