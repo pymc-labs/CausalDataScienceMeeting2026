@@ -1,20 +1,16 @@
 /* ==========================================================================
-   Results scenes, LIGHT theme.
-     structure · slide 15   0 the hidden true graph beside River's draws
-                            1 edge-by-edge precision and recall
-                            2 reliability of the edge probabilities
-                            3 exact-set recovery, one cell per world
-     crps      · slide 16   one dot plot, no steps: query channel CRPS of River,
-                              PathMC, OLS and PyMC-Marketing in every condition
-                              and at all three horizons
-   Every number on screen is read from window.DECK_DATA. The graph of
-   structure step 0 is illustrative and says so on screen.
+   Results scenes, LIGHT theme. One picture per slide, no steps.
+     structure · slide 15   one dot plot: channel-edge precision and recall, and
+                              exact-set recovery, at all three horizons
+     crps      · slide 16   one dot plot: query channel CRPS of River, PathMC,
+                              OLS and PyMC-Marketing in every condition and at
+                              all three horizons
+   Every number on screen is read from window.DECK_DATA.
 
-   Each view is a panel: an SVG laid out in stage px (940 x 800) whose build is
-   a pure function of a clock t (ms). Showing a panel runs t forward; hiding it
-   lifts it out and freezes t; a panel hidden for longer than RESET_MS builds
-   again from t = 0. Steps, jumps, reversals and re-entries therefore only
-   choose the visible panel.
+   Each picture is a panel: an SVG laid out in stage px whose build is a pure
+   function of a clock t (ms). Entering the slide runs t forward; leaving it
+   lifts the panel out and freezes t; a panel hidden for longer than RESET_MS
+   builds again from t = 0.
    ========================================================================== */
 (function () {
   'use strict';
@@ -22,11 +18,8 @@
   var D = window.DECK_DATA;
   var ease = Deck.ease;
   var NS = 'http://www.w3.org/2000/svg';
-  var VIEW_W = 940;
-  var VIEW_H = 800;
   var RESET_MS = 650;
   var ENTER = { delay: 260, lead: 160 };   // slide entrance: CSS rise delay, then the build
-  var STEP = { delay: 160, lead: 120 };    // step change
 
   var C = {
     ink: '#0C1F40',
@@ -100,11 +93,11 @@
   function setDir(root, dir) { root.style.setProperty('--rs-dir', dir < 0 ? '-1' : '1'); }
 
   /* ---- Panel: one view with a build clock ------------------------------------------ */
-  // The SVG is laid out in stage px: VIEW_W x VIEW_H unless a size is given.
+  // The SVG is laid out in stage px, w x h.
   function Panel(host, w, h) {
     this.el = document.createElement('div');
     this.el.className = 'rs-panel';
-    this.svg = svgEl('svg', { viewBox: '0 0 ' + (w || VIEW_W) + ' ' + (h || VIEW_H), 'class': 'rs-svg', 'aria-hidden': 'true' });
+    this.svg = svgEl('svg', { viewBox: '0 0 ' + w + ' ' + h, 'class': 'rs-svg', 'aria-hidden': 'true' });
     this.el.appendChild(this.svg);
     host.appendChild(this.el);
     this.t = 0;
@@ -179,500 +172,138 @@
     this.classes(false, true, false);
   };
 
-  /* ---- Quadratic edges for the schematic graphs ------------------------------------- */
-  function qAt(q, t) {
-    var u = 1 - t;
-    return {
-      x: u * u * q[0].x + 2 * u * t * q[1].x + t * t * q[2].x,
-      y: u * u * q[0].y + 2 * u * t * q[1].y + t * t * q[2].y
-    };
-  }
-  function qDir(q, t) {
-    var x = 2 * (1 - t) * (q[1].x - q[0].x) + 2 * t * (q[2].x - q[1].x);
-    var y = 2 * (1 - t) * (q[1].y - q[0].y) + 2 * t * (q[2].y - q[1].y);
-    var l = Math.hypot(x, y) || 1;
-    return { x: x / l, y: y / l };
-  }
-  // The piece of q between t0 and t1, as a quadratic of its own (blossom of the control point).
-  function qSub(q, t0, t1) {
-    var w0 = (1 - t0) * (1 - t1);
-    var w1 = (1 - t0) * t1 + t0 * (1 - t1);
-    var w2 = t0 * t1;
-    return [qAt(q, t0), {
-      x: w0 * q[0].x + w1 * q[1].x + w2 * q[2].x,
-      y: w0 * q[0].y + w1 * q[1].y + w2 * q[2].y
-    }, qAt(q, t1)];
-  }
-  // Curve parameter at distance d from the start (or from the end).
-  function qTrim(q, d, fromEnd) {
-    var ref = fromEnd ? q[2] : q[0];
-    var lo = 0;
-    var hi = 1;
-    for (var k = 0; k < 28; k++) {
-      var mid = (lo + hi) / 2;
-      var p = qAt(q, mid);
-      var dd = Math.hypot(p.x - ref.x, p.y - ref.y);
-      if (fromEnd ? dd < d : dd >= d) hi = mid; else lo = mid;
-    }
-    return fromEnd ? lo : hi;
-  }
-  function qLen(q) {
-    var len = 0;
-    var prev = q[0];
-    for (var i = 1; i <= 32; i++) {
-      var p = qAt(q, i / 32);
-      len += Math.hypot(p.x - prev.x, p.y - prev.y);
-      prev = p;
-    }
-    return len;
-  }
-  function qPath(q) {
-    return 'M' + px2(q[0].x) + ' ' + px2(q[0].y) + 'Q' + px2(q[1].x) + ' ' + px2(q[1].y) + ' ' + px2(q[2].x) + ' ' + px2(q[2].y);
-  }
-
-  // A gentle quadratic edge from disc a (radius ra) to disc b (radius rb), with an optional arrowhead.
-  function graphEdge(parent, a, b, ra, rb, o) {
-    var q = [a, { x: lerp(a.x, b.x, 0.5), y: lerp(a.y, b.y, 0.12) }, b];
-    var head = o.head || 0;
-    var tTip = qTrim(q, rb + 5, true);
-    var line = qSub(q, qTrim(q, ra + 6, false), head ? qTrim(q, rb + 5 + head * 0.7, true) : tTip);
-    var g = svgEl('g', null, parent);
-    var path = svgEl('path', { d: qPath(line), fill: 'none', stroke: o.color, 'stroke-width': o.width, 'stroke-linecap': 'round' }, g);
-    var len = qLen(line);
-    if (o.dash) path.setAttribute('stroke-dasharray', o.dash);
-    else path.setAttribute('stroke-dasharray', px2(len) + ' ' + px2(len + 2));
-    var arrow = null;
-    if (head) {
-      var tip = qAt(q, tTip);
-      var u = qDir(q, tTip);
-      var bx = tip.x - u.x * head;
-      var by = tip.y - u.y * head;
-      var nx = -u.y * head * 0.46;
-      var ny = u.x * head * 0.46;
-      arrow = svgEl('path', {
-        d: 'M' + px2(tip.x) + ' ' + px2(tip.y) + 'L' + px2(bx + nx) + ' ' + px2(by + ny) + 'L' + px2(bx - nx) + ' ' + px2(by - ny) + 'Z',
-        fill: o.color
-      }, g);
-    }
-    return { g: g, q: line, path: path, arrow: arrow, len: len };
-  }
-  // Draws a solid edge from its source: k = 0 hidden, k = 1 complete with its arrowhead.
-  function drawEdge(e, k) {
-    alpha(e.path, k > 0 ? 1 : 0);
-    setAttr(e.path, 'stroke-dashoffset', px2(e.len * (1 - k)));
-    if (e.arrow) alpha(e.arrow, seg(k, 0.82, 0.18));
-  }
-  function disc(parent, p, r, fill, stroke) {
-    return svgEl('circle', { cx: p.x, cy: p.y, r: r, fill: fill, stroke: stroke, 'stroke-width': 1.5 }, parent);
-  }
-  function lockIcon(parent, x, y, color) {
-    var g = svgEl('g', {
-      transform: 'translate(' + x + ' ' + y + ')',
-      fill: 'none', stroke: color, 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
-    }, parent);
-    svgEl('path', { d: 'M4.5 9.5V6.5a4.5 4.5 0 0 1 9 0v3' }, g);
-    svgEl('rect', { x: 1.5, y: 9.5, width: 15, height: 11.5, rx: 2.5 }, g);
-    svgEl('circle', { cx: 9, cy: 15.2, r: 1.5, fill: color, stroke: 'none' }, g);
-    return g;
+  // A slide with one panel: built on mount, played on entry, lifted out on leave.
+  function registerPanelScene(name, build) {
+    var root = null;
+    var panel = null;
+    Deck.registerScene(name, {
+      mount: function (section) {
+        root = section.querySelector('.scene-root');
+        root.classList.add('rs-root');
+        panel = build(root);
+        panel.seek(0);
+      },
+      enter: function (ctx) {
+        setDir(root, ctx.dir);
+        panel.show({ instant: ctx.instant, delay: ENTER.delay, lead: ENTER.lead });
+      },
+      leave: function (ctx) {
+        setDir(root, ctx.dir);
+        panel.hide({});
+      }
+    });
   }
 
   /* ==========================================================================
      Slide 15 · structure
      ========================================================================== */
-  var INPUTS = [
-    { name: 'TV', color: '#3E9C8C' },
-    { name: 'Search', color: '#62B5A6' },
-    { name: 'Social', color: '#92D0C4' },
-    { name: 'Promo', color: '#6874C4' },
-    { name: 'Holiday', color: '#A3ACE0' }
-  ];
-  // Illustrative example, shared with the graph-sampling slide: TV, Search and Promo act on sales.
-  var EXAMPLE_GRAPH = [1, 1, 0, 1, 0];
-  var EXAMPLE_P = [0.94, 0.90, 0.30, 0.86, 0.16];
+  var STRUCT_W = 1760;
+  var STRUCT_H = 440;
 
-  // Step 0: the true graph, hidden at inference, beside River's draws.
-  function buildSchematic(host) {
-    var P = new Panel(host);
+  // Two questions on one 0-1 scale, one dot per horizon: is each channel edge right (edge by
+  // edge), and is the whole set exactly right? A column at the right prints the range.
+  function buildStructure(host) {
+    var P = new Panel(host, STRUCT_W, STRUCT_H);
     var svg = P.svg;
-    var R = 28;
-    var RS = 36;
-    var Y0 = 236;
-    var DY = 84;
-    function layout(x0) {
-      return {
-        nodes: INPUTS.map(function (_, i) { return { x: x0 + 134, y: Y0 + i * DY }; }),
-        sales: { x: x0 + 362, y: Y0 + 2 * DY }
-      };
-    }
-    var L = layout(0);
-    var Rt = layout(520);
-
-    var defs = svgEl('defs', null, svg);
-    var veilFilter = svgEl('filter', { id: 'rs-veil', x: '-10%', y: '-10%', width: '120%', height: '120%' }, defs);
-    svgEl('feGaussianBlur', { stdDeviation: '2.2' }, veilFilter);
-
-    // Left: the true graph, stored with the world, not supplied at inference.
-    var frame = svgEl('rect', {
-      x: 0.75, y: 72, width: 418, height: 572, rx: 18,
-      fill: 'rgba(12, 31, 64, .025)', stroke: 'rgba(12, 31, 64, .3)', 'stroke-width': 1.5, 'stroke-dasharray': '6 6'
-    }, svg);
-    var headL = svgEl('g', null, svg);
-    lockIcon(headL, 28, 99, C.ink2);
-    tint(text(headL, 58, 118, 'True graph', 't-title'), C.ink2);
-    text(headL, 28, 148, 'hidden at inference', 't-mono');
-    var veil = svgEl('g', { filter: 'url(#rs-veil)' }, svg);
-    var hidEdges = svgEl('g', null, veil);
-    EXAMPLE_GRAPH.forEach(function (on, i) {
-      graphEdge(hidEdges, L.nodes[i], L.sales, R, RS, on
-        ? { color: 'rgba(12, 31, 64, .42)', width: 2.5, head: 11, dash: 'none' }
-        : { color: 'rgba(12, 31, 64, .2)', width: 1.5, dash: '6 6' });
+    var S = D.structure;
+    function byCtx(f) { return CTX.map(f); }
+    var groups = [
+      { head: 'Edge by edge \u00b7 mean over worlds', rows: [
+        { name: 'Precision', vals: byCtx(function (c) { return S.channels[c].precision; }) },
+        { name: 'Recall', vals: byCtx(function (c) { return S.channels[c].recall; }) }
+      ] },
+      { head: 'Whole set exactly right \u00b7 share of worlds', rows: [
+        { name: 'Channels', vals: byCtx(function (c) { return S.channels[c].exact; }) },
+        { name: 'Channels and controls', vals: byCtx(function (c) { return S.channelsAndControlsExact[c]; }) }
+      ] }
+    ];
+    var LABEL_X = 380;
+    var X0 = 430;
+    var X1 = 1470;
+    var VAL_X = X1 + 40;   // the range column sits clear of the scale lines
+    var HEAD = 34;         // group heading to its first row
+    var ROW = 64;
+    var GAP = 72;          // last row of a group to the next heading
+    var TICKS = [0, 0.25, 0.5, 0.75, 1];
+    function x(v) { return X0 + (X1 - X0) * v; }
+    var y = 90;
+    groups.forEach(function (g, gi) {
+      if (gi) y += GAP - ROW;
+      g.y = y;
+      y += HEAD;
+      g.rows.forEach(function (r) { r.y = y; y += ROW; });
     });
-    var hidNodes = INPUTS.map(function (inp, i) {
-      var g = svgEl('g', null, veil);
-      disc(g, L.nodes[i], R, 'rgba(12, 31, 64, .04)', 'rgba(12, 31, 64, .34)');
-      text(g, L.nodes[i].x - R - 14, L.nodes[i].y + 7, inp.name, 't-lab', { 'text-anchor': 'end' });
+    var axisY = y - ROW + HEAD;
+
+    // Scale lines run only beside each group's rows, so no line passes behind a heading.
+    var grid = svgEl('g', null, svg);
+    groups.forEach(function (g, gi) {
+      var y0 = g.rows[0].y - 18;
+      var y1 = gi === groups.length - 1 ? axisY : g.rows[g.rows.length - 1].y + 18;
+      TICKS.forEach(function (v) {
+        svgEl('line', { x1: x(v), x2: x(v), y1: y0, y2: y1, stroke: v === 0 ? C.hair : C.wash, 'stroke-width': 1 }, grid);
+      });
+    });
+    svgEl('line', { x1: X0, x2: X1, y1: axisY, y2: axisY, stroke: C.ink3, 'stroke-width': 1 }, grid);
+    TICKS.forEach(function (v) {
+      svgEl('line', { x1: x(v), x2: x(v), y1: axisY, y2: axisY + 7, stroke: C.ink3, 'stroke-width': 1 }, grid);
+      text(grid, x(v), axisY + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
+    });
+    text(grid, X1, 22, WORLDS + ' full-input worlds \u00b7 under the specified prior', 't-mono', { 'text-anchor': 'end' });
+
+    var LEG_X = [0, 90, 200];   // offsets from X0; label widths differ, so placed by hand
+    var legend = CTX.map(function (ctx, k) {
+      var g = svgEl('g', null, svg);
+      svgEl('circle', { cx: X0 + LEG_X[k] + 8, cy: 15, r: 8, fill: SERIES[k].deep }, g);
+      text(g, X0 + LEG_X[k] + 26, 22, k === CTX.length - 1 ? ctx + ' context weeks' : String(ctx), 't-lab t-ink');
       return g;
     });
-    var hidSales = svgEl('g', null, veil);
-    disc(hidSales, L.sales, RS, 'rgba(12, 31, 64, .4)', 'none');
-    text(hidSales, L.sales.x, L.sales.y + 6, 'Sales', 't-sales', { 'text-anchor': 'middle' });
+    var heads = groups.map(function (g) { return text(svg, X0, g.y, g.head, 't-cap'); });
 
-    // Between them: the question the next steps answer.
-    var ask = svgEl('g', null, svg);
-    svgEl('circle', { cx: 476, cy: L.sales.y, r: 30, fill: 'none', stroke: C.hair, 'stroke-width': 1.5 }, ask);
-    text(ask, 476, L.sales.y + 13, '?', 't-q', { 'text-anchor': 'middle' });
+    var rows = [];
+    groups.forEach(function (g, gi) {
+      g.rows.forEach(function (r) {
+        var lo = Math.min.apply(null, r.vals).toFixed(2);
+        var hi = Math.max.apply(null, r.vals).toFixed(2);
+        rows.push({
+          gi: gi,
+          vals: r.vals,
+          label: text(svg, LABEL_X, r.y + 7, r.name, 't-lab t-ink', { 'text-anchor': 'end' }),
+          range: svgEl('line', { x1: X0, x2: X0, y1: r.y, y2: r.y, stroke: C.hair, 'stroke-width': 2 }, svg),
+          // In horizon order, so the 207-week dot sits on top where two dots meet.
+          dots: r.vals.map(function (v, k) { return svgEl('circle', { cx: X0, cy: r.y, r: 9, fill: SERIES[k].deep, opacity: 0 }, svg); }),
+          val: text(svg, VAL_X, r.y + 8, lo === hi ? hi : lo + '\u2013' + hi, 't-val')
+        });
+      });
+    });
 
-    // Right: River's draws, edge opacity = how often an edge appears among the draws.
-    var headR = svgEl('g', null, svg);
-    text(headR, 534, 118, 'River\u2019s draws', 't-title');
-    text(headR, 534, 148, 'edge probabilities \u00b7 illustrative', 't-mono');
-    var edges = EXAMPLE_P.map(function (p, i) {
-      var e = graphEdge(svg, Rt.nodes[i], Rt.sales, R, RS, { color: C.ink, width: 2.5, head: 11 });
-      alpha(e.g, Math.max(0.12, p));
-      var below = Rt.nodes[i].y > Rt.sales.y;
-      e.label = text(svg, Rt.nodes[i].x + R + 12, Rt.nodes[i].y + (below ? 30 : -14), p.toFixed(2), 't-mono t-small');
-      e.p = p;
-      return e;
-    });
-    var dotsLayer = svgEl('g', null, svg);
-    edges.forEach(function (e, i) {
-      e.dots = [0, 1, 2].map(function () { return svgEl('circle', { r: 3, fill: INPUTS[i].color, opacity: 0 }, dotsLayer); });
-    });
-    var rNodes = INPUTS.map(function (inp, i) {
-      var g = svgEl('g', null, svg);
-      var c = disc(g, Rt.nodes[i], R, inp.color, inp.color);
-      text(g, Rt.nodes[i].x - R - 14, Rt.nodes[i].y + 7, inp.name, 't-lab t-ink', { 'text-anchor': 'end' });
-      return { g: g, c: c };
-    });
-    var rSales = svgEl('g', null, svg);
-    var rSalesDisc = disc(rSales, Rt.sales, RS, C.ink, C.ink);
-    text(rSales, Rt.sales.x, Rt.sales.y + 6, 'Sales', 't-sales', { 'text-anchor': 'middle' });
-
-    var flow = 0;   // 0..1, how much the travelling particles show (ramps in after the build)
     P.duration = 2300;
     P.render = function (t) {
-      alpha(frame, seg(t, 0, 700, ease.out));
-      reveal(headL, seg(t, 60, 700, ease.out));
-      hidNodes.forEach(function (g, i) { alpha(g, seg(t, 120 + i * 60, 600, ease.out)); });
-      alpha(hidSales, seg(t, 360, 600, ease.out));
-      alpha(hidEdges, seg(t, 420, 700, ease.out));
-      alpha(ask, seg(t, 760, 700, ease.out));
-      reveal(headR, seg(t, 200, 700, ease.out));
-      rNodes.forEach(function (n, i) {
-        var k = seg(t, 300 + i * 70, 650, ease.outQuart);
-        alpha(n.g, k);
-        setAttr(n.c, 'r', px2(R * (0.72 + 0.28 * k)));
-      });
-      var ks = seg(t, 620, 650, ease.outQuart);
-      alpha(rSales, ks);
-      setAttr(rSalesDisc, 'r', px2(RS * (0.72 + 0.28 * ks)));
-      edges.forEach(function (e, i) {
-        drawEdge(e, seg(t, 820 + i * 80, 900, ease.inOut));
-        alpha(e.label, seg(t, 1300 + i * 80, 500, ease.out));
-      });
-      flow = seg(t, 1700, 600);
-      if (flow === 0) edges.forEach(function (e) { e.dots.forEach(function (d) { alpha(d, 0); }); });
-    };
-    // Data flow: particles in each input's colour travel along its edge, as visible as the edge is probable.
-    P.tick = function (ms) {
-      if (flow === 0) return;
-      var s = ms / 1000;
-      edges.forEach(function (e, i) {
-        e.dots.forEach(function (d, k) {
-          var u = (s * 0.42 + k / 3 + i * 0.137) % 1;
-          var pt = qAt(e.q, u);
-          setAttr(d, 'cx', px2(pt.x));
-          setAttr(d, 'cy', px2(pt.y));
-          alpha(d, flow * e.p * Math.sin(Math.PI * u));
+      alpha(grid, seg(t, 0, 700, ease.out));
+      legend.forEach(function (g, k) { reveal(g, seg(t, 100 + k * 80, 600, ease.out)); });
+      heads.forEach(function (h, gi) { reveal(h, seg(t, 150 + gi * 500, 600, ease.out)); });
+      rows.forEach(function (row, i) {
+        var st = 250 + i * 200 + row.gi * 100;
+        var a = seg(t, st, 600, ease.out);
+        var k = seg(t, st + 60, 1100, ease.outExpo);
+        alpha(row.label, a);
+        var lo = Infinity;
+        var hi = -Infinity;
+        row.dots.forEach(function (d, j) {
+          var cx = lerp(X0, x(row.vals[j]), k);
+          lo = Math.min(lo, cx);
+          hi = Math.max(hi, cx);
+          setAttr(d, 'cx', px2(cx));
+          alpha(d, a);
         });
+        setAttr(row.range, 'x1', px2(lo));
+        setAttr(row.range, 'x2', px2(hi));
+        alpha(row.range, a);
+        reveal(row.val, seg(t, st + 800, 500, ease.out));
       });
     };
     return P;
   }
-
-  // Step 1: precision and recall of channel edges, one group per horizon.
-  function buildPrecisionRecall(host) {
-    var P = new Panel(host);
-    var svg = P.svg;
-    var X0 = 210;
-    var X1 = 730;
-    var BAR = 36;
-    var TOP = 128;
-    var GROUP = 176;
-    var ROW0 = 44;     // first bar below the group title
-    var ROW = 50;      // precision to recall
-    function x(v) { return X0 + (X1 - X0) * v; }
-
-    var head = text(svg, X0, 62, 'channel edges \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
-    var rows = [];
-    var titles = CTX.map(function (ctx, gi) {
-      var s = D.structure.channels[ctx];
-      var col = SERIES[gi].deep;
-      var y0 = TOP + gi * GROUP;
-      var title = tint(text(svg, X0, y0, ctx + ' context weeks', 't-lab t-strong'), col);
-      [['precision', s.precision], ['recall', s.recall]].forEach(function (m, mi) {
-        var yc = y0 + ROW0 + mi * ROW;
-        var g = svgEl('g', null, svg);
-        text(g, X0 - 20, yc + 7, m[0], 't-lab', { 'text-anchor': 'end' });
-        svgEl('rect', { x: X0, y: yc - BAR / 2, width: X1 - X0, height: BAR, fill: C.wash }, g);
-        var bar = svgEl('rect', { x: X0, y: yc - BAR / 2, width: 0, height: BAR, fill: col }, svg);
-        var val = text(svg, X1 + 28, yc + 13, (0).toFixed(2), 't-big');
-        rows.push({ gi: gi, mi: mi, v: m[1], g: g, bar: bar, val: val });
-      });
-      return title;
-    });
-    var ay = TOP + (CTX.length - 1) * GROUP + ROW0 + ROW + BAR / 2 + 26;
-    var axis = svgEl('g', null, svg);
-    svgEl('line', { x1: X0, x2: X1, y1: ay, y2: ay, stroke: C.ink3, 'stroke-width': 1 }, axis);
-    [0, 0.5, 1].forEach(function (v) {
-      svgEl('line', { x1: x(v), x2: x(v), y1: ay, y2: ay + 7, stroke: C.ink3, 'stroke-width': 1 }, axis);
-      text(axis, x(v), ay + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
-    });
-    var note = text(svg, X0, ay + 80, 'edge included when marginal probability \u2265 0.5', 't-mono');
-
-    P.duration = 2500;
-    P.render = function (t) {
-      reveal(head, seg(t, 0, 600, ease.out));
-      titles.forEach(function (e, gi) { reveal(e, seg(t, 80 + gi * 300, 600, ease.out)); });
-      rows.forEach(function (r) {
-        var st = 260 + r.gi * 300 + r.mi * 100;
-        alpha(r.g, seg(t, st - 160, 500, ease.out));
-        var k = seg(t, st, 1300, ease.outExpo);
-        setAttr(r.bar, 'width', px2((X1 - X0) * r.v * k));
-        alpha(r.val, seg(t, st, 250));
-        setText(r.val, (r.v * k).toFixed(2));
-      });
-      alpha(axis, seg(t, 300, 700, ease.out));
-      reveal(note, seg(t, 1900, 600, ease.out));
-    };
-    return P;
-  }
-
-  // Step 2: reliability diagram of the channel edge probabilities, all three horizons.
-  function buildReliability(host) {
-    var P = new Panel(host);
-    var svg = P.svg;
-    var X0 = 190;
-    var X1 = 730;
-    var Y0 = 600;   // f = 0
-    var Y1 = 60;    // f = 1
-    var RK = 1.25;  // radius per sqrt(edges in bin): point area is proportional to the count
-    var POP = 0.16; // share of the line's draw over which one point grows
-    function px(v) { return X0 + (X1 - X0) * v; }
-    function py(v) { return Y0 + (Y1 - Y0) * v; }
-
-    // Range-frame axes, set slightly off the data.
-    var frame = svgEl('g', null, svg);
-    var AX = Y0 + 22;
-    var AY = X0 - 22;
-    svgEl('line', { x1: px(0.5), x2: px(0.5), y1: py(0), y2: py(1), stroke: C.wash, 'stroke-width': 1 }, frame);
-    svgEl('line', { x1: px(0), x2: px(1), y1: py(0.5), y2: py(0.5), stroke: C.wash, 'stroke-width': 1 }, frame);
-    svgEl('line', { x1: px(0), x2: px(1), y1: AX, y2: AX, stroke: C.ink3, 'stroke-width': 1 }, frame);
-    svgEl('line', { x1: AY, x2: AY, y1: py(0), y2: py(1), stroke: C.ink3, 'stroke-width': 1 }, frame);
-    [0, 0.5, 1].forEach(function (v) {
-      svgEl('line', { x1: px(v), x2: px(v), y1: AX, y2: AX + 7, stroke: C.ink3, 'stroke-width': 1 }, frame);
-      text(frame, px(v), AX + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
-      svgEl('line', { x1: AY - 7, x2: AY, y1: py(v), y2: py(v), stroke: C.ink3, 'stroke-width': 1 }, frame);
-      text(frame, AY - 14, py(v) + 5, String(v), 't-mono', { 'text-anchor': 'end' });
-    });
-    text(frame, px(0.5), AX + 74, 'mean predicted probability', 't-lab', { 'text-anchor': 'middle' });
-    text(frame, 0, 0, 'observed frequency', 't-lab', {
-      'text-anchor': 'middle', transform: 'translate(' + (AY - 70) + ' ' + py(0.5) + ') rotate(-90)'
-    });
-
-    var diag = svgEl('line', {
-      x1: px(0), y1: py(0), x2: px(0), y2: py(0),
-      stroke: C.ink3, 'stroke-width': 1.25, 'stroke-dasharray': '6 6'
-    }, svg);
-    var diagLabel = text(svg, px(1) + 26, py(1) + 5, 'calibrated', 't-mono');
-
-    // Labels stack in the empty lower-right corner, one per horizon, top to bottom.
-    var labelAt = [{ p: 0.56, f: 0.36 }, { p: 0.56, f: 0.22 }, { p: 0.56, f: 0.08 }];
-    var series = CTX.map(function (ctx, si) {
-      var bins = D.structure.reliability[ctx];
-      var col = SERIES[si];
-      var g = svgEl('g', null, svg);
-      var pts = bins.map(function (b) { return { x: px(b.p), y: py(b.f), r: RK * Math.sqrt(b.n) }; });
-      var frac = [0];
-      var total = 0;
-      for (var j = 1; j < pts.length; j++) {
-        total += Math.hypot(pts[j].x - pts[j - 1].x, pts[j].y - pts[j - 1].y);
-        frac.push(total);
-      }
-      frac = frac.map(function (v) { return v / total; });
-      var path = svgEl('path', {
-        d: 'M' + pts.map(function (p) { return px2(p.x) + ' ' + px2(p.y); }).join('L'),
-        fill: 'none', stroke: col.deep, 'stroke-width': 1.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round',
-        'stroke-dasharray': px2(total) + ' ' + px2(total + 2)
-      }, g);
-      var dots = pts.map(function (p) {
-        return svgEl('circle', { cx: px2(p.x), cy: px2(p.y), r: 0, fill: col.light, 'fill-opacity': 0.82, stroke: col.deep, 'stroke-width': 1.5 }, g);
-      });
-      var at = labelAt[si];
-      var label = svgEl('g', null, svg);
-      tint(text(label, px(at.p), py(at.f), ctx + ' context weeks', 't-lab t-strong'), col.deep);
-      text(label, px(at.p), py(at.f) + 30, 'ECE ' + D.structure.channels[ctx].ece.toFixed(3), 't-val');
-      return { path: path, dots: dots, pts: pts, frac: frac, total: total, label: label };
-    });
-    var note = text(svg, X0, AX + 122, 'channel edges \u00b7 point area \u221d edges in the bin', 't-mono');
-
-    P.duration = 3500;
-    P.render = function (t) {
-      reveal(frame, seg(t, 0, 700, ease.out));
-      var kd = seg(t, 150, 1000, ease.inOut);
-      setAttr(diag, 'x2', px2(px(kd)));
-      setAttr(diag, 'y2', px2(py(kd)));
-      alpha(diag, kd > 0 ? 1 : 0);
-      alpha(diagLabel, seg(t, 950, 500, ease.out));
-      series.forEach(function (s, si) {
-        var st = 520 + si * 560;
-        var k = seg(t, st, 1300, ease.inOut);
-        alpha(s.path, k > 0 ? 1 : 0);
-        setAttr(s.path, 'stroke-dashoffset', px2(s.total * (1 - k)));
-        // Each point grows as the line reaches it, and is full size when the line is complete.
-        s.dots.forEach(function (d, j) {
-          var kj = ease.outQuart(clamp01((k - s.frac[j] * (1 - POP)) / POP));
-          setAttr(d, 'r', px2(s.pts[j].r * kj));
-          alpha(d, kj);
-        });
-        reveal(s.label, seg(t, st + 1000, 600, ease.out));
-      });
-      reveal(note, seg(t, 2900, 600, ease.out));
-    };
-    return P;
-  }
-
-  // Step 3: exact-set recovery as waffles, one cell per world, filled in sequence.
-  function buildWaffles(host) {
-    var P = new Panel(host);
-    var svg = P.svg;
-    var CELL = 15;
-    var GAP = 4;
-    var N = 10;
-    var SIZE = N * CELL + (N - 1) * GAP;
-    var COLX = [0, 318, 636];
-    var TOP = [120, 410];
-    var STEP_MS = 14;
-    var defs = [
-      { title: 'Exact live-channel set', vals: CTX.map(function (c) { return D.structure.channels[c].exact; }) },
-      { title: 'Channels and controls', vals: CTX.map(function (c) { return D.structure.channelsAndControlsExact[c]; }) }
-    ];
-    var heads = CTX.map(function (ctx, ci) {
-      return tint(text(svg, COLX[ci], 44, ctx + ' context weeks', 't-lab t-strong'), SERIES[ci].deep);
-    });
-    var waffles = [];
-    var titles = defs.map(function (d, ri) {
-      var top = TOP[ri];
-      var title = text(svg, COLX[0], top - 26, d.title, 't-lab t-ink');
-      CTX.forEach(function (ctx, ci) {
-        var count = Math.round(d.vals[ci] * WORLDS);
-        var grid = svgEl('g', null, svg);
-        var fills = [];
-        for (var k = 0; k < N * N; k++) {
-          var x = COLX[ci] + Math.floor(k / N) * (CELL + GAP);
-          var y = top + (k % N) * (CELL + GAP);
-          svgEl('rect', { x: x, y: y, width: CELL, height: CELL, rx: 3, fill: C.wash }, grid);
-          if (k < count) fills.push(svgEl('rect', { x: x, y: y, width: CELL, height: CELL, rx: 3, fill: SERIES[ci].deep, opacity: 0 }, svg));
-        }
-        var num = text(svg, COLX[ci] + SIZE + 20, top + 48, '0', 't-count');
-        var of = text(svg, COLX[ci] + SIZE + 22, top + 78, 'of ' + WORLDS, 't-mono');
-        waffles.push({ ri: ri, ci: ci, grid: grid, fills: fills, num: num, of: of });
-      });
-      return title;
-    });
-    var note = text(svg, COLX[0], TOP[1] + SIZE + 56, 'one cell = one world \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
-
-    function start(w) { return 360 + w.ri * 1050 + w.ci * 160; }
-    P.duration = 2900;   // the note finishes last unless a waffle fills longer
-    waffles.forEach(function (w) { P.duration = Math.max(P.duration, start(w) + w.fills.length * STEP_MS + 240); });
-    P.render = function (t) {
-      heads.forEach(function (e, ci) { reveal(e, seg(t, ci * 100, 600, ease.out)); });
-      titles.forEach(function (e, ri) { reveal(e, seg(t, 120 + ri * 1050, 600, ease.out)); });
-      waffles.forEach(function (w) {
-        var st = start(w);
-        alpha(w.grid, seg(t, st - 260, 500, ease.out));
-        var shown = 0;
-        w.fills.forEach(function (c, k) {
-          var a = seg(t, st + k * STEP_MS, 240, ease.out);
-          alpha(c, a);
-          if (a >= 0.5) shown++;
-        });
-        alpha(w.num, seg(t, st - 160, 400, ease.out));
-        alpha(w.of, seg(t, st - 160, 400, ease.out));
-        setText(w.num, String(shown));
-      });
-      reveal(note, seg(t, 2300, 600, ease.out));
-    };
-    return P;
-  }
-
-  (function () {
-    var root = null;
-    var panels = [];
-    var active = false;
-    var raf = 0;
-
-    function loop(ms) {
-      panels[0].tick(ms);
-      raf = requestAnimationFrame(loop);
-    }
-    function startLoop() { if (!raf) raf = requestAnimationFrame(loop); }
-    function stopLoop() {
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    }
-    function apply(step, o) {
-      var cur = Math.max(0, Math.min(panels.length - 1, step | 0));
-      panels.forEach(function (p, i) { if (i !== cur) p.hide(o); });
-      panels[cur].show(o);
-      if (active && cur === 0 && !Deck.reducedMotion) startLoop();
-      else stopLoop();
-    }
-
-    Deck.registerScene('structure', {
-      mount: function (section) {
-        root = section.querySelector('.scene-root');
-        root.classList.add('rs-root');
-        panels = [buildSchematic(root), buildPrecisionRecall(root), buildReliability(root), buildWaffles(root)];
-        panels.forEach(function (p) { p.seek(0); });
-      },
-      enter: function (ctx) {
-        active = true;
-        setDir(root, ctx.dir);
-        apply(ctx.step, { instant: ctx.instant, delay: ENTER.delay, lead: ENTER.lead });
-      },
-      step: function (ctx) {
-        setDir(root, ctx.dir);
-        apply(ctx.step, { instant: ctx.instant, delay: STEP.delay, lead: STEP.lead });
-      },
-      leave: function (ctx) {
-        active = false;
-        stopLoop();
-        setDir(root, ctx.dir);
-        panels.forEach(function (p) { p.hide({}); });
-      }
-    });
-  })();
 
   /* ==========================================================================
      Slide 16 · crps
@@ -792,25 +423,6 @@
     return P;
   }
 
-  (function () {
-    var root = null;
-    var plot = null;
-
-    Deck.registerScene('crps', {
-      mount: function (section) {
-        root = section.querySelector('.scene-root');
-        root.classList.add('rs-root');
-        plot = buildCrps(root);
-        plot.seek(0);
-      },
-      enter: function (ctx) {
-        setDir(root, ctx.dir);
-        plot.show({ instant: ctx.instant, delay: ENTER.delay, lead: ENTER.lead });
-      },
-      leave: function (ctx) {
-        setDir(root, ctx.dir);
-        plot.hide({});
-      }
-    });
-  })();
+  registerPanelScene('structure', buildStructure);
+  registerPanelScene('crps', buildCrps);
 })();

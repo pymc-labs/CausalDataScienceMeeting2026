@@ -111,42 +111,19 @@ window.DECK_DATA = {
   // Study structure_accuracy of run pr29-final-full-e35866e (code e35866e, results 10b785a):
   // 100 full-input worlds; 2,048 router graph draws per view; an edge is selected when its
   // marginal probability is >= 0.5. Precision and recall are means over eligible worlds.
-  // ece: channel edge-pooled ten-bin expected calibration error. Contexts 99 and 207 repeat
-  // the earlier run structure-91de88629ca3 exactly (same seeds); context 185 is new.
+  // Contexts 99 and 207 repeat the earlier run structure-91de88629ca3 exactly (same seeds);
+  // context 185 is new.
   structure: {
     channels: {
-      99: { precision: 0.887, recall: 0.903, exact: 0.45, ece: 0.040 },
-      185: { precision: 0.889, recall: 0.908, exact: 0.51, ece: 0.039 },
-      207: { precision: 0.920, recall: 0.868, exact: 0.49, ece: 0.067 }
+      99: { precision: 0.887, recall: 0.903, exact: 0.45 },
+      185: { precision: 0.889, recall: 0.908, exact: 0.51 },
+      207: { precision: 0.920, recall: 0.868, exact: 0.49 }
     },
     channelsAndControlsExact: { 99: 0.17, 185: 0.19, 207: 0.19 },
     // Section 4.3 "Graph banks" and Figure 3: worlds (of 100) whose bank of 2,048 draws contains
     // the true complete active graph, and share of worlds whose most frequent graph is the true one.
     trueGraphInBank: { 99: 82, 185: 84, 207: 86 },
-    fullGraphModeExact: { 99: 0.17, 185: 0.18, 207: 0.20 },
-    // Reliability bins, router, channel edges: mean probability p, observed frequency f, edges n.
-    // Not printed in the paper. From experiments/structure_accuracy/results/analysis/
-    // structure_accuracy/calibration_bins.csv at 499be45 (sha256 8c3c89db10d9).
-    reliability: {
-      99: [
-        { p: 0.0244, f: 0.1067, n: 75 }, { p: 0.1454, f: 0.1875, n: 32 }, { p: 0.2475, f: 0.3158, n: 19 },
-        { p: 0.3573, f: 0.3684, n: 19 }, { p: 0.4547, f: 0.3333, n: 21 }, { p: 0.5553, f: 0.5926, n: 27 },
-        { p: 0.6591, f: 0.5185, n: 27 }, { p: 0.7526, f: 0.7609, n: 46 }, { p: 0.8515, f: 0.8667, n: 60 },
-        { p: 0.9859, f: 0.9637, n: 248 }
-      ],
-      185: [
-        { p: 0.0358, f: 0.0723, n: 83 }, { p: 0.1453, f: 0.2903, n: 31 }, { p: 0.2346, f: 0.1333, n: 15 },
-        { p: 0.3347, f: 0.4091, n: 22 }, { p: 0.4518, f: 0.4231, n: 26 }, { p: 0.5516, f: 0.5185, n: 27 },
-        { p: 0.6519, f: 0.7073, n: 41 }, { p: 0.7440, f: 0.8085, n: 47 }, { p: 0.8439, f: 0.9000, n: 50 },
-        { p: 0.9879, f: 0.9784, n: 232 }
-      ],
-      207: [
-        { p: 0.0371, f: 0.1127, n: 71 }, { p: 0.1421, f: 0.1000, n: 40 }, { p: 0.2483, f: 0.2812, n: 32 },
-        { p: 0.3350, f: 0.4286, n: 28 }, { p: 0.4494, f: 0.6061, n: 33 }, { p: 0.5520, f: 0.7059, n: 51 },
-        { p: 0.6403, f: 0.8205, n: 39 }, { p: 0.7441, f: 0.8750, n: 32 }, { p: 0.8497, f: 0.8000, n: 35 },
-        { p: 0.9911, f: 1.0000, n: 213 }
-      ]
-    }
+    fullGraphModeExact: { 99: 0.17, 185: 0.18, 207: 0.20 }
   },
 
   // Section 4.5 and Appendix C.10 of the paper (PR #36, commit 499be45): unit invariance.

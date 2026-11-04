@@ -552,27 +552,21 @@
   </aside>
 </section>
 
-<!-- 15 · Structure recovery -->
-<section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light" data-steps="3"
+<!-- 15 · Structure recovery: one dot plot, no steps -->
+<section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light"
   data-scene="structure" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
+  <div class="frame">
     <p class="eyebrow r"><span class="num">04</span>Evidence · Structure</p>
     <h2 class="h2 r">River finds most direct effects <span class="accent-2">without the true graph</span></h2>
-    <div class="flow-text">
-      <div data-step-only="0"><p class="body">The true graph is not supplied at inference. We score the sampled graphs on the 100 full-input worlds. Two questions stay separate.</p></div>
-      <div data-step-only="1"><p class="body"><b>Edge by edge.</b> An edge counts when its marginal probability is at least 0.5. Channel edges reach a precision and recall near 0.9.</p></div>
-      <div data-step-only="2"><p class="body"><b>Calibration of single edges.</b> Points near the diagonal mean that a stated edge probability matches how often the edge is present. Edge-pooled calibration error for channel edges: 0.04 to 0.07. These values are measurements, not proof of calibration. We apply no recalibration.</p></div>
-      <div data-step-only="3"><p class="body"><b>Whole set.</b> The exact set of live channels is right in about half of the worlds. The exact set of channels and controls is right in fewer than one in five. The true complete graph is among the 2,048 draws in 82 to 86 of 100 worlds.</p>
-        <p class="body accent-2" style="margin-top:20px">Partial structure recovery, under the specified prior.</p></div>
-    </div>
   </div>
-  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <div class="scene-root" style="left:80px;top:450px;width:1760px;height:440px"></div>
   <aside class="notes">
-    <p>Source: Section 4.3, Figure 3 and Appendix C.10 of the paper; reliability bins from the structure study of run pr29-final-full-e35866e (router, channel edges, 2,048 draws per view).</p>
-    <p>The headline causal result. Good edge-level scores do not mean every graph is right. We report both.</p>
-    <p>Step 1: precision and recall 0.89 and 0.90 with 99 context weeks, 0.89 and 0.91 with 185, and 0.92 and 0.87 with 207. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
-    <p>Step 2: reliability diagram from the actual bins of the structure study, for all three context lengths. Channel edges only. ECE is 0.040, 0.039 and 0.067. At 99 and 207 context weeks, the lowest bin is too low: edges with a probability of about 0.03 are present in about 11% of cases; at 185 weeks, in about 7%. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
-    <p>Step 3: exact channel set in 45%, 51% and 49% of worlds; channels and controls together in 17%, 19% and 19%. The true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
+    <p>Source: Section 4.3, Figure 3 and Appendix C.10 of the paper. Structure study of run pr29-final-full-e35866e: router, 100 full-input worlds, 2,048 graph draws per view.</p>
+    <p>Say: River does not get the true graph. We score its sampled graphs on the 100 full-input worlds. Edge by edge, it is right about nine times in ten. The whole set is right less often: the exact channels in about half of the worlds, channels and controls together in fewer than one in five. This is partial structure recovery, under the specified prior.</p>
+    <p>Edge by edge: precision and recall are 0.89 and 0.90 with 99 context weeks, 0.89 and 0.91 with 185, and 0.92 and 0.87 with 207. An edge counts when its marginal probability is at least 0.5. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
+    <p>Whole set: the exact channel set in 45%, 51% and 49% of worlds; channels and controls together in 17%, 19% and 19%.</p>
+    <p>If asked about the draws: the true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
+    <p>If asked about calibration: the edge-pooled calibration error (ECE) for channel edges is 0.040, 0.039 and 0.067. These are measurements, not proof of calibration. At 99 and 207 context weeks, the lowest bin is too low: edges with a probability of about 0.03 are present in about 11% of cases; at 185 weeks, in about 7%. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
   </aside>
 </section>
 

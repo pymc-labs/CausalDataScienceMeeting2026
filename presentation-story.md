@@ -216,7 +216,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** evaluate the conditional-discovery claim.
 - **Takeaway:** strong marginal edge scores are not whole-graph recovery.
-- **Visual / delivery:** contrast channel-edge precision and recall with exact channel-set recovery; report the measured calibration error, not a calibration claim. There is no recalibration step. All panels show the three context lengths, 99, 185 and 207 weeks.
+- **Visual / delivery:** one picture, no steps (Carlos, 4 November 2026). One dot plot on a 0–1 scale, one dot for each context length (99, 185 and 207 weeks): channel-edge precision and recall (edge by edge), then the exact channel set and the exact set of channels and controls (whole set). The range over the three context lengths is printed at the right. The illustrative true-graph view is removed, because slide 13 already shows graph sampling. The speaker notes keep the edge rule, the true graph among the 2,048 draws and the measured calibration error, for questions. Report the calibration error as a measurement, not as a calibration claim. There is no recalibration step.
 
 ### 16 — Contributions: lower error in every condition · 105 seconds · Main
 
