@@ -237,12 +237,20 @@
 .slide-concl .concl-note { margin-top: 40px; font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--accent-2); max-width: 1440px; }
 
 /* --- 20 What comes next ----------------------------------------------------------------------- */
-.close-cols { display: grid; grid-template-columns: 420px 560px 360px; gap: 72px; margin-top: 72px; }
+.close-cols { display: grid; grid-template-columns: 560px 360px; gap: 72px; margin-top: 72px; }
 .close-col { position: relative; padding-top: 26px; }
 .close-col::before { content: ''; position: absolute; left: 0; top: 0; width: 32px; height: 3px; border-radius: 2px; background: var(--band); }
 .close-col .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 12px; }
 .close-col p { font-size: 21px; line-height: 1.5; color: var(--fg); margin: 0; }
 
-/* --- 21 Thank you: the scene draws the word; two quiet marks sit where the chrome would be --- */
+/* --- 21 The papers: the white paper (QR code) and the coming academic paper (its first page) --- */
+.slide-papers .papers { position: absolute; left: var(--mx); right: var(--mx); top: 400px; display: grid; grid-template-columns: 640px 1fr; column-gap: 120px; align-items: start; }
+.slide-papers .close-col > p { max-width: 640px; }
+.slide-papers .paper-qr { display: block; width: 340px; height: 340px; margin-top: 32px; border-radius: 10px; }
+.slide-papers .paper-link { margin-top: 18px; font-family: var(--f-mono); font-size: 22px; letter-spacing: .02em; color: var(--accent); }
+/* The page fades out at its bottom edge, so the crop reads as the top of a page. */
+.slide-papers .paper-page { display: block; width: 580px; margin-top: 32px; border-radius: 4px 4px 0 0; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent); }
+
+/* --- 22 Thank you: the scene draws the word; two quiet marks sit where the chrome would be --- */
 .slide-close .close-logo { position: absolute; left: var(--mx); top: 60px; height: 44px; width: auto; opacity: .9; }
 .slide-close .close-event { position: absolute; right: var(--mx); bottom: 46px; margin: 0; font-size: 17px; letter-spacing: .02em; color: var(--fg-3); }
