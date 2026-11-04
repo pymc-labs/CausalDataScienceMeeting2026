@@ -92,7 +92,7 @@ Keep the comparison scope explicit: these are synthetic results, and the default
 
 *Current slides 17–22, including conclusions, what comes next and the thank-you slide.*
 
-Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. Uncertainty calibration needs work, contribution gains do not imply better sales prediction, and real-business causal identification is not established.
+Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. The limitations slide lists only properties of River that restrict where its output can be trusted: direct effects only, reliability outside the prior on some axes only, contribution intervals that miss the truth too often, and no check for approximation error on a single dataset. The oracle gap and sales prediction are not limitations: the oracle has privileged information, and River is not built as a forecaster. Real-business causal identification is not established.
 
 Richer causal systems—mediation, interactions, hidden demand and changing graphs—require broader priors, new training and new evaluation. Unused architectural capacity is not an existing learned capability.
 
@@ -224,11 +224,12 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** lower mean contribution CRPS than PathMC, OLS and the native PyMC-Marketing MMM in every tested condition and at all three horizons, while the oracle remains better.
 - **Visual / delivery:** one picture, no steps (Carlos, 4 November 2026). A dot plot of query channel CRPS: all four methods, PyMC-Marketing included, in all five conditions and at all three context lengths. The legend bounds PyMC-Marketing to default priors. Explain what CRPS measures before the comparison. The full-input numbers, the per-world wins, the separate PyMC-Marketing study (Table 20) and its fit-health caveats are in the speaker notes, for questions.
 
-### 17 — Where River falls short · 35 seconds · Main, compressed
+### 17 — Four limitations of River today · 35 seconds · Main, compressed
 
-- **Purpose:** prevent contribution gains from becoming a general superiority claim.
-- **Takeaway:** oracle gap, sales prediction and interval calibration remain limitations; the source of the gains is not isolated.
-- **Proposal:** summarize rather than read all numerical comparisons.
+- **Purpose:** state what restricts where River's output can be trusted, so that contribution gains do not become a general superiority claim.
+- **Takeaway:** direct effects only; reliable inside the prior, and outside it only on some axes; contribution intervals miss the truth too often; no check for approximation error on a single dataset.
+- **Rule (Carlos, 4 November 2026):** a limitation is a property of River, measured or set by its design, that restricts trust in its output. These items are not limitations and stay in the notes, for questions: the oracle gap (privileged information, so it shows headroom), sales prediction (not River's goal) and the width of the sales bands (the cause is not tested). The source of the gain is not established; it is in the slide 18 notes.
+- **Delivery:** summarize the four lines; do not read the numbers.
 
 ### 18 — What is demonstrated, and what is not · 35 seconds · Main
 

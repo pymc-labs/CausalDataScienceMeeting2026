@@ -592,25 +592,31 @@
      05 · BOUNDARIES AND THE NEXT STAGE
      ===================================================================== -->
 
-<!-- 17 · Limits -->
-<section class="slide slide-limits" data-title="Where River falls short" data-act="05 · Boundaries" data-theme="light"
+<!-- 17 · Limitations: properties of River, measured or set by its design, that restrict where its
+     output can be trusted. Not listed here: the gap to the oracle (it has privileged information)
+     and sales prediction (not River's goal). Both are in the notes, for questions. -->
+<section class="slide slide-limits" data-title="Four limitations of River today" data-act="05 · Boundaries" data-theme="light"
   data-field='{"mode":"none"}'>
   <div class="frame">
-    <p class="eyebrow r"><span class="num">05</span>Boundaries · It says where it fails</p>
-    <h2 class="h2 r">Where River falls short</h2>
+    <p class="eyebrow r"><span class="num">05</span>Boundaries · Limitations</p>
+    <h2 class="h2 r">Four limitations <span class="accent-2">of River today</span></h2>
     <ol class="points limits">
-      <li class="r"><span class="n">01</span><span class="t">The oracle still does better<small>The oracle uses the true graph and the mechanism families. Its mean channel CRPS is lower at all three context lengths. With 99 context weeks, it is 0.0185 against 0.0295 for River.</small></span></li>
-      <li class="r"><span class="n">02</span><span class="t">Contributions improve; one-week sales do not<small>For the one-week query, mean total-sales CRPS is 0.0384 for River, 0.0213 for PathMC, 0.0290 for OLS and 0.0085 for the native MMM. All three references are lower in all five conditions.</small></span></li>
-      <li class="r"><span class="n">03</span><span class="t">Uncertainty is not yet calibrated<small>One-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. Long-query 80% contribution intervals contain the true value less often than 80%.</small></span></li>
-      <li class="r"><span class="n">04</span><span class="t">The gain is not yet attributed<small>The comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</small></span></li>
+      <li class="r"><span class="n">01</span><span class="t">Direct effects only<small>The prior has no confounding from hidden demand and no paths between inputs. If the data contain them, the results can be unreliable.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Reliable inside the prior; outside it, only on some axes<small>With 12 channels (training had at most 10), contributions stay the most accurate. With the largest input hidden, the visible inputs stay accurate, but River does not find the hidden cause. With a different input dependence, intervals cover less. Other axes are not tested.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Contribution intervals miss the truth too often<small>80% intervals contain the true window mean in 59% of cases for channels and 68% for controls (full inputs, 99 context weeks). The channel intervals of PathMC, OLS and the MMM miss even more often.</small></span></li>
+      <li class="r"><span class="n">04</span><span class="t">No check for approximation error<small>River has no chains, so divergence and mixing checks do not apply. Approximation error remains, and no check on a single dataset measures it.</small></span></li>
     </ol>
   </div>
   <aside class="notes">
-    <p>Source: Sections 4.2, 4.3, 4.6, 4.8 and 5, Tables 12, 16, 18 and 20, and Figure 2 of the paper.</p>
-    <p>The advantage is in the decomposition. It is not general prediction superiority.</p>
-    <p>Wide bands that cover the truth are not evidence of a better predictive distribution.</p>
-    <p>With 23 query weeks, River's mean weekly total CRPS is also higher: 0.0422 against 0.0312 for PathMC, 0.0388 for OLS and 0.0206 for the native MMM. With 109 query weeks, River has the lowest mean in all five conditions.</p>
-    <p>With full inputs and 99 context weeks, River's 80% intervals contain 58.9% of the channel and 68.0% of the control window means. Bias, not only width, can cause this under-coverage. The oracle is a fitted reference, not simulator truth; its score is not a lower bound.</p>
+    <p>Source: Sections 2, 4.2, 4.4, 4.6, 4.7, 4.8 and 5 of the paper; the 80% coverage table and the weekly coverage figure in Appendix C.</p>
+    <p>Say: a limitation here is a property of River that restricts where you can trust its output. Two things are not on this list on purpose. The oracle does better because it gets the true graph. River is not built to forecast sales.</p>
+    <p>01: the prior permits only direct effects from each input to sales. Inference can be unreliable when the prior does not describe the data. Slide 18 lists recovery under hidden confounding as not established.</p>
+    <p>02: twelve-channel cohort: channel CRPS 0.0140, 0.0129 and 0.0135, below PathMC, OLS and the native MMM. This supports the tested larger population, not any number of channels. Largest input hidden (out of prior): lower mean contribution scores on the visible inputs; the hidden input is not recovered, and in one example the baseline error rises. Real-data-informed settings: no detected increase in channel point error; 90% coverage of non-zero effects is 71.0% for K7 and 54.9% for M4, against 73.0% for the corpus reference. Not tested: confounding, paths between inputs, unseen response shapes and real business data.</p>
+    <p>03: exact values 58.9% for channels and 68.0% for controls. The intervals under-cover in every benchmark condition. Bias, not only width, can cause this. Weekly 95% coverage of live channels, read from the figure: River about 85–92%, PathMC about 57–61%, OLS about 42–54%, native MMM about 78–80%, oracle about 90–93%. River's channel intervals are also narrower than those of OLS and the MMM: 12–14% of the sales scale, against 35–90% and 46–62%.</p>
+    <p>04: River's draws avoid MCMC divergences and chain-mixing failures, but not approximation error. The paper measures calibration over cohorts of worlds, not for one dataset.</p>
+    <p>If asked about the oracle: it gets the true graph, the mechanism families and prior information, so a gap is expected. It shows headroom, not a limit. Mean channel CRPS is 0.0185, 0.0141 and 0.0139, against 0.0295, 0.0241 and 0.0263 for River. The oracle is a fitted reference, so its score is not a lower bound.</p>
+    <p>If asked about sales prediction: River is built for the decomposition, not as a forecaster. For the one-week query, mean total-sales CRPS is 0.0384 for River, 0.0213 for PathMC, 0.0290 for OLS and 0.0085 for the native MMM. With 23 query weeks: 0.0422 against 0.0312, 0.0388 and 0.0206. With 109 query weeks, River has the lowest mean in all five conditions.</p>
+    <p>If asked about the sales bands: one-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. River has no observation-noise draws. The paper does not test why the bands are wide; averaging over graphs is a hypothesis.</p>
   </aside>
 </section>
 
@@ -634,6 +640,7 @@
     <p>Source: Sections 5 and 5.2 of the paper.</p>
     <p>We keep three statements separate: what is demonstrated, what is not, and the research goal.</p>
     <p>The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
+    <p>If asked about the source of the gain: the comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</p>
   </aside>
 </section>
 
