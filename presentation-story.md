@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Editorial slide references below retain the pre-comparison numbering: 22 main slides, then backup slides B1 and B2. A temporary flowchart comparison is inserted after editorial slide 14; the rendered deck now has 23 main slides, so subsequent rendered slide numbers are one higher until a version is selected. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. The deck has 22 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026), and the flowchart on slide 14, which replaces the card layout (Carlos, 4 November 2026).
 
 ## Walkthrough notes — pending changes
 
@@ -200,19 +200,17 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** repeated graph-and-contribution draws capture uncertainty between and within graphs; absent edges give exact zeros.
 - **Visual / delivery:** sample graphs and show their contributions. Call this discovery conditional on the permitted family.
 
-### 14 — 500 held-out cases with known truth · 45 seconds · Main
+### 14 — One world. Five analysts. · 45 seconds · Main
 
 - **Purpose:** make the evaluation interpretable before showing results.
 - **Takeaway:** methods are tested against known synthetic truth, with different scopes for different comparisons.
-- **Visual / delivery:** world → observed table → methods → scores. Mention the oracle’s privileged information.
-
-### Comparison draft after slide 14 — Evaluation data flow
-
-- **Status:** implemented for side-by-side review; not yet selected to replace slide 14. No additional speaking budget is approved.
-- **Initial view:** four aligned columns without boxes, in the deck style (text with small coloured dots, thin lines): one simulated world (true graph and mechanisms, observed data, held-out truth), five analysts, and the scores. All five analysts share the observed-data line and send estimates to the scores. A dashed peach line takes the true graph to the oracle only; a solid peach line takes the held-out truth to the scores only. Restyled by Carlos on 4 November 2026; the content is unchanged.
-- **Reveal 1:** insert the five conditions. The four non-oracle analysts receive all five conditions; the full-input condition also goes to the oracle, which receives only those 100 cases. Do not imply that full-input observations are exclusive to the oracle. Distinguish world selection from input masking.
-- **Scope:** contribution and prediction evaluation, not graph-recovery scoring. Keep the original horizon design and the separate structure study.
-- **Review:** compare both layouts before choosing one. The draft temporarily shifts subsequent rendered slide numbers by one; editorial numbering below is unchanged.
+- **Visual:** Teemu’s evaluation flowchart in the deck style, without boxes. Four aligned columns: one simulated world (true graph and mechanisms, observed data, held-out truth), five conditions, five analysts and the scores. Grey lines carry observed data and estimates. Peach lines carry what only the simulator knows: a dashed line takes the true graph to the oracle only, and a solid line takes the held-out truth to the scores only.
+- **Delivery:** four steps. Each step adds one column and one short caption, and the earlier columns fade back. The last step shows all four columns.
+  - Step 0, the world: what the simulator knows and what an analyst sees.
+  - Step 1, the conditions: 100 cases each. Three select the worlds; two hide the largest-effect channel or control (out of prior). Distinguish world selection from input masking.
+  - Step 2, the analysts: four analysts receive all five conditions. The oracle gets the true graph and only the 100 full-input cases. Do not imply that full-input observations are exclusive to the oracle.
+  - Step 3, the scores: CRPS against the held-out truth, three horizons, 1,500 scored views. The horizons are in the speaker notes only.
+- **Scope:** contribution and prediction evaluation, not graph-recovery scoring. The structure study on slide 15 scores graph recovery.
 
 ### 15 — Structure is partly recovered · 90 seconds · Main
 

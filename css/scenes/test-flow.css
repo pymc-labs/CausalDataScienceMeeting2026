@@ -1,7 +1,11 @@
-/* Comparison draft: the evaluation flow (kept beside the original test-design slide until review).
-   Deck style: no boxes. Text with small coloured dots, thin grey lines for data and estimates,
-   peach lines for what only the simulator knows. */
-.slide-test-flow .eval-flow { position: absolute; left: var(--mx); top: 318px; width: 1760px; height: 640px; overflow: visible; }
+/* 14 · How we test: the evaluation flow. Deck style: no boxes. Text with small coloured dots,
+   thin grey lines for data and estimates, peach lines for what only the simulator knows.
+   Each step reveals one column ([data-step]) and one caption ([data-step-only]). deck.js sets
+   data-step on the section; that fades the earlier columns back. The last step shows all. */
+.slide-test-flow .tf-caps { position: absolute; left: var(--mx); top: 338px; width: 1440px; height: 80px; }
+.slide-test-flow .tf-cap { position: absolute; left: 0; top: 0; margin: 0; font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
+.slide-test-flow .tf-cap b { font-weight: 600; color: var(--fg); }
+.slide-test-flow .eval-flow { position: absolute; left: var(--mx); top: 456px; width: 1760px; height: 520px; overflow: visible; }
 .eval-flow text { font-family: var(--f-body); fill: var(--fg); }
 .eval-flow .ef-col { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; fill: var(--fg-3); }
 .eval-flow .ef-name { font-size: 24px; font-weight: 500; }
@@ -22,4 +26,9 @@
 .eval-flow .ef-arrow-hot { marker-end: url(#ef-head-hot); }
 .eval-flow .ef-head { fill: rgba(12, 31, 64, .45); }
 .eval-flow .ef-head.hot { fill: var(--hot); }
-.slide-test-flow .eval-scope { position: absolute; left: var(--mx); bottom: 96px; margin: 0; font-size: 19px; color: var(--fg-3); }
+
+/* Focus: the newest column is full strength. The true graph stays bright on step 2,
+   where its dashed line reaches the oracle. */
+.eval-flow .ef-sec { transition: opacity .7s var(--ease); }
+.slide-test-flow[data-step="1"] .ef-sec:is([data-sec="0"], [data-sec="0g"]),
+.slide-test-flow[data-step="2"] .ef-sec:is([data-sec="0"], [data-sec="1"]) { opacity: .3; }

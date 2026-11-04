@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/deck.css">
 <link rel="stylesheet" href="css/slides.css">
-<link rel="stylesheet" href="css/scenes/test-flow-prototype.css">
+<link rel="stylesheet" href="css/scenes/test-flow.css">
 <link rel="stylesheet" href="css/scenes/arch.css">
 <link rel="stylesheet" href="css/scenes/causal.css">
 <link rel="stylesheet" href="css/scenes/machine.css">
@@ -448,140 +448,107 @@
      04 · EVIDENCE
      ===================================================================== -->
 
-<!-- 14 · Test design -->
-<section class="slide slide-test" data-title="500 held-out cases with known truth" data-act="04 · Evidence" data-theme="light" data-steps="2"
-  data-field='{"mode":"none"}'>
-  <div class="frame">
-    <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
-    <h2 class="h2 r">500 held-out cases where <span class="accent-2">the truth is known</span></h2>
-  </div>
-  <div class="test-flow">
-    <div class="card r"><p class="card-label">1 · A world</p><p class="card-title">The true split</p><p>Baseline, channels, controls and the graph, stored with the world. Hidden from River and the regressions.</p></div>
-    <span class="arrow r">→</span>
-    <div class="card peri r"><p class="card-label">2 · One table</p><p class="card-title">What an analyst sees</p><p>Spend and controls for all weeks. Sales for the context weeks only.</p></div>
-    <span class="arrow r">→</span>
-    <div class="card r methods"><p class="card-label">3 · Five methods</p>
-      <ul>
-        <li><b>River</b> · graph not supplied</li>
-        <li><b>PyMC-Marketing 1.2</b> · default priors · time-varying intercept</li>
-        <li><b>PathMC</b> · Bayesian regression, logistic response, carryover</li>
-        <li><b>OLS</b> · linear regression</li>
-        <li><b>Oracle</b> · told the true graph and mechanisms · full inputs</li>
-      </ul></div>
-    <span class="arrow r">→</span>
-    <div class="card peach r"><p class="card-label">4 · Scores</p><p class="card-title">Against the truth</p><p>CRPS of contributions: accuracy of a whole distribution. Lower is better.</p></div>
-  </div>
-  <div class="test-design td-1" data-step="1">
-    <div class="td-k">Five conditions · 100 each</div>
-    <div class="chips"><span class="chip fill">Full inputs</span><span class="chip fill">In-sample saturation</span><span class="chip fill">Smooth baseline</span><span class="chip peach">Omitted channel · out of prior</span><span class="chip peach">Omitted control · out of prior</span></div>
-  </div>
-  <div class="test-design td-2" data-step="2">
-    <div class="td-k">Three horizons</div>
-    <div class="chips"><span class="chip">99 context weeks → 109 query weeks</span><span class="chip">185 context weeks → 23 query weeks</span><span class="chip">207 context weeks → 1 query week</span><span class="chip fill">1,500 scored views</span></div>
-  </div>
-  <aside class="notes">
-    <p>Source: Section 4.1 of the paper. 300 distinct held-out worlds; the full-input and both omission conditions share 100 base worlds.</p>
-    <p>The design keeps the truth known. Every method gets the same table. Only the oracle also gets more information.</p>
-    <p>The oracle is a fitted reference with privileged information: the generating graph, the mechanism families and prior information. No analyst has it. It is not a guaranteed best case.</p>
-    <p>The oracle runs on the 100 full-input worlds only. PyMC-Marketing runs in all five conditions. A separate PyMC-Marketing study also uses the 100 full-input worlds.</p>
-    <p>Two of the five conditions are out of prior: we hide the largest-effect channel or control.</p>
-  </aside>
-</section>
-
-<!-- Comparison draft · evaluation flow; the original test-design slide is kept above until review.
-     Four columns on one row grid: the world, the conditions (step 1), the analysts, the scores.
+<!-- 14 · How we test: the evaluation flow, one section per step.
+     Four columns on one row grid: the world, the conditions, the analysts, the scores. Each step adds
+     the next column and a one-line caption; earlier columns fade back, and the last step shows all.
      Grey lines carry observed data and estimates; peach lines carry what only the simulator knows. -->
-<section class="slide slide-test-flow" data-title="Test design — flowchart comparison" data-act="04 · Evidence" data-theme="light" data-steps="1" data-field='{"mode":"none"}'>
+<section class="slide slide-test-flow" data-title="One world, five analysts" data-act="04 · Evidence" data-theme="light" data-steps="3" data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
     <h2 class="h2 r">One world. <span class="accent-2">Five analysts.</span></h2>
   </div>
-  <svg class="eval-flow r" viewBox="0 0 1760 640" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
+  <div class="tf-caps r">
+    <p class="tf-cap" data-step-only="0"><b>A simulated world.</b> The simulator knows the true graph and every contribution. An analyst sees only the inputs and the sales of the context weeks.</p>
+    <p class="tf-cap" data-step-only="1"><b>Five conditions, 100 cases each.</b> Three conditions select the worlds. Two conditions hide the largest-effect channel or control, outside River’s training prior.</p>
+    <p class="tf-cap" data-step-only="2"><b>Five analysts get the same table.</b> No analyst sees the true contributions. Only the oracle also gets the true graph and the mechanisms. It runs on the full-input cases only.</p>
+    <p class="tf-cap" data-step-only="3"><b>Scores against the held-out truth.</b> CRPS compares each predicted distribution with the true value. Lower is better. 500 cases at three horizons give 1,500 scored views.</p>
+  </div>
+  <svg class="eval-flow r" viewBox="0 0 1760 520" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
     <title id="eval-flow-title">Evaluation data flow</title>
-    <desc id="eval-flow-desc">A simulated world gives observed data to five analysts. Only the oracle also gets the true graph. The held-out truth goes only to scoring. The next step adds five test conditions; the oracle runs only on full inputs.</desc>
+    <desc id="eval-flow-desc">A simulated world gives observed data to five test conditions and then to five analysts. Only the oracle also gets the true graph, and only for full inputs. The held-out truth goes only to scoring.</desc>
     <defs>
       <marker id="ef-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head" d="M0 0 L10 5 L0 10Z"/></marker>
       <marker id="ef-head-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head hot" d="M0 0 L10 5 L0 10Z"/></marker>
     </defs>
 
-    <!-- Column labels -->
-    <text class="ef-col" x="0" y="24">One simulated world</text>
-    <text class="ef-col" x="470" y="24" data-step="1">Five conditions · 100 each</text>
-    <text class="ef-col" x="930" y="24">Five analysts</text>
-    <text class="ef-col" x="1430" y="24">Scoring</text>
-
-    <!-- 1 · The world: what the simulator knows, what an analyst sees, what is held out -->
-    <circle class="ef-dot hot" cx="6" cy="82" r="5"/>
-    <text class="ef-name" x="22" y="90">True graph</text>
-    <text class="ef-sub" x="22" y="118">and mechanisms</text>
-    <circle class="ef-dot aqua" cx="6" cy="262" r="5"/>
-    <text class="ef-name" x="22" y="270">Observed data</text>
-    <text class="ef-sub" x="22" y="298">Inputs · all weeks</text>
-    <text class="ef-sub" x="22" y="324">Sales · context weeks</text>
-    <circle class="ef-dot hot" cx="6" cy="442" r="5"/>
-    <text class="ef-name" x="22" y="450">Held-out truth</text>
-    <text class="ef-sub" x="22" y="478">True decomposition</text>
-    <text class="ef-sub" x="22" y="504">Query sales</text>
-
-    <!-- 2 · Conditions (step 1): the observed data pass through them -->
-    <path class="ef-line" data-until="1" d="M300 262 H860"/>
-    <g data-step="1">
-      <path class="ef-line ef-arrow" d="M300 262 H458"/>
-      <circle class="ef-dot aqua" cx="476" cy="172" r="4"/><text class="ef-item" x="492" y="180">Full inputs</text>
-      <circle class="ef-dot aqua" cx="476" cy="217" r="4"/><text class="ef-item" x="492" y="225">In-sample saturation</text>
-      <circle class="ef-dot aqua" cx="476" cy="262" r="4"/><text class="ef-item" x="492" y="270">Smooth baseline</text>
-      <circle class="ef-dot hot" cx="476" cy="307" r="4"/><text class="ef-item" x="492" y="315">Omitted channel</text>
-      <circle class="ef-dot hot" cx="476" cy="352" r="4"/><text class="ef-item" x="492" y="360">Omitted control</text>
-      <text class="ef-tag" x="492" y="394">last two · out of prior</text>
-      <path class="ef-line" d="M712 262 H860"/>
-      <!-- Only the full-input condition also reaches the oracle (its subtitle says so). -->
-      <path class="ef-line ef-arrow" d="M612 172 C 740 172 790 112 918 112"/>
+    <!-- 0 · The world: what the simulator knows, what an analyst sees, what is held out.
+         The true graph is its own section: it stays bright on step 2, where it reaches the oracle. -->
+    <text class="ef-col ef-sec" data-sec="0" x="0" y="14">One simulated world</text>
+    <g class="ef-sec" data-sec="0g">
+      <circle class="ef-dot hot" cx="6" cy="70" r="5"/>
+      <text class="ef-name" x="22" y="78">True graph</text>
+      <text class="ef-sub" x="22" y="104">and mechanisms</text>
+    </g>
+    <g class="ef-sec" data-sec="0">
+      <circle class="ef-dot aqua" cx="6" cy="226" r="5"/>
+      <text class="ef-name" x="22" y="234">Observed data</text>
+      <text class="ef-sub" x="22" y="260">Inputs · all weeks</text>
+      <text class="ef-sub" x="22" y="284">Sales · context weeks</text>
+      <circle class="ef-dot hot" cx="6" cy="382" r="5"/>
+      <text class="ef-name" x="22" y="390">Held-out truth</text>
+      <text class="ef-sub" x="22" y="416">True decomposition</text>
+      <text class="ef-sub" x="22" y="440">Query sales</text>
     </g>
 
-    <!-- 3 · The analysts, fed from one bus -->
-    <path class="ef-line" d="M860 172 V442"/>
-    <path class="ef-line" data-until="1" d="M860 112 V172"/>
-    <path class="ef-line ef-arrow" data-until="1" d="M860 112 H918"/>
-    <path class="ef-line ef-arrow" d="M860 172 H918"/>
-    <path class="ef-line ef-arrow" d="M860 262 H918"/>
-    <path class="ef-line ef-arrow" d="M860 352 H918"/>
-    <path class="ef-line ef-arrow" d="M860 442 H918"/>
-    <!-- The true graph reaches the oracle only. -->
-    <path class="ef-hot ef-dash ef-arrow-hot" d="M300 82 H918"/>
-    <circle class="ef-dot hot" cx="936" cy="82" r="5"/>
-    <text class="ef-name" x="952" y="90">Oracle</text>
-    <text class="ef-sub" x="952" y="118" data-until="1">true graph supplied</text>
-    <text class="ef-sub" x="952" y="118" data-step="1">true graph · full inputs only</text>
-    <circle class="ef-dot aqua" cx="936" cy="172" r="5"/>
-    <text class="ef-name river" x="952" y="180">River</text>
-    <text class="ef-sub" x="952" y="208">graph not supplied</text>
-    <circle class="ef-dot" cx="936" cy="262" r="5"/>
-    <text class="ef-name" x="952" y="270">PyMC-Marketing</text>
-    <text class="ef-sub" x="952" y="298">default priors</text>
-    <circle class="ef-dot" cx="936" cy="352" r="5"/>
-    <text class="ef-name" x="952" y="360">PathMC</text>
-    <text class="ef-sub" x="952" y="388">Bayesian regression</text>
-    <circle class="ef-dot" cx="936" cy="442" r="5"/>
-    <text class="ef-name" x="952" y="450">OLS</text>
-    <text class="ef-sub" x="952" y="478">linear regression</text>
+    <!-- 1 · The conditions: the observed data pass through them -->
+    <g class="ef-sec" data-sec="1"><g data-step="1">
+      <text class="ef-col" x="470" y="14">Five conditions · 100 each</text>
+      <path class="ef-line ef-arrow" d="M300 226 H458"/>
+      <circle class="ef-dot aqua" cx="476" cy="146" r="4"/><text class="ef-item" x="492" y="154">Full inputs</text>
+      <circle class="ef-dot aqua" cx="476" cy="186" r="4"/><text class="ef-item" x="492" y="194">In-sample saturation</text>
+      <circle class="ef-dot aqua" cx="476" cy="226" r="4"/><text class="ef-item" x="492" y="234">Smooth baseline</text>
+      <circle class="ef-dot hot" cx="476" cy="266" r="4"/><text class="ef-item" x="492" y="274">Omitted channel</text>
+      <circle class="ef-dot hot" cx="476" cy="306" r="4"/><text class="ef-item" x="492" y="314">Omitted control</text>
+      <text class="ef-tag" x="492" y="346">last two · out of prior</text>
+    </g></g>
 
-    <!-- 4 · Every analyst's estimates meet the held-out truth at the scores -->
-    <path class="ef-line" d="M1180 82 H1260 M1180 172 H1260 M1180 262 H1260 M1180 352 H1260 M1180 442 H1260 M1260 82 V442"/>
-    <path class="ef-line ef-arrow" d="M1260 262 H1418"/>
-    <path class="ef-hot ef-arrow-hot" d="M300 442 H400 V560 H1436 V280"/>
-    <text class="ef-mono hot" x="700" y="590">held-out truth · used only for scoring</text>
-    <circle class="ef-dot ink" cx="1436" cy="262" r="6"/>
-    <text class="ef-name" x="1456" y="270">Scores</text>
-    <text class="ef-sub" x="1456" y="298">Contributions · sales predictions</text>
-    <text class="ef-mono" x="1456" y="326">CRPS · lower is better</text>
+    <!-- 2 · The analysts. Four get every condition from one line; the oracle gets the true graph
+         (dashed) and the full-input condition only (curve). -->
+    <g class="ef-sec" data-sec="2"><g data-step="2">
+      <text class="ef-col" x="930" y="14">Five analysts</text>
+      <path class="ef-line" d="M712 226 H860 M860 148 V382"/>
+      <path class="ef-line ef-arrow" d="M860 148 H918"/>
+      <path class="ef-line ef-arrow" d="M860 226 H918"/>
+      <path class="ef-line ef-arrow" d="M860 304 H918"/>
+      <path class="ef-line ef-arrow" d="M860 382 H918"/>
+      <path class="ef-line ef-arrow" d="M612 146 C 740 146 790 100 918 100"/>
+      <path class="ef-hot ef-dash ef-arrow-hot" d="M300 70 H918"/>
+      <circle class="ef-dot hot" cx="936" cy="70" r="5"/>
+      <text class="ef-name" x="952" y="78">Oracle</text>
+      <text class="ef-sub" x="952" y="104">true graph · full inputs only</text>
+      <circle class="ef-dot aqua" cx="936" cy="148" r="5"/>
+      <text class="ef-name river" x="952" y="156">River</text>
+      <text class="ef-sub" x="952" y="182">graph not supplied</text>
+      <circle class="ef-dot" cx="936" cy="226" r="5"/>
+      <text class="ef-name" x="952" y="234">PyMC-Marketing</text>
+      <text class="ef-sub" x="952" y="260">default priors</text>
+      <circle class="ef-dot" cx="936" cy="304" r="5"/>
+      <text class="ef-name" x="952" y="312">PathMC</text>
+      <text class="ef-sub" x="952" y="338">Bayesian regression</text>
+      <circle class="ef-dot" cx="936" cy="382" r="5"/>
+      <text class="ef-name" x="952" y="390">OLS</text>
+      <text class="ef-sub" x="952" y="416">linear regression</text>
+    </g></g>
+
+    <!-- 3 · Every analyst's estimates meet the held-out truth at the scores -->
+    <g class="ef-sec" data-sec="3"><g data-step="3">
+      <text class="ef-col" x="1430" y="14">Scoring</text>
+      <path class="ef-line" d="M1180 70 H1260 M1180 148 H1260 M1180 226 H1260 M1180 304 H1260 M1180 382 H1260 M1260 70 V382"/>
+      <path class="ef-line ef-arrow" d="M1260 226 H1418"/>
+      <path class="ef-hot ef-arrow-hot" d="M300 382 H400 V470 H1436 V244"/>
+      <text class="ef-mono hot" x="700" y="498">held-out truth · used only for scoring</text>
+      <circle class="ef-dot ink" cx="1436" cy="226" r="6"/>
+      <text class="ef-name" x="1456" y="234">Scores</text>
+      <text class="ef-sub" x="1456" y="262">Contributions · sales predictions</text>
+      <text class="ef-mono" x="1456" y="290">CRPS · lower is better</text>
+    </g></g>
   </svg>
-  <p class="eval-scope r">Contribution and prediction evaluation. Graph recovery is a separate study.</p>
   <aside class="notes">
-    <p>Comparison prototype. Keep the original test-design slide immediately before this one until the layout is reviewed.</p>
-    <p>The world supplies observations, evaluation truth, and privileged graph/mechanism information. Analysts receive input histories and context sales. They do not receive the true decomposition or query sales.</p>
-    <p>The oracle additionally knows the true graph, mechanism families and prior information. It runs only on the 100 full-input cases, not on all five conditions.</p>
-    <p>Initially all five analysts share the observed-data route. Step 1 inserts the five conditions: the four non-oracle analysts receive all five, while only the full-input condition also reaches the oracle. The first three describe world selection; the last two hide the largest-effect channel or control. They are not five transformations of every world. There are 300 distinct worlds across 500 cases.</p>
-    <p>The evaluator compares inferred contributions and sales predictions against their corresponding truth. This flow does not score River's graph recovery; the separate structure study does that. Three context/query horizons are unchanged from the original test design.</p>
+    <p>Source: Section 4.1 of the paper. 300 distinct held-out worlds; the full-input and both omission conditions share 100 base worlds.</p>
+    <p>Step 0, the world. It holds the observations, the held-out truth, and the true graph and mechanisms. Analysts get the input histories and the context sales. They do not get the true decomposition or the query sales.</p>
+    <p>Step 1, the conditions: 100 cases each. The first three select the worlds. The last two hide the largest-effect channel or control, so they are out of prior. They are not five transformations of every world: the 500 cases come from 300 distinct worlds.</p>
+    <p>Step 2, the analysts. Every method gets the same table. The oracle is a fitted reference with privileged information: the generating graph, the mechanism families and prior information. No analyst has it, and it is not a guaranteed best case. It runs on the 100 full-input cases only. PyMC-Marketing runs in all five conditions. A separate PyMC-Marketing study also uses the 100 full-input worlds.</p>
+    <p>Step 3, the scores. We compare each method's contributions and sales predictions with the held-out truth. CRPS scores a whole predicted distribution against the true value. Three horizons: 99 context weeks with 109 query weeks, 185 with 23, and 207 with 1. That gives 1,500 scored views. The structure study on the next slide scores graph recovery.</p>
   </aside>
 </section>
 
