@@ -158,7 +158,9 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Visual / delivery:** two plausible analyst decompositions, followed by the model-averaging idea. The causal-structure row names the three graphs of slide 5.
 - **Proposal:** summarize the choices and averaging equation rather than explaining each option.
 
-### 7 — What if we could start backwards? · 35 seconds · Main
+### 7 — What if the hard work was already done? · 35 seconds · Main
+
+- **Walkthrough title change, approved after visual review:** emphasize training inference upfront, not reversing the causal-discovery process. The causal conclusions for a new dataset are not already known.
 
 - **Purpose:** turn the problem into the proposed solution.
 - **Takeaway:** specify many worlds first, learn inference once, reuse it without a new fit.
