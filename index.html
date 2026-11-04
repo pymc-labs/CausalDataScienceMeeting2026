@@ -336,47 +336,35 @@
   </aside>
 </section>
 
-<!-- 10 · Learn the posterior from the prior. The plain messages lead (left, large);
-     the math follows in a small column at the right. -->
-<section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+<!-- 10 · Learn the posterior from the prior. Two rows: a plain message at the left,
+     its equation small at the right. -->
+<section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
   data-field='{"mode":"none"}'>
   <div class="frame">
     <p class="eyebrow r"><span class="num">02</span>Amortized inference · prior-fitted networks</p>
     <h2 class="h2 r">Learn the posterior from the prior</h2>
     <span class="bar r"></span>
   </div>
-  <div class="pfn-text">
+  <div class="pfn-grid">
     <p class="pfn-msg r">Simulate worlds with a known truth. Train one network to recover that truth from the data an analyst sees.</p>
-    <div class="pfn-claim" data-step="1">
-      <p class="pfn-main">If the network is flexible enough, the best answer is <span class="accent-2 nowrap">the model-averaged posterior</span>.</p>
-      <p class="pfn-claim-note">It averages over every specification in the prior, learned once. River’s flow-matching loss has the same intended target; finite training and numerical sampling do not guarantee exact draws.</p>
-    </div>
-  </div>
-  <div class="pfn-math">
-    <p class="pfn-math-k r">In symbols</p>
     <div class="pfn-eq r">
       <span class="eq-tag">ideal loss</span>
       <div class="eq" data-tex="\mathcal{L}(\varphi) = \mathbb{E}_{(\mathcal{D}, C) \sim p(\mathcal{D}, C)}\big[-\log q_\varphi(C \mid \mathcal{D})\big]" data-display></div>
     </div>
-    <div class="pfn-eq" data-step="1">
-      <span class="eq-tag">equals</span>
-      <div class="eq" data-tex="\mathbb{E}_{\mathcal{D}}\Big[\mathrm{KL}\big(p(C \mid \mathcal{D}) \,\|\, q_\varphi(C \mid \mathcal{D})\big)\Big] + \text{const}" data-display></div>
+    <div class="pfn-claim" data-step="1">
+      <p class="pfn-main">If the network is flexible enough, the best answer is <span class="accent-2 nowrap">the model-averaged posterior</span>.</p>
+      <p class="pfn-claim-note">River’s flow-matching loss aims at the same target, without a guarantee of exact draws.</p>
     </div>
-    <div class="pfn-eq" data-step="1" style="--d:200ms">
+    <div class="pfn-eq pfn-eq-main" data-step="1" style="--d:200ms">
       <span class="eq-tag">optimum</span>
       <div class="eq" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
     </div>
   </div>
-  <div class="trio" data-step="2">
-    <div class="card"><p class="card-label">1 · Simulate</p><p>Draw worlds from the prior. Store the graph and the contributions.</p></div>
-    <div class="card peri"><p class="card-label">2 · Train</p><p>Train one network on what an analyst would see. The stored graph and contributions are its training targets.</p></div>
-    <div class="card peach"><p class="card-label">3 · Use</p><p>Read a new dataset with fixed weights. The target holds only inside the prior and is not guaranteed.</p></div>
-  </div>
   <aside class="notes">
     <p>Source: Eqs. (19), (21) and (22) in Appendix B.1, and Appendix B.9 of the paper; prior-fitted networks (Müller et al., 2022).</p>
-    <p>Step 0: the idea in one sentence. We simulate worlds where we know the truth, and we train one network to recover it. In symbols, the ideal loss is the negative log density of the truth. River does not use this exact loss; step 1 explains.</p>
-    <p>Step 1: the main message. This loss is an expected KL divergence to the true posterior, plus a constant. So, if the network can represent it, the optimum is the posterior of the mixture prior. That is Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence. The paper treats the same posterior as its intended target; Appendix B.9 gives the limits of this argument.</p>
-    <p>Step 2: the limits. The ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views. It samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. Outside the prior, there is no such result.</p>
+    <p>Step 0: the idea. Draw worlds from the prior and store the graph and the contributions. Train one network on what an analyst would see, with the stored truth as targets. In symbols, the ideal loss is the negative log density of the truth. River does not use this exact loss; step 1 explains.</p>
+    <p>Step 1: the main message. The ideal loss equals an expected KL divergence to the true posterior, plus a constant. So, if the network can represent it, the optimum is the posterior of the mixture prior: Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but the paper treats the same posterior as its intended target.</p>
+    <p>The limits: the ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views, and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. A new dataset is read with fixed weights; outside the prior, there is no such result.</p>
   </aside>
 </section>
 
