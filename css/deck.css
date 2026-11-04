@@ -387,17 +387,6 @@ strong, b { font-weight: 600; color: var(--fg); }
 .tex-hot { color: var(--hot) !important; }
 .tex-peri { color: var(--accent-2) !important; }
 
-/* Source line at the bottom of evidence slides. */
-.source {
-  position: absolute;
-  left: var(--mx);
-  bottom: 96px;
-  font-size: 17px;
-  letter-spacing: .02em;
-  color: var(--fg-3);
-}
-.source b { font-weight: 600; color: var(--fg-2); }
-
 /* Speaker notes are carried in the markup and shown with the N key. */
 .notes { display: none; }
 .notes-panel {
