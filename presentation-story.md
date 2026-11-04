@@ -224,7 +224,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** lower mean contribution CRPS than PathMC, OLS and the native PyMC-Marketing MMM in every tested condition and at all three horizons, while the oracle remains better.
 - **Visual / delivery:** one picture, no steps (Carlos, 4 November 2026). A dot plot of query channel CRPS: all four methods, PyMC-Marketing included, in all five conditions and at all three context lengths. The legend bounds PyMC-Marketing to default priors. Explain what CRPS measures before the comparison. The full-input numbers, the per-world wins, the separate PyMC-Marketing study (Table 20) and its fit-health caveats are in the speaker notes, for questions.
 
-### 17 — Four limitations of River today · 35 seconds · Main, compressed
+### 17 — Limitations of River · 35 seconds · Main, compressed
 
 - **Purpose:** state what restricts where River's output can be trusted, so that contribution gains do not become a general superiority claim.
 - **Takeaway:** direct effects only; reliable inside the prior, and outside it only on some axes; contribution intervals miss the truth too often; no check for approximation error on a single dataset.
