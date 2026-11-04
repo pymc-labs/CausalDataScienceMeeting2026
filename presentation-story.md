@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Editorial slide references below retain the pre-comparison numbering: 22 main slides, then backup slides B1 and B2. A temporary flowchart comparison is inserted after editorial slide 14; the rendered deck now has 23 main slides, so subsequent rendered slide numbers are one higher until a version is selected. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Editorial slide references below retain the pre-comparison numbering: 22 main slides, then backup slides B1 and B2. A temporary flowchart comparison is inserted after editorial slide 14; the rendered deck now has 23 main slides, so subsequent rendered slide numbers are one higher until a version is selected. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026).
 
 ## Walkthrough notes — pending changes
 
@@ -188,11 +188,11 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** graphs plus contributions conditional on each graph—not one number.
 - **Visual / delivery:** use this as the transition into the mechanism.
 
-### 12 — Assembling River · 60 seconds · Main, compressed
+### 12 — Assembling River · 60 seconds · Main
 
-- **Purpose:** show the essential architecture without a component inventory.
+- **Purpose:** show the architecture step by step: input, encoder, router, sampled graph, conditioner, decoder, one decomposition draw, then training and inference.
 - **Takeaway:** encode data, sample a graph, condition the contribution decoder on that graph.
-- **Agreed decision, implemented:** a five-step overview: encode one dataset, sample a graph, decode contributions for that graph, training, inference. The training and inference views stay separate.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** the full nine-step walkthrough is back, so the camera moves to the next part on every step instead of jumping over parts. This replaces the five-step overview of 3 November. Keep each step short to stay near 60 seconds.
 
 ### 13 — At inference, River samples the causal graph · 60 seconds · Main
 
@@ -286,5 +286,5 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 1. Does the proposed 15-minute talk / 5-minute Q&A split work?
 2. Is the main emphasis contribution inference, conditional structure discovery, or an equal balance?
-3. ~~For the short version, can the full flow-matching explanation and detailed architecture walkthrough move to backup?~~ Yes (Carlos, 3 November 2026): flow matching and the three checks are backup B1 and B2; slide 12 is a five-step overview.
+3. ~~For the short version, can the full flow-matching explanation and detailed architecture walkthrough move to backup?~~ Flow matching and the three checks are backup B1 and B2 (Carlos, 3 November 2026). Slide 12 keeps the full nine-step walkthrough (Carlos, 4 November 2026).
 4. Which two result visuals should the audience remember?

@@ -1,14 +1,12 @@
 /* ==========================================================================
    Scene "arch" (slide 12, dark theme): River's architecture assembles.
 
-   One SVG in world units. In the full view (views 7 and 8) one unit is one
-   stage px; views 0-6 move a camera (the SVG viewBox) onto the part being
-   explained. Text has two levels of detail: block titles for the full view
-   and small internal labels for the zoomed views, each at least 15 stage px
-   on screen. Particles (aqua dots) travel along the active connectors.
-   The slide shows a short overview: its five steps map to views 1, 3, 5, 7
-   and 8 (VIEWS). Every view is a function of its index alone, so skipped
-   views need no handling.
+   One SVG in world units. In the full view (steps 7 and 8) one unit is one
+   stage px; steps 0-6 move a camera (the SVG viewBox) onto the part being
+   explained, one part per step, so the camera travels along the network.
+   Text has two levels of detail: block titles for the full view and small
+   internal labels for the zoomed views, each at least 15 stage px on screen.
+   Particles (aqua dots) travel along the active connectors.
 
    Every paper number comes from DECK_DATA.network. Synthetic values (token
    grid, graph draws, decomposition) are labelled "illustrative" on screen.
@@ -45,10 +43,8 @@
     [0, 0, W],         // 7 full view, training
     [0, 0, W]          // 8 full view, inference
   ];
-  var FULL = 7;                                        // first full-view view
-  // Deck step -> view: encoder, sampled graph, conditional decoder, training, inference.
-  var VIEWS = [1, 3, 5, 7, 8];
-  function viewOf(deckStep) { return VIEWS[Math.max(0, Math.min(VIEWS.length - 1, deckStep | 0))]; }
+  var FULL = 7;                                        // first full-view step
+  function clampStep(s) { return Math.max(0, Math.min(CAMS.length - 1, s | 0)); }
   var FS = { title: 18, sub: 15.5, mono: 15, hdr: 5.8, lab: 6, tag: 6.4 };
 
   // Illustrative dataset and graph draws.
@@ -1039,7 +1035,7 @@
     enter: function (ctx) {
       reduced = !!Deck.reducedMotion;
       svg.classList.toggle('reduced', reduced);
-      step = viewOf(ctx.step);
+      step = clampStep(ctx.step);
       var now = performance.now();
       stepT0 = now;
       resetHidden();
@@ -1064,7 +1060,7 @@
 
     step: function (ctx) {
       var prev = step;
-      step = viewOf(ctx.step);
+      step = clampStep(ctx.step);
       var now = performance.now();
       stepT0 = now;
       if (ctx.instant) svg.classList.add('instant');

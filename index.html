@@ -390,26 +390,32 @@
      ===================================================================== -->
 
 <!-- 12 · Architecture assembly -->
-<section class="slide slide-arch" data-title="Assembling River" data-act="03 · Inside River" data-theme="dark" data-steps="4"
+<section class="slide slide-arch" data-title="Assembling River" data-act="03 · Inside River" data-theme="dark" data-steps="8"
   data-scene="arch" data-field='{"mode":"none"}'>
   <div class="arch-head">
     <p class="eyebrow r"><span class="num">03</span>Inside River</p>
     <div class="arch-captions r">
-      <div class="arch-cap" data-step-only="0"><h3 class="h3">Encode one dataset</h3><p>Spend and controls for every week, sales for the context weeks only. A shared transformer encoder attends across weeks and across inputs; time attention is causal. The true graph and contributions never enter the encoder.</p></div>
-      <div class="arch-cap" data-step-only="1"><h3 class="h3">Sample a graph</h3><p>The joint router, a flow head, draws a graph and a decomposition together. An edge is present when its mean signed state over the query weeks is above zero. River keeps the graph and discards the router’s decomposition.</p></div>
-      <div class="arch-cap" data-step-only="2"><h3 class="h3">Decode contributions for that graph</h3><p>The graph conditioner passes one round of messages along the sampled edges. A second flow head, the conditional decoder, then draws the contributions. A support mask makes the contribution of an absent edge exactly zero.</p></div>
-      <div class="arch-cap" data-step-only="3"><h3 class="h3">Training</h3><p>The simulator’s graph and contributions are the targets. The decoder learns with the true graph. An auxiliary edge classifier adds a training loss; checkpoint selection only checks that its held-out score is valid. It never selects graphs.</p></div>
-      <div class="arch-cap" data-step-only="4"><h3 class="h3">Inference: weights fixed</h3><p>In the evaluation, each of 256 draws samples a graph with the router, then decodes contributions for that graph. Each flow head takes 16 Euler steps per draw.</p></div>
+      <div class="arch-cap" data-step-only="0"><h3 class="h3">One dataset in</h3><p>Spend and controls for every week. Sales only for the context weeks. Query sales are zero-filled and flagged. The true graph and contributions never enter the encoder.</p></div>
+      <div class="arch-cap" data-step-only="1"><h3 class="h3">A shared transformer encoder</h3><p>Attention runs across weeks and across inputs. Time attention is causal: a cell cannot attend to later weeks directly. Four blocks, width 128, eight heads.</p></div>
+      <div class="arch-cap" data-step-only="2"><h3 class="h3">The joint router</h3><p>A flow head that generates a graph and a decomposition together. Its target appends the graph, coded −1 / +1, to the contributions: 346 coordinates per week.</p></div>
+      <div class="arch-cap" data-step-only="3"><h3 class="h3">A sampled graph G</h3><p>An edge is present when its mean signed state over the query weeks is above zero. River keeps the graph and discards the router’s decomposition.</p></div>
+      <div class="arch-cap" data-step-only="4"><h3 class="h3">The graph conditioner</h3><p>One round of messages along the sampled edges between inputs, latent demand, baseline and sales. 321 graph slots in 8 families; River’s prior uses only the 20 direct ones.</p></div>
+      <div class="arch-cap" data-step-only="5"><h3 class="h3">The conditional decoder</h3><p>A second flow head generates contributions for that graph. A support mask removes forbidden coordinates: an absent edge gives exactly zero.</p></div>
+      <div class="arch-cap" data-step-only="6"><h3 class="h3">One decomposition draw</h3><p>Baseline, each channel and each control, for every week of the requested window. 25 coordinates per week, including four latent and indirect slots that River’s prior sets to zero.</p></div>
+      <div class="arch-cap" data-step-only="7"><h3 class="h3">Training</h3><p>The simulator’s graph and contributions are the targets. The decoder learns with the true graph. An auxiliary edge classifier adds a training loss; checkpoint selection only checks that its held-out score is valid. It never selects graphs.</p></div>
+      <div class="arch-cap" data-step-only="8"><h3 class="h3">Inference: weights fixed</h3><p>In the evaluation, each of 256 draws samples a graph with the router, then decodes contributions for that graph. Each flow head takes 16 Euler steps per draw.</p></div>
     </div>
   </div>
   <div class="scene-root" style="left:120px;top:330px;width:1680px;height:660px"></div>
   <aside class="notes">
-    <p>A short overview: encode, sample a graph, decode contributions for that graph. The camera zooms into each part.</p>
-    <p>0: the input is 208 weeks by 21 rows: up to 10 channels, 10 controls and sales, with 31 features per cell. Query sales are zero-filled and flagged. Time attention is lower-triangular. Entity attention is bidirectional over all cells of a week, inputs and sales.</p>
-    <p>1: the router generates contributions and a graph together. We keep only the graph.</p>
-    <p>2: the conditioner adjusts the representations for that graph. The decoder draws contributions for it. Absent edges give exact zeros. There are 321 graph slots in 8 families; River's prior uses only the 20 direct ones.</p>
-    <p>3: training uses the true graph for the decoder, and the simulated contributions as targets. Loss: joint and conditional velocity losses for query and context windows, plus an edge classification loss. The evaluated checkpoint is the last one of a fixed 62,500-update budget.</p>
-    <p>4: inference repeats graph, then contributions. The evaluation used 256 draws; the structure study used 2,048 router draws.</p>
+    <p>We assemble the network piece by piece. The camera moves to each part in turn.</p>
+    <p>0: the input is 208 weeks by 21 rows: up to 10 channels, 10 controls and sales, with 31 features per cell. Context and query windows.</p>
+    <p>1: the encoder. Time attention is lower-triangular. Entity attention is bidirectional over all cells of a week, inputs and sales.</p>
+    <p>2 and 3: the router generates contributions and a graph together. We keep only the graph.</p>
+    <p>4 and 5: the conditioner adjusts the representations for that graph. The decoder draws contributions for it. Absent edges give exact zeros.</p>
+    <p>6: one draw of the decomposition: baseline, channels and controls for every week of the window.</p>
+    <p>7: training uses the true graph for the decoder, and the simulated contributions as targets. Loss: joint and conditional velocity losses for query and context windows, plus an edge classification loss. The evaluated checkpoint is the last one of a fixed 62,500-update budget.</p>
+    <p>8: inference repeats graph, then contributions. The evaluation used 256 draws; the structure study used 2,048 router draws.</p>
   </aside>
 </section>
 

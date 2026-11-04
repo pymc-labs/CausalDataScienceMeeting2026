@@ -48,7 +48,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 | Opening | 1–3 | Title, the team, the agenda |
 | 01 · The problem | 4–7 | Sales do not reveal causes; the structural model and three alternative causal graphs; one specification against model averaging; “What if we could start backwards?” |
 | 02 · Causal worlds | 8–11 | The prior generates worlds with a known truth; the contribution as an interventional quantity; prior-fitted networks |
-| 03 · Inside River | 12–13 | The architecture in a five-step overview with zoom; graph sampling and graph-averaged inference |
+| 03 · Inside River | 12–13 | The architecture, assembled step by step with zoom; graph sampling and graph-averaged inference |
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
 | 05 · Boundaries | 17–19 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
 | Close | 20–22 | Conclusions; what comes next (paper, link, contact); "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
