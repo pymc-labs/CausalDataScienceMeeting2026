@@ -488,91 +488,94 @@
   </aside>
 </section>
 
-<!-- Comparison prototype · evaluation flow; original slide retained above. -->
+<!-- Comparison draft · evaluation flow; the original test-design slide is kept above until review.
+     Four columns on one row grid: the world, the conditions (step 1), the analysts, the scores.
+     Grey lines carry observed data and estimates; peach lines carry what only the simulator knows. -->
 <section class="slide slide-test-flow" data-title="Test design — flowchart comparison" data-act="04 · Evidence" data-theme="light" data-steps="1" data-field='{"mode":"none"}'>
   <div class="frame">
-    <p class="eyebrow r">04 · Evidence · Comparison draft</p>
+    <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
     <h2 class="h2 r">One world. <span class="accent-2">Five analysts.</span></h2>
   </div>
-  <svg class="eval-flow r" viewBox="0 0 1680 680" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
+  <svg class="eval-flow r" viewBox="0 0 1760 640" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
     <title id="eval-flow-title">Evaluation data flow</title>
-    <desc id="eval-flow-desc">Generated inputs and context sales go to analysts. True contributions and query sales go separately to evaluation. Only the oracle receives the true graph and mechanisms, and it runs on full-input cases only. The next reveal shows five test conditions.</desc>
+    <desc id="eval-flow-desc">A simulated world gives observed data to five analysts. Only the oracle also gets the true graph. The held-out truth goes only to scoring. The next step adds five test conditions; the oracle runs only on full inputs.</desc>
     <defs>
-      <marker id="eval-flow-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#53656a"/></marker>
-      <marker id="eval-flow-hot-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#ae6645"/></marker>
+      <marker id="ef-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head" d="M0 0 L10 5 L0 10Z"/></marker>
+      <marker id="ef-head-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head hot" d="M0 0 L10 5 L0 10Z"/></marker>
     </defs>
-    <!-- World artifacts share one enclosing group, not a separate source node. -->
-    <g role="group" aria-label="Generate a world: observations, evaluation truth and true graph">
-    <rect class="ef-box ef-world" x="210" y="35" width="340" height="505"/>
-    <text class="ef-title" x="230" y="66">Generate a world</text>
-    <rect class="ef-box ef-truth" x="230" y="80" width="300" height="65"/>
-    <text class="ef-title" x="250" y="120">True graph</text>
-    <rect class="ef-box ef-observed" x="230" y="230" width="300" height="130"/>
-    <text class="ef-title" x="250" y="266">Observed data</text>
-    <text x="250" y="303">Inputs · all weeks</text>
-    <text x="250" y="337">Sales · context only</text>
-    <rect class="ef-box ef-truth" x="230" y="420" width="300" height="100"/>
-    <text class="ef-title" x="250" y="453">Evaluation truth</text>
-    <text class="ef-small" x="250" y="480">True decomposition</text>
-    <text class="ef-small" x="250" y="505">Query sales + noise-free total</text>
-    </g>
-    <!-- A direct observed-data route becomes an explicit condition stage. -->
-    <path class="ef-bus" data-until="1" d="M530 290 H950"/>
-    <g data-step="1" transform="translate(0 150)">
-      <path class="ef-edge" d="M530 140 H600"/>
-      <rect class="ef-box ef-condition" x="600" y="45" width="300" height="400"/>
-      <text class="ef-title" x="620" y="82">Five test conditions</text>
-      <text class="ef-small" x="620" y="111">100 cases per condition</text>
-      <text x="620" y="157">Full inputs</text>
-      <text x="620" y="205">In-sample saturation</text>
-      <text x="620" y="253">Smooth baseline</text>
-      <text x="620" y="301">Omitted channel</text>
-      <text x="620" y="349">Omitted control</text>
-      <text class="ef-small" x="620" y="396">World selection / masking</text>
-      <text class="ef-small" x="620" y="423">Omissions are out of prior</text>
-      <path class="ef-bus" d="M900 250 H950"/>
-    </g>
-    <!-- Initially all five share observations; the reveal separates oracle eligibility. -->
-    <path class="ef-bus" d="M950 210 V520"/>
-    <g data-until="1">
-      <path class="ef-edge" d="M950 210 V135 H990"/>
-    </g>
-    <path class="ef-edge" d="M950 210 H990"/>
-    <path class="ef-edge" d="M950 310 H990"/>
-    <path class="ef-edge" d="M950 410 H990"/>
-    <path class="ef-edge" d="M950 520 H990"/>
-    <text class="ef-label" x="990" y="40">FIVE ANALYSTS</text>
-    <rect class="ef-box ef-truth" x="990" y="70" width="270" height="80"/>
-    <text class="ef-title" x="1010" y="103">Oracle</text>
-    <text class="ef-small" data-until="1" x="1010" y="132">True graph supplied</text>
-    <text class="ef-small" data-step="1" x="1010" y="132">100 full-input cases only</text>
-    <rect class="ef-box" x="990" y="170" width="270" height="80"/>
-    <text class="ef-title" x="1010" y="203">River</text><text class="ef-small" x="1010" y="232">Graph not supplied</text>
-    <rect class="ef-box" x="990" y="270" width="270" height="80"/>
-    <text class="ef-title" x="1010" y="303">PyMC-Marketing</text><text class="ef-small" x="1010" y="332">Default-prior MMM</text>
-    <rect class="ef-box" x="990" y="370" width="270" height="80"/>
-    <text class="ef-title" x="1010" y="403">PathMC</text><text class="ef-small" x="1010" y="432">Bayesian regression</text>
-    <rect class="ef-box" x="990" y="480" width="270" height="80"/>
-    <text class="ef-title" x="1010" y="513">OLS</text><text class="ef-small" x="1010" y="542">Linear regression</text>
-    <!-- Full inputs reach every analyst; only this condition also reaches the oracle. -->
+
+    <!-- Column labels -->
+    <text class="ef-col" x="0" y="24">One simulated world</text>
+    <text class="ef-col" x="470" y="24" data-step="1">Five conditions · 100 each</text>
+    <text class="ef-col" x="930" y="24">Five analysts</text>
+    <text class="ef-col" x="1430" y="24">Scoring</text>
+
+    <!-- 1 · The world: what the simulator knows, what an analyst sees, what is held out -->
+    <circle class="ef-dot hot" cx="6" cy="82" r="5"/>
+    <text class="ef-name" x="22" y="90">True graph</text>
+    <text class="ef-sub" x="22" y="118">and mechanisms</text>
+    <circle class="ef-dot aqua" cx="6" cy="262" r="5"/>
+    <text class="ef-name" x="22" y="270">Observed data</text>
+    <text class="ef-sub" x="22" y="298">Inputs · all weeks</text>
+    <text class="ef-sub" x="22" y="324">Sales · context weeks</text>
+    <circle class="ef-dot hot" cx="6" cy="442" r="5"/>
+    <text class="ef-name" x="22" y="450">Held-out truth</text>
+    <text class="ef-sub" x="22" y="478">True decomposition</text>
+    <text class="ef-sub" x="22" y="504">Query sales</text>
+
+    <!-- 2 · Conditions (step 1): the observed data pass through them -->
+    <path class="ef-line" data-until="1" d="M300 262 H860"/>
     <g data-step="1">
-      <path class="ef-edge" d="M900 307 H925 V135 H990"/>
-      <text class="ef-small" x="750" y="155">Full inputs only</text>
+      <path class="ef-line ef-arrow" d="M300 262 H458"/>
+      <circle class="ef-dot aqua" cx="476" cy="172" r="4"/><text class="ef-item" x="492" y="180">Full inputs</text>
+      <circle class="ef-dot aqua" cx="476" cy="217" r="4"/><text class="ef-item" x="492" y="225">In-sample saturation</text>
+      <circle class="ef-dot aqua" cx="476" cy="262" r="4"/><text class="ef-item" x="492" y="270">Smooth baseline</text>
+      <circle class="ef-dot hot" cx="476" cy="307" r="4"/><text class="ef-item" x="492" y="315">Omitted channel</text>
+      <circle class="ef-dot hot" cx="476" cy="352" r="4"/><text class="ef-item" x="492" y="360">Omitted control</text>
+      <text class="ef-tag" x="492" y="394">last two · out of prior</text>
+      <path class="ef-line" d="M712 262 H860"/>
+      <!-- Only the full-input condition also reaches the oracle (its subtitle says so). -->
+      <path class="ef-line ef-arrow" d="M612 172 C 740 172 790 112 918 112"/>
     </g>
-    <path class="ef-edge ef-privileged" d="M530 110 H990"/>
-    <!-- Every method supplies estimates; evaluation truth takes a separate route. -->
-    <path class="ef-bus" d="M1260 110 H1340 V520 H1260 M1260 210 H1340 M1260 310 H1340 M1260 410 H1340"/>
-    <path class="ef-edge" d="M1340 290 H1400"/>
-    <text class="ef-small" x="1400" y="209">Estimates from each analyst</text>
-    <rect class="ef-box ef-world" x="1400" y="235" width="280" height="150"/>
-    <text class="ef-title" x="1420" y="272">Evaluate</text>
-    <text x="1420" y="311">Contributions</text>
-    <text x="1420" y="345">Sales predictions</text>
-    <text class="ef-small" x="1420" y="374">Compare with held-out truth</text>
-    <path class="ef-edge ef-score" d="M530 470 H575 V630 H1540 V385"/>
-    <text class="ef-small" x="1170" y="615">Truth goes only to scoring</text>
+
+    <!-- 3 · The analysts, fed from one bus -->
+    <path class="ef-line" d="M860 172 V442"/>
+    <path class="ef-line" data-until="1" d="M860 112 V172"/>
+    <path class="ef-line ef-arrow" data-until="1" d="M860 112 H918"/>
+    <path class="ef-line ef-arrow" d="M860 172 H918"/>
+    <path class="ef-line ef-arrow" d="M860 262 H918"/>
+    <path class="ef-line ef-arrow" d="M860 352 H918"/>
+    <path class="ef-line ef-arrow" d="M860 442 H918"/>
+    <!-- The true graph reaches the oracle only. -->
+    <path class="ef-hot ef-dash ef-arrow-hot" d="M300 82 H918"/>
+    <circle class="ef-dot hot" cx="936" cy="82" r="5"/>
+    <text class="ef-name" x="952" y="90">Oracle</text>
+    <text class="ef-sub" x="952" y="118" data-until="1">true graph supplied</text>
+    <text class="ef-sub" x="952" y="118" data-step="1">true graph · full inputs only</text>
+    <circle class="ef-dot aqua" cx="936" cy="172" r="5"/>
+    <text class="ef-name river" x="952" y="180">River</text>
+    <text class="ef-sub" x="952" y="208">graph not supplied</text>
+    <circle class="ef-dot" cx="936" cy="262" r="5"/>
+    <text class="ef-name" x="952" y="270">PyMC-Marketing</text>
+    <text class="ef-sub" x="952" y="298">default priors</text>
+    <circle class="ef-dot" cx="936" cy="352" r="5"/>
+    <text class="ef-name" x="952" y="360">PathMC</text>
+    <text class="ef-sub" x="952" y="388">Bayesian regression</text>
+    <circle class="ef-dot" cx="936" cy="442" r="5"/>
+    <text class="ef-name" x="952" y="450">OLS</text>
+    <text class="ef-sub" x="952" y="478">linear regression</text>
+
+    <!-- 4 · Every analyst's estimates meet the held-out truth at the scores -->
+    <path class="ef-line" d="M1180 82 H1260 M1180 172 H1260 M1180 262 H1260 M1180 352 H1260 M1180 442 H1260 M1260 82 V442"/>
+    <path class="ef-line ef-arrow" d="M1260 262 H1418"/>
+    <path class="ef-hot ef-arrow-hot" d="M300 442 H400 V560 H1436 V280"/>
+    <text class="ef-mono hot" x="700" y="590">held-out truth · used only for scoring</text>
+    <circle class="ef-dot ink" cx="1436" cy="262" r="6"/>
+    <text class="ef-name" x="1456" y="270">Scores</text>
+    <text class="ef-sub" x="1456" y="298">Contributions · sales predictions</text>
+    <text class="ef-mono" x="1456" y="326">CRPS · lower is better</text>
   </svg>
-  <p class="eval-scope r">Contribution and prediction evaluation. <strong>Graph recovery is a separate study.</strong></p>
+  <p class="eval-scope r">Contribution and prediction evaluation. Graph recovery is a separate study.</p>
   <aside class="notes">
     <p>Comparison prototype. Keep the original test-design slide immediately before this one until the layout is reviewed.</p>
     <p>The world supplies observations, evaluation truth, and privileged graph/mechanism information. Analysts receive input histories and context sales. They do not receive the true decomposition or query sales.</p>

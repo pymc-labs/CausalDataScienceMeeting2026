@@ -1,16 +1,25 @@
-/* Comparison prototype: keep the original test-design slide until review. */
-.slide-test-flow .eval-flow { position: absolute; left: 120px; top: 270px; width: 1680px; height: 680px; overflow: visible; }
-.eval-flow text { font-family: Inter, sans-serif; fill: var(--fg); font-size: 23px; }
-.eval-flow .ef-title { font-size: 25px; font-weight: 600; }
-.eval-flow .ef-small { font-size: 19px; fill: var(--fg-2); }
-.eval-flow .ef-label { font-size: 18px; font-weight: 600; letter-spacing: 1px; }
-.eval-flow .ef-box { fill: #f7f8fa; stroke: var(--line); stroke-width: 2; rx: 12; }
-.eval-flow .ef-world { fill: #e1efec; }
-.eval-flow .ef-observed { fill: #e6e9f6; }
-.eval-flow .ef-truth { fill: #f8e4d8; }
-.eval-flow .ef-condition { fill: #edf1f0; }
-.eval-flow .ef-edge { fill: none; stroke: #53656a; stroke-width: 2.3; marker-end: url(#eval-flow-head); }
-.eval-flow .ef-bus { fill: none; stroke: #53656a; stroke-width: 2.3; }
-.eval-flow .ef-privileged { stroke: #ae6645; stroke-dasharray: 7 5; marker-end: url(#eval-flow-hot-head); }
-.eval-flow .ef-score { stroke: #ae6645; marker-end: url(#eval-flow-hot-head); }
-.slide-test-flow .eval-scope { position: absolute; left: 120px; bottom: 80px; font-size: 23px; color: var(--fg-2); }
+/* Comparison draft: the evaluation flow (kept beside the original test-design slide until review).
+   Deck style: no boxes. Text with small coloured dots, thin grey lines for data and estimates,
+   peach lines for what only the simulator knows. */
+.slide-test-flow .eval-flow { position: absolute; left: var(--mx); top: 318px; width: 1760px; height: 640px; overflow: visible; }
+.eval-flow text { font-family: var(--f-body); fill: var(--fg); }
+.eval-flow .ef-col { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; fill: var(--fg-3); }
+.eval-flow .ef-name { font-size: 24px; font-weight: 500; }
+.eval-flow .ef-name.river { fill: var(--accent); }
+.eval-flow .ef-sub { font-size: 18px; fill: var(--fg-2); }
+.eval-flow .ef-item { font-size: 21px; fill: var(--fg); }
+.eval-flow .ef-tag { font-family: var(--f-mono); font-size: 15px; letter-spacing: .04em; fill: var(--hot); }
+.eval-flow .ef-mono { font-family: var(--f-mono); font-size: 15px; letter-spacing: .04em; fill: var(--fg-3); }
+.eval-flow .ef-mono.hot { fill: var(--hot); }
+.eval-flow .ef-dot { fill: var(--fg-3); }
+.eval-flow .ef-dot.aqua { fill: var(--accent); }
+.eval-flow .ef-dot.hot { fill: var(--hot); }
+.eval-flow .ef-dot.ink { fill: var(--fg); }
+.eval-flow .ef-line { fill: none; stroke: rgba(12, 31, 64, .28); stroke-width: 1.5; stroke-linejoin: round; }
+.eval-flow .ef-arrow { marker-end: url(#ef-head); }
+.eval-flow .ef-hot { fill: none; stroke: var(--hot); stroke-width: 1.5; stroke-linejoin: round; }
+.eval-flow .ef-dash { stroke-dasharray: 6 6; }
+.eval-flow .ef-arrow-hot { marker-end: url(#ef-head-hot); }
+.eval-flow .ef-head { fill: rgba(12, 31, 64, .45); }
+.eval-flow .ef-head.hot { fill: var(--hot); }
+.slide-test-flow .eval-scope { position: absolute; left: var(--mx); bottom: 96px; margin: 0; font-size: 19px; color: var(--fg-3); }

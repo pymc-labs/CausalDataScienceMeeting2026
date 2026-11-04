@@ -209,7 +209,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 ### Comparison draft after slide 14 — Evaluation data flow
 
 - **Status:** implemented for side-by-side review; not yet selected to replace slide 14. No additional speaking budget is approved.
-- **Initial view:** a “Generate a world” group contains observed data, evaluation truth, and the true graph/mechanisms. All five analysts share the observed-data route and send estimates to evaluation. A separate privileged graph/mechanism arrow goes to the oracle.
+- **Initial view:** four aligned columns without boxes, in the deck style (text with small coloured dots, thin lines): one simulated world (true graph and mechanisms, observed data, held-out truth), five analysts, and the scores. All five analysts share the observed-data line and send estimates to the scores. A dashed peach line takes the true graph to the oracle only; a solid peach line takes the held-out truth to the scores only. Restyled by Carlos on 4 November 2026; the content is unchanged.
 - **Reveal 1:** insert the five conditions. The four non-oracle analysts receive all five conditions; the full-input condition also goes to the oracle, which receives only those 100 cases. Do not imply that full-input observations are exclusive to the oracle. Distinguish world selection from input masking.
 - **Scope:** contribution and prediction evaluation, not graph-recovery scoring. Keep the original horizon design and the separate structure study.
 - **Review:** compare both layouts before choosing one. The draft temporarily shifts subsequent rendered slide numbers by one; editorial numbering below is unchanged.
