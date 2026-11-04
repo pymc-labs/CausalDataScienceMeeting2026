@@ -51,7 +51,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 | 03 · Inside River | 12–13 | The architecture in a five-step overview with zoom; graph sampling and graph-averaged inference |
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
 | 05 · Boundaries | 17–19 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
-| Close | 20–21 | Conclusions; "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
+| Close | 20–22 | Conclusions; what comes next (paper, link, contact); "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
 | Backup | B1–B2 | Flow matching; units, cost and omitted inputs. Hidden during the talk: arrows, End, swipes, the overview and slide numbers in the address never reach them. Open them only by their own address: `#/backup/1` and `#/backup/2` |
 
 ## Structure

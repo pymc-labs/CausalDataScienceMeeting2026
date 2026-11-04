@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the current deck’s numbers and titles: 21 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. Slide references use the current deck’s numbers and titles: 22 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the five-step overview on slide 12, and the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 November 2026).
 
 ## Review workflow
 
@@ -81,7 +81,7 @@ Keep the comparison scope explicit: these are synthetic results, and the default
 
 ## 5. Boundaries and next steps — A first result, not the finished tool · 2 minutes
 
-*Current slides 17–21, including conclusions and closing.*
+*Current slides 17–22, including conclusions, what comes next and the thank-you slide.*
 
 Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. Uncertainty calibration needs work, contribution gains do not imply better sales prediction, and real-business causal identification is not established.
 
@@ -227,17 +227,22 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** richer mechanisms need new priors, new training and new evaluation; capacity is not a learned capability.
 - **Proposal:** one sentence on richer and time-varying graphs, no slot-count walkthrough.
 
-### 20 — Conclusions · 20 seconds · Main
+### 20 — Conclusions · 15 seconds · Main
 
 - **Purpose:** restate the three contributions in bounded form.
 - **Takeaway:** contribution inference, constrained structure recovery and reusable inference.
 - **Visual / delivery:** concise recap, no repeated result tables.
 
-### 21 — Thank you · 10 seconds · Main
+### 21 — This is just the start · 10 seconds · Main
+
+- **Purpose:** state the research direction and where to find the paper.
+- **Visual / delivery:** "What comes next" with the paper title, the link and the contact.
+
+### 22 — Thank you · 5 seconds · Main
 
 - **Purpose:** close and invite discussion.
-- **Visual / delivery:** one word only. "Thank you" is drawn as a graph (nodes on the letter outlines, edges between neighbours) that morphs into "Kiitos", "Gracias" and "Obrigado" and back, without a header or footer. The paper title, the link and the contact are in the speaker notes. Transition directly to the five-minute Q&A.
-- **Agreed decision, implemented (Carlos, 4 November 2026):** this replaces the earlier closing slide with the headline and the three contact columns.
+- **Visual / delivery:** one word only. "Thank you" is drawn as a graph (nodes on the letter outlines, edges between neighbours) that morphs into "Kiitos", "Gracias" and "Obrigado" and back. Only the PyMC Labs logo (top left) and the conference name (bottom right) sit in the corners. Transition directly to the five-minute Q&A.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** the thank-you moves out of slide 21 into its own slide. The conclusions budget drops by 5 seconds, so the talk stays at 15 minutes.
 
 ### B1 — Flow matching turns noise into draws · Backup
 
