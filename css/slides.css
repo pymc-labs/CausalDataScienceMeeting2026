@@ -191,19 +191,24 @@
 .boundary p { margin: 0; font-size: 22px; line-height: 1.55; font-weight: 300; color: var(--fg-2); }
 .boundary .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--hot); margin-bottom: 10px; }
 
-/* --- 10 Prior-fitted networks --------------------------------------------------------- */
-.slide-pfn .pfn-eqs { position: absolute; left: var(--mx); right: var(--mx); top: 336px; display: flex; flex-direction: column; gap: 6px; }
-.slide-pfn .pfn-eq { display: grid; grid-template-columns: 170px 1fr; align-items: center; }
-/* The claim of the optimum: its own statement at the left margin, marked by a rule (as on slide 09). */
-.slide-pfn .pfn-claim { grid-column: 1 / -1; margin-top: 20px; padding: 2px 0 2px 24px; border-left: 2px solid var(--accent-2); }
-.slide-pfn .pfn-claim p { margin: 0; font-size: 30px; line-height: 1.35; color: var(--fg); }
-.slide-pfn .pfn-claim .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-2); margin-bottom: 10px; }
-.slide-pfn .pfn-claim p.pfn-claim-note { margin-top: 6px; font-size: 22px; line-height: 1.45; font-weight: 300; color: var(--fg-2); }
-.slide-pfn .eq { font-size: 40px; text-align: left; }
-.slide-pfn .eq .katex-display { margin: 8px 0; text-align: left; }
+/* --- 10 Prior-fitted networks: plain messages large at the left, the math small at the right --- */
+.slide-pfn .pfn-text { position: absolute; left: var(--mx); top: 362px; width: 1040px; }
+.slide-pfn .pfn-msg { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 34px; line-height: 1.28; color: var(--fg); transition: opacity .6s var(--ease); }
+.slide-pfn[data-step="1"] .pfn-msg,
+.slide-pfn[data-step="2"] .pfn-msg { opacity: .4; }
+/* The main message: its own statement, marked by a rule (as on slide 09). */
+.slide-pfn .pfn-claim { margin-top: 40px; padding: 4px 0 4px 28px; border-left: 3px solid var(--accent-2); }
+.slide-pfn .pfn-main { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 52px; line-height: 1.18; letter-spacing: -.01em; color: var(--fg); }
+.slide-pfn .pfn-main .nowrap { white-space: nowrap; }
+.slide-pfn .pfn-claim-note { margin: 18px 0 0; font-size: 21px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
+.slide-pfn .pfn-math { position: absolute; left: 1220px; right: var(--mx); top: 362px; display: flex; flex-direction: column; gap: 18px; }
+.slide-pfn .pfn-math-k { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); }
+.slide-pfn .pfn-eq { display: flex; flex-direction: column; gap: 4px; }
+.slide-pfn .eq { font-size: 25px; color: var(--fg-2); text-align: left; }
+.slide-pfn .eq .katex-display { margin: 0; text-align: left; }
 .slide-pfn .eq .katex-display > .katex { text-align: left; }
-.eq-tag { font-family: var(--f-mono); font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-2); }
-.slide-pfn .trio { position: absolute; left: var(--mx); right: var(--mx); top: 796px; }
+.eq-tag { font-family: var(--f-mono); font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-2); }
+.slide-pfn .trio { position: absolute; left: var(--mx); right: var(--mx); top: 830px; }
 
 /* --- 12 Architecture --------------------------------------------------------------------- */
 .slide-arch .arch-head { position: absolute; left: var(--mx); right: var(--mx); top: 150px; }
