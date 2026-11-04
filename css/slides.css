@@ -232,22 +232,17 @@
 .slide-limits .points .t { font-size: 30px; }
 .slide-limits .points .t small { font-size: 21px; max-width: 1440px; }
 
-/* --- 18 Scope ------------------------------------------------------------------------------- */
-.slide-scope .scope { position: absolute; left: var(--mx); right: var(--mx); top: 400px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 96px; }
-.slide-scope .card p:last-child { font-size: 21px; }
-.slide-scope .scope-note { position: absolute; left: var(--mx); right: var(--mx); top: 760px; margin: 0; padding-top: 28px; border-top: 1px solid var(--line); font-size: 25px; line-height: 1.5; font-weight: 300; color: var(--fg); max-width: 1480px; }
-
-/* --- 20 Conclusions --------------------------------------------------------------------------- */
+/* --- 18 What River demonstrates --------------------------------------------------------------- */
 .slide-concl .points { margin-top: 48px; }
 .slide-concl .concl-note { margin-top: 40px; font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--accent-2); max-width: 1440px; }
 
-/* --- 21 What comes next ----------------------------------------------------------------------- */
+/* --- 20 What comes next ----------------------------------------------------------------------- */
 .close-cols { display: grid; grid-template-columns: 420px 560px 360px; gap: 72px; margin-top: 72px; }
 .close-col { position: relative; padding-top: 26px; }
 .close-col::before { content: ''; position: absolute; left: 0; top: 0; width: 32px; height: 3px; border-radius: 2px; background: var(--band); }
 .close-col .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 12px; }
 .close-col p { font-size: 21px; line-height: 1.5; color: var(--fg); margin: 0; }
 
-/* --- 22 Thank you: the scene draws the word; two quiet marks sit where the chrome would be --- */
+/* --- 21 Thank you: the scene draws the word; two quiet marks sit where the chrome would be --- */
 .slide-close .close-logo { position: absolute; left: var(--mx); top: 60px; height: 44px; width: auto; opacity: .9; }
 .slide-close .close-event { position: absolute; right: var(--mx); bottom: 46px; margin: 0; font-size: 17px; letter-spacing: .02em; color: var(--fg-3); }

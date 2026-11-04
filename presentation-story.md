@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. The deck has 22 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026), and the flowchart on slide 14, which replaces the card layout (Carlos, 4 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. The deck has 21 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026), the flowchart on slide 14, which replaces the card layout, and the close in the order limitations, main results, future work, thank you (Carlos, 4 November 2026).
 
 ## Walkthrough notes — pending changes
 
@@ -90,7 +90,7 @@ Keep the comparison scope explicit: these are synthetic results, and the default
 
 ## 5. Boundaries and next steps — A first result, not the finished tool · 2 minutes
 
-*Current slides 17–22, including conclusions, what comes next and the thank-you slide.*
+*Current slides 17–21: the limitations, what River demonstrates, the future work (graph slots, then what comes next) and the thank-you slide.*
 
 Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. The limitations slide lists only properties of River that restrict where its output can be trusted: direct effects only, reliability outside the prior on some axes only, contribution intervals that miss the truth too often, and no check for approximation error on a single dataset. The oracle gap and sales prediction are not limitations: the oracle has privileged information, and River is not built as a forecaster. Real-business causal identification is not established.
 
@@ -231,34 +231,29 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Rule (Carlos, 4 November 2026):** a limitation is a property of River, measured or set by its design, that restricts trust in its output. These items are not limitations and stay in the notes, for questions: the oracle gap (privileged information, so it shows headroom), sales prediction (not River's goal) and the width of the sales bands (the cause is not tested). The source of the gain is not established; it is in the slide 18 notes.
 - **Delivery:** summarize the four lines; do not read the numbers.
 
-### 18 — What is demonstrated, and what is not · 35 seconds · Main
+### 18 — What River demonstrates · 50 seconds · Main
 
-- **Purpose:** state the exact scope of the causal claim.
-- **Takeaway:** restricted synthetic direct-effect inference is demonstrated; unrestricted discovery and real-business identification are not.
-- **Visual / delivery:** contrast current evidence with non-claims, without repeating all earlier caveats.
+- **Purpose:** state the main results that the tests prove, right after the limitations.
+- **Takeaway:** contribution inference, constrained structure recovery and reusable inference, in the tested synthetic setting. Graph draws do not establish causal identification from business data.
+- **Visual / delivery:** the three numbered results of the former conclusions slide, then one line on the scope of the causal claim. What is not established and the source of the gain are in the speaker notes; the research goals are on slide 19.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** the former slide 18 (“What is demonstrated, and what is not”) and slide 20 (conclusions) are one slide. Its time is the sum of the two former budgets.
 
 ### 19 — The graph slots are already in the network · 20 seconds · Main, compressed
 
-- **Purpose:** motivate the next research stage.
+- **Purpose:** future work: motivate the next research stage.
 - **Takeaway:** richer mechanisms need new priors, new training and new evaluation; capacity is not a learned capability.
 - **Proposal:** one sentence on richer and time-varying graphs, no slot-count walkthrough.
 
-### 20 — Conclusions · 15 seconds · Main
-
-- **Purpose:** restate the three contributions in bounded form.
-- **Takeaway:** contribution inference, constrained structure recovery and reusable inference.
-- **Visual / delivery:** concise recap, no repeated result tables.
-
-### 21 — This is just the start · 10 seconds · Main
+### 20 — This is just the start · 10 seconds · Main
 
 - **Purpose:** state the research direction and where to find the paper.
 - **Visual / delivery:** "What comes next" with the paper title, the link and the contact.
 
-### 22 — Thank you · 5 seconds · Main
+### 21 — Thank you · 5 seconds · Main
 
 - **Purpose:** close and invite discussion.
 - **Visual / delivery:** one word only. "Thank you" is drawn as a graph (nodes on the letter outlines, edges between neighbours) that morphs into "Kiitos", "Gracias" and "Obrigado" and back. Only the PyMC Labs logo (top left) and the conference name (bottom right) sit in the corners. Transition directly to the five-minute Q&A.
-- **Agreed decision, implemented (Carlos, 4 November 2026):** the thank-you moves out of slide 21 into its own slide. The conclusions budget drops by 5 seconds, so the talk stays at 15 minutes.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** the thank-you is its own slide, after “What comes next”. The conclusions budget dropped by 5 seconds, so the talk stays at 15 minutes.
 
 ### B1 — Flow matching turns noise into draws · Backup
 
@@ -279,7 +274,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Slides 10, 12, 13, 15 and B1:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Verified against pymc-mfm `32587ac` (the training revision of River-1), run `profile-c-9add72ea6d35` and the structure run; corrections applied. The issue comment holds the claim-by-claim checklist.
 - **Slide 11:** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
 - **Slide 16:** [Issue #4 — converged PyMC-Marketing results](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/4). No converged MMM rerun exists. Carlos decided that the deck follows the latest paper (MarketingFoundationalModels PR #36, commit `499be45`), with its fit-health caveats.
-- **Slide 18:** retain the current title, “What is demonstrated, and what is not.”
+- **Slide 18:** merged with the conclusions (Carlos, 4 November 2026). The title is now “What River demonstrates”, because the slide no longer shows what is not established.
 
 ## Decisions for review
 

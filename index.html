@@ -94,7 +94,7 @@
       <li class="r"><span class="n">02</span><span class="t">Simulated causal worlds<small>A prior that knows the graph and every contribution.</small></span></li>
       <li class="r"><span class="n">03</span><span class="t">Inside River<small>One encoder and two flow heads that sample graphs, then effects.</small></span></li>
       <li class="r"><span class="n">04</span><span class="t">What River recovers<small>Structure, contributions and checks on held-out simulated worlds.</small></span></li>
-      <li class="r"><span class="n">05</span><span class="t">Boundaries and the next stage<small>What the results show, and what they do not show.</small></span></li>
+      <li class="r"><span class="n">05</span><span class="t">Boundaries and the next stage<small>The limitations, what River demonstrates, and the next research stage.</small></span></li>
     </ol>
   </div>
   <aside class="notes">
@@ -620,35 +620,34 @@
   </aside>
 </section>
 
-<!-- 18 · Demonstrated vs not -->
-<section class="slide slide-scope" data-title="What is demonstrated, and what is not" data-act="05 · Boundaries" data-theme="light" data-steps="2"
+<!-- 18 · What River demonstrates: the three main results, right after the limitations.
+     Merges the former "What is demonstrated, and what is not" and "Conclusions" slides. What is
+     not established is in the notes; the research goals are on the next slide. -->
+<section class="slide slide-concl" data-title="What River demonstrates" data-act="05 · Conclusions" data-theme="light"
   data-field='{"mode":"none"}'>
   <div class="frame">
-    <p class="eyebrow r"><span class="num">05</span>Boundaries · The causal claim</p>
-    <h2 class="h2 r">What is demonstrated, <span class="accent-2">and what is not</span></h2>
+    <p class="eyebrow r"><span class="num">05</span>Conclusions · What is demonstrated</p>
+    <h2 class="h2 r">What River demonstrates<br><span class="accent-2">in the tested synthetic setting</span></h2>
+    <ol class="points">
+      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than PathMC, OLS and PyMC-Marketing in all five conditions and at all three horizons. In a separate study, less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Constrained structure recovery<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds; the sampled graphs contain the true graph in most worlds.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves new datasets with no new fit. Tested positive changes of units do not change the answer.</small></span></li>
+    </ol>
+    <p class="concl-note r">Graph draws describe structural uncertainty under the prior’s assumptions. They do not establish causal identification from business data.</p>
   </div>
-  <div class="scope">
-    <div class="card r"><p class="card-label">Demonstrated now</p><p class="card-title">Inference in a restricted direct-effect setting</p>
-      <p>Contribution inference and partial recovery of permitted direct effects, on held-out synthetic worlds, with no new fit.</p></div>
-    <div class="card peach" data-step="1"><p class="card-label">Not yet established</p><p class="card-title">Unrestricted causal discovery</p>
-      <p>Full DAG discovery, learned edge directions, recovery under hidden confounding, new response mechanisms, and identification from real business data.</p></div>
-    <div class="card peri" data-step="2"><p class="card-label">Research goal</p><p class="card-title">Richer causal structure</p>
-      <p>Mediation, awareness, funnel effects and interactions. Each needs a broader prior, new weights and new evaluation.</p></div>
-  </div>
-  <p class="scope-note r">Graph draws describe structural uncertainty under the prior’s assumptions. They do not establish causal identification from business data.</p>
   <aside class="notes">
-    <p>Source: Sections 5 and 5.2 of the paper.</p>
-    <p>We keep three statements separate: what is demonstrated, what is not, and the research goal.</p>
-    <p>The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
+    <p>Source: Sections 4, 5 and 6 of the paper.</p>
+    <p>Say: three results, each tested against known truth on held-out synthetic worlds, with no new fit. River is a first tool, not the finished tool.</p>
+    <p>If asked what is not established: full DAG discovery, learned edge directions, recovery under hidden confounding, transfer to response mechanisms outside the prior, and causal identification from real business data. The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
     <p>If asked about the source of the gain: the comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</p>
   </aside>
 </section>
 
-<!-- 19 · Graph slots -->
-<section class="slide" data-title="The graph slots are already in the network" data-act="05 · Next stage" data-theme="dark" data-steps="3"
+<!-- 19 · Future work: the graph slots -->
+<section class="slide" data-title="The graph slots are already in the network" data-act="05 · Future work" data-theme="dark" data-steps="3"
   data-scene="slots" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
-    <p class="eyebrow r"><span class="num">05</span>The next stage</p>
+    <p class="eyebrow r"><span class="num">05</span>Future work · The next stage</p>
     <h2 class="h2 r">The graph slots are <span class="accent">already in the network</span></h2>
     <div class="flow-text">
       <div data-step-only="0"><p class="body">Today each graph that River samples holds for every week: direct effects only.</p></div>
@@ -666,26 +665,7 @@
   </aside>
 </section>
 
-<!-- 20 · Conclusions -->
-<section class="slide slide-concl" data-title="Conclusions" data-act="Conclusions" data-theme="light"
-  data-field='{"mode":"none"}'>
-  <div class="frame">
-    <p class="eyebrow r">Conclusions</p>
-    <h2 class="h2 r">Three bounded results<br><span class="accent-2">in the tested synthetic setting</span></h2>
-    <ol class="points">
-      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than PathMC, OLS and PyMC-Marketing in all five conditions and at all three horizons. In a separate study, less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
-      <li class="r"><span class="n">02</span><span class="t">Constrained structure recovery<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds; the sampled graphs contain the true graph in most worlds.</small></span></li>
-      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves new datasets with no new fit. Tested positive changes of units do not change the answer.</small></span></li>
-    </ol>
-    <p class="concl-note r">River partly recovers direct-effect structure in the tested synthetic setting. Its current weights do not support richer mechanisms, such as mediation or interactions.</p>
-  </div>
-  <aside class="notes">
-    <p>Three contributions, each with its limit.</p>
-    <p>River is a first tool, not the finished tool.</p>
-  </aside>
-</section>
-
-<!-- 21 · What comes next -->
+<!-- 20 · What comes next -->
 <section class="slide slide-next" data-title="This is just the start" data-act="Closing" data-theme="dark" data-chrome="min"
   data-field='{"mode":"contour","focus":[0.88,0.26],"reach":380,"intensity":0.9}'>
   <div class="frame mid">
@@ -702,7 +682,7 @@
   </aside>
 </section>
 
-<!-- 22 · Thank you: one word as a graph, morphing through English, Finnish, Spanish and Portuguese.
+<!-- 21 · Thank you: one word as a graph, morphing through English, Finnish, Spanish and Portuguese.
      Only two quiet marks in the corners: the PyMC Labs logo and the conference. -->
 <section class="slide slide-close" data-title="Thank you" data-act="Closing" data-theme="dark" data-chrome="off"
   data-scene="thanks" data-field='{"mode":"none"}'>
