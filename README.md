@@ -50,6 +50,11 @@ The presenter screen is a second window for your own display. It shows:
 - what the next arrow press shows: the next step (with its caption, when the step has one) or the next slide;
 - the speaker notes of the current slide.
 
+The elapsed timer shows minutes and seconds. Click **Start** to run it.
+Use **Pause** and **Resume** to stop and continue the count.
+**Reset** stops the timer and sets it to `00:00`.
+Slide changes do not reset the timer. Reloading the presenter screen does.
+
 Its arrow keys, a clicker and its **Previous** and **Next** buttons move the deck. The deck's own keys move the presenter screen too.
 
 - **Two screens, in Chrome or Edge:** press **F** in the deck. The first time, allow the browser to manage windows on all your displays, then press **F** again. The deck fills the external screen, and the presenter screen opens on the other screen.

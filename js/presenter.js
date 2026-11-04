@@ -2,7 +2,7 @@
    Presenter screen: where the talk is, what the next arrow press shows, and
    the speaker notes. The deck (js/deck.js) opens this window and answers over
    postMessage through window.opener; this window sends next/prev back from its
-   arrow keys, a clicker and its two buttons. Classic script, so it also works
+   arrow keys, a clicker and its navigation buttons. Classic script, so it also works
    from file://. A heartbeat finds the deck again after a reload of either window.
    ========================================================================== */
 (function () {
@@ -13,10 +13,16 @@
   var deck = window.opener;
   var lastState = 0;
   var lastKey = '';
+  var timerStartedAt = null;
+  var timerElapsed = 0;
+  var timerInterval = null;
 
   function $(sel) { return document.querySelector(sel); }
   var el = {
     status: $('[data-status]'),
+    timer: $('[data-timer]'),
+    timerToggle: $('[data-timer-toggle]'),
+    timerReset: $('[data-timer-reset]'),
     nowLabel: $('[data-now-label]'),
     nowOf: $('[data-now-of]'),
     nowTitle: $('[data-now-title]'),
@@ -28,6 +34,15 @@
     nextText: $('[data-next-text]'),
     notes: $('[data-notes]')
   };
+
+  // Use elapsed time, not tick counts, so delayed callbacks do not slow the clock.
+  function updateTimer() {
+    var elapsed = timerElapsed + (timerStartedAt === null ? 0 : performance.now() - timerStartedAt);
+    var seconds = Math.floor(elapsed / 1000);
+    var text = String(Math.floor(seconds / 60)).padStart(2, '0') + ':' +
+      String(seconds % 60).padStart(2, '0');
+    if (el.timer.textContent !== text) el.timer.textContent = text;
+  }
 
   function send(type) {
     if (deck && !deck.closed) deck.postMessage({ cdsm: 'presenter', type: type }, '*');
@@ -94,6 +109,8 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if ((e.key === ' ' || e.key === 'Enter') &&
+        e.target instanceof Element && e.target.closest('button')) return;
     switch (e.key) {
       case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': case 'Enter':
         e.preventDefault(); send('next'); break;
@@ -105,5 +122,29 @@
   // Blur after a click, so the arrow keys and Enter do not also press a focused button.
   document.querySelectorAll('[data-cmd]').forEach(function (b) {
     b.addEventListener('click', function () { send(b.getAttribute('data-cmd')); b.blur(); });
+  });
+  el.timerToggle.addEventListener('click', function () {
+    if (timerStartedAt === null) {
+      timerStartedAt = performance.now();
+      timerInterval = setInterval(updateTimer, 1000);
+      el.timerToggle.textContent = 'Pause';
+    } else {
+      timerElapsed += performance.now() - timerStartedAt;
+      timerStartedAt = null;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      el.timerToggle.textContent = 'Resume';
+    }
+    updateTimer();
+    el.timerToggle.blur();
+  });
+  el.timerReset.addEventListener('click', function () {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerStartedAt = null;
+    timerElapsed = 0;
+    updateTimer();
+    el.timerToggle.textContent = 'Start';
+    el.timerReset.blur();
   });
 })();

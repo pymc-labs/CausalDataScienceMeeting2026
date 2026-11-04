@@ -6,9 +6,11 @@
 .pv-k { margin: 0; font: 600 13px/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--fg-3); }
 .pv-k.accent { color: var(--accent); }
 
-.pv-top { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.pv-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
 .pv-status { margin: 0; font: 400 14px/1 var(--f-mono); color: var(--hot); }
 .pv-status.on { color: var(--accent); }
+.pv-timer { display: flex; align-items: center; gap: 12px; }
+.pv-clock { min-width: 5ch; font: 500 24px/1 var(--f-mono); color: var(--fg); }
 
 .pv-main { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); column-gap: 64px; min-height: 0; }
 .pv-now { grid-column: 1; grid-row: 1; }
@@ -37,4 +39,6 @@
 .pv-btn { padding: 14px 26px; border: 1px solid var(--line); border-radius: 999px; background: none; font: 500 17px/1 var(--f-body); color: var(--fg); cursor: pointer; }
 .pv-btn:hover { border-color: var(--fg-3); }
 .pv-btn.next { border-color: var(--accent); color: var(--accent); }
+.pv-btn.pv-timer-btn { padding: 10px 14px; font-size: 14px; }
+.pv-btn[data-timer-toggle] { min-width: 88px; border-color: var(--accent); color: var(--accent); }
 .pv-help { margin: 0 0 0 auto; font: 400 14px/1.4 var(--f-body); color: var(--fg-3); }

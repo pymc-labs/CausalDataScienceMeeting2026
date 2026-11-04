@@ -14,6 +14,12 @@
   <div class="bg bg-dark"></div>
   <header class="pv-top">
     <p class="pv-k">Presenter screen</p>
+    <div class="pv-timer" role="group" aria-label="Presentation timer">
+      <span class="pv-k">Elapsed</span>
+      <output id="presenter-elapsed" class="pv-clock" data-timer role="timer" aria-live="off" aria-label="Elapsed presentation time">00:00</output>
+      <button type="button" class="pv-btn pv-timer-btn" data-timer-toggle aria-controls="presenter-elapsed">Start</button>
+      <button type="button" class="pv-btn pv-timer-btn" data-timer-reset aria-controls="presenter-elapsed">Reset</button>
+    </div>
     <p class="pv-status" data-status>Waiting for the deck</p>
   </header>
   <main class="pv-main">
