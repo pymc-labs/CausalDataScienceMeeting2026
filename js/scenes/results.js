@@ -313,7 +313,8 @@
     { key: 'mfm', name: 'River', fill: C.aquaDeep },
     { key: 'pathmc', name: 'PathMC', fill: C.peri },
     { key: 'ols', name: 'OLS', fill: C.ols },
-    { key: 'mmm', name: 'PyMC-Marketing', fill: C.ink, note: ' \u00b7 default priors' }
+    { key: 'mmm', name: 'PyMC-Marketing', fill: C.ink, note: ' \u00b7 default priors' },
+    { key: 'oracle', name: 'Oracle', fill: C.peachDeep, note: ' · true graph + mechanisms supplied · full inputs only' }
   ];
   var CRPS_W = 1760;
   var CRPS_H = 590;
@@ -323,10 +324,16 @@
   function buildCrps(host) {
     var P = new Panel(host, CRPS_W, CRPS_H);
     var svg = P.svg;
-    var rows = D.crpsChannels;
+    var rows = D.crpsChannels.map(function (r) {
+      return r.condition === 'Full inputs'
+        ? Object.assign({}, r, { oracle: D.limits.oracleChannelCrps[r.context].oracle })
+        : r;
+    });
     var oop = D.evaluation.outOfPrior;
     var max = 0;
-    rows.forEach(function (r) { METHODS.forEach(function (m) { max = Math.max(max, r[m.key]); }); });
+    rows.forEach(function (r) { METHODS.forEach(function (m) {
+      if (Number.isFinite(r[m.key])) max = Math.max(max, r[m.key]);
+    }); });
     var TICK = 0.05;
     var DMAX = Math.ceil(max / TICK - 1e-9) * TICK;
     var LABEL_X = 330;
@@ -360,11 +367,12 @@
     text(grid, X1, 22, 'query channel CRPS \u00b7 lower is better', 't-mono', { 'text-anchor': 'end' });
     text(grid, CTX_X, RY0 - 36, 'context', 't-mono t-small', { 'text-anchor': 'end' });
 
-    var LEG_X = [0, 130, 280, 400];   // offsets from X0; name widths differ, so placed by hand
+    var LEG_X = [0, 130, 280, 400, 0];   // offsets from X0; name widths differ, so placed by hand
     var legend = METHODS.map(function (m, k) {
       var g = svgEl('g', null, svg);
-      svgEl('circle', { cx: X0 + LEG_X[k] + 8, cy: 15, r: 8, fill: m.fill }, g);
-      var name = text(g, X0 + LEG_X[k] + 26, 22, m.name, 't-lab t-ink');
+      var legendY = m.key === 'oracle' ? 49 : 15;
+      svgEl('circle', { cx: X0 + LEG_X[k] + 8, cy: legendY, r: 8, fill: m.fill }, g);
+      var name = text(g, X0 + LEG_X[k] + 26, legendY + 7, m.name, 't-lab t-ink');
       if (m.note) svgEl('tspan', { 'class': 't-mono t-small' }, name).textContent = m.note;
       return g;
     });
@@ -393,7 +401,9 @@
       // Drawn last to first, so River's dot sits on top where two dots come close.
       var dots = [];
       for (var m = METHODS.length - 1; m >= 0; m--) {
-        dots[m] = svgEl('circle', { cx: X0, cy: y, r: 8, fill: METHODS[m].fill, opacity: 0 }, svg);
+        if (Number.isFinite(r[METHODS[m].key])) {
+          dots[m] = svgEl('circle', { cx: X0, cy: y, r: 8, fill: METHODS[m].fill, opacity: 0 }, svg);
+        }
       }
       return { r: r, labels: labels, range: range, dots: dots };
     });
