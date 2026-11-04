@@ -51,7 +51,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 | 03 · Inside River | 12–13 | The architecture in a five-step overview with zoom; graph sampling and graph-averaged inference |
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
 | 05 · Boundaries | 17–19 | Limits; what is demonstrated and what is not; the graph slots for the next research stage |
-| Close | 20–21 | Conclusions and contact |
+| Close | 20–21 | Conclusions; "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
 | Backup | B1–B2 | Flow matching; units, cost and omitted inputs. Hidden during the talk: arrows, End, swipes, the overview and slide numbers in the address never reach them. Open them only by their own address: `#/backup/1` and `#/backup/2` |
 
 ## Structure
@@ -64,7 +64,7 @@ css/scenes/*.css      styles of the animated scenes
 js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom
 js/field.js           background flow lines and contours; edge-anchored forms that fade out and morph between slides
 js/data.js            every number shown in the deck, with its source
-js/scenes/*.js        animated scenes (architecture, causal scenes, results)
+js/scenes/*.js        animated scenes (architecture, causal scenes, results, closing "thank you" graph)
 assets/               fonts, team photos, official PyMC Labs logos
 vendor/katex/         KaTeX 0.16.11 for equations
 ```
@@ -77,7 +77,7 @@ vendor/katex/         KaTeX 0.16.11 for equations
   The reliability diagram uses the calibration bins of the structure_accuracy study of that run.
 - Style and colours: the PyMC Labs white paper template (Deep Navy `#0C1F40`, Pastel Aqua `#B4E7DD`,
   Soft Periwinkle `#9FAAE2`, Soft White `#F7F7F7`, Peach Orange `#F6AE72`; Archivo Expanded, Inter, Fira Mono).
-- Logos: the official PyMC Labs full logo (white and navy) and short mark (aqua; favicon).
+- Logos: the official PyMC Labs full logo (white and navy); favicon from the short mark.
 - Narrative elements: the ODSC West 2026 talk and the white paper.
 
 River is an early research prototype. The paper evaluates it on simulated data only.

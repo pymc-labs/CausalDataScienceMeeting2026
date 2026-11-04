@@ -233,10 +233,11 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** contribution inference, constrained structure recovery and reusable inference.
 - **Visual / delivery:** concise recap, no repeated result tables.
 
-### 21 — This is just the start · 10 seconds · Main
+### 21 — Thank you · 10 seconds · Main
 
 - **Purpose:** close and invite discussion.
-- **Visual / delivery:** paper/contact information; transition directly to the five-minute Q&A.
+- **Visual / delivery:** one word only. "Thank you" is drawn as a graph (nodes on the letter outlines, edges between neighbours) that morphs into "Kiitos", "Gracias" and "Obrigado" and back, without a header or footer. The paper title, the link and the contact are in the speaker notes. Transition directly to the five-minute Q&A.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** this replaces the earlier closing slide with the headline and the three contact columns.
 
 ### B1 — Flow matching turns noise into draws · Backup
 

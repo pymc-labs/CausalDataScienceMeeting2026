@@ -307,6 +307,8 @@ strong, b { font-weight: 600; color: var(--fg); }
 .frame { position: absolute; left: var(--mx); right: var(--mx); top: 168px; bottom: 120px; }
 .frame.center { display: flex; flex-direction: column; justify-content: center; }
 .frame.mid { top: 140px; bottom: 100px; display: flex; flex-direction: column; justify-content: center; }
+/* Text for screen readers only (the closing slide draws its words on a canvas). */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .row { display: flex; gap: 64px; }
 .col { display: flex; flex-direction: column; }
 .grow { flex: 1; }
