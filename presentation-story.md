@@ -252,7 +252,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 ### 21 — The white paper is out; the academic paper is next · 10 seconds · Main
 
 - **Purpose:** tell the audience where to read more.
-- **Visual / delivery:** two columns. The white paper, available now: one line and a QR code to `dub.sh/mfm-cdsm` (the white-paper landing page). The academic paper, coming soon: its title and the top of its first page, from the current draft (MarketingFoundationalModels PR #36, commit `499be45`).
+- **Visual / delivery:** left: the white paper, available now, with one line, a QR code to `dub.sh/mfm-cdsm` (the white-paper landing page) and the short link. Right: only the top of the academic paper's first page, large and fading out at its bottom edge, from the current draft (MarketingFoundationalModels PR #36, commit `499be45`). The slide title says that the academic paper comes next, so the photo has no label or title of its own (Carlos, 4 November 2026).
 - **Agreed decision, implemented (Carlos, 4 November 2026):** a separate slide before the thank-you. The "Read the paper" column moves from slide 20 to this slide, because the academic paper is not out yet. The slide adds 10 seconds to the 15-minute budget.
 
 ### 22 — Thank you · 5 seconds · Main
