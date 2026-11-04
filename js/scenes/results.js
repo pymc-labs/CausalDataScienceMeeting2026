@@ -4,11 +4,9 @@
                             1 edge-by-edge precision and recall
                             2 reliability of the edge probabilities
                             3 exact-set recovery, one cell per world
-     crps      · slide 16   0 full inputs, 99 context weeks: four bars (River,
-                              PathMC, OLS, PyMC-Marketing)
-                            1 the bars fold into a dot plot of every condition
-                              and all three horizons
-                            2 River against the separate PyMC-Marketing study
+     crps      · slide 16   one dot plot, no steps: query channel CRPS of River,
+                              PathMC, OLS and PyMC-Marketing in every condition
+                              and at all three horizons
    Every number on screen is read from window.DECK_DATA. The graph of
    structure step 0 is illustrative and says so on screen.
 
@@ -16,7 +14,7 @@
    a pure function of a clock t (ms). Showing a panel runs t forward; hiding it
    lifts it out and freezes t; a panel hidden for longer than RESET_MS builds
    again from t = 0. Steps, jumps, reversals and re-entries therefore only
-   choose the visible panel (and, on slide 16, a morph parameter).
+   choose the visible panel.
    ========================================================================== */
 (function () {
   'use strict';
@@ -29,7 +27,6 @@
   var RESET_MS = 650;
   var ENTER = { delay: 260, lead: 160 };   // slide entrance: CSS rise delay, then the build
   var STEP = { delay: 160, lead: 120 };    // step change
-  var VAL_ADVANCE = 0.6 * 24;              // Fira Mono glyph advance at the 24 px of .t-val
 
   var C = {
     ink: '#0C1F40',
@@ -103,10 +100,11 @@
   function setDir(root, dir) { root.style.setProperty('--rs-dir', dir < 0 ? '-1' : '1'); }
 
   /* ---- Panel: one view with a build clock ------------------------------------------ */
-  function Panel(host) {
+  // The SVG is laid out in stage px: VIEW_W x VIEW_H unless a size is given.
+  function Panel(host, w, h) {
     this.el = document.createElement('div');
     this.el.className = 'rs-panel';
-    this.svg = svgEl('svg', { viewBox: '0 0 ' + VIEW_W + ' ' + VIEW_H, 'class': 'rs-svg', 'aria-hidden': 'true' });
+    this.svg = svgEl('svg', { viewBox: '0 0 ' + (w || VIEW_W) + ' ' + (h || VIEW_H), 'class': 'rs-svg', 'aria-hidden': 'true' });
     this.el.appendChild(this.svg);
     host.appendChild(this.el);
     this.t = 0;
@@ -684,44 +682,31 @@
     { key: 'mfm', name: 'River', fill: C.aquaDeep },
     { key: 'pathmc', name: 'PathMC', fill: C.peri },
     { key: 'ols', name: 'OLS', fill: C.ols },
-    { key: 'mmm', name: 'PyMC-Marketing', fill: C.ink }
+    { key: 'mmm', name: 'PyMC-Marketing', fill: C.ink, note: ' \u00b7 default priors' }
   ];
+  var CRPS_W = 1760;
+  var CRPS_H = 590;
 
-  // Steps 0 and 1: four bars for full inputs at 99 context weeks, which fold into
-  // the first row of a dot plot over every condition and horizon (shared x scale).
+  // One dot plot over every condition and horizon: rows in condition groups, one row per
+  // horizon. The entrance builds it once: rows in reading order, dots sliding out from zero.
   function buildCrps(host) {
-    var P = new Panel(host);
+    var P = new Panel(host, CRPS_W, CRPS_H);
     var svg = P.svg;
     var rows = D.crpsChannels;
     var oop = D.evaluation.outOfPrior;
-    var first = rows.filter(function (r) { return r.condition === D.evaluation.conditionNames[0] && r.context === CTX[0]; })[0];
     var max = 0;
     rows.forEach(function (r) { METHODS.forEach(function (m) { max = Math.max(max, r[m.key]); }); });
-    var DMAX = Math.ceil(max / 0.05 - 1e-9) * 0.05;
-    var X0 = 300;
-    var X1 = 880;
+    var TICK = 0.05;
+    var DMAX = Math.ceil(max / TICK - 1e-9) * TICK;
+    var LABEL_X = 330;
+    var CTX_X = 388;
+    var X0 = 420;
+    var X1 = 1700;
     function x(v) { return X0 + (X1 - X0) * v / DMAX; }
 
-    // --- state 0: bars
-    var BAR = 50;
-    var barY = [236, 326, 416, 506];
-    var head0 = svgEl('g', null, svg);
-    text(head0, X0, 118, first.condition.toLowerCase() + ' \u00b7 ' + first.context + ' context weeks', 't-mono');
-    text(head0, X0, 148, 'CRPS \u00b7 lower is better', 't-mono');
-    var bars = METHODS.map(function (m, k) {
-      var name = text(svg, X0 - 24, barY[k] + 9, m.name, 't-name', { 'text-anchor': 'end' });
-      var rect = svgEl('rect', { x: X0, y: barY[k] - BAR / 2, width: 0, height: BAR, fill: m.fill }, svg);
-      var val = text(svg, X0, barY[k] + 9, '', 't-val');
-      return { v: first[m.key], name: name, rect: rect, val: val };
-    });
-    var wins = text(svg, X0, 590, 'joint wins over both regressions: ' + first.wins, 't-mono');
-
-    // --- state 1: dot plot. Rows come in condition groups, one row per horizon.
-    var ROW = 34;
-    var GROUP = (CTX.length - 1) * ROW + 40;
-    var RY0 = 140;
-    var LABEL_X = 222;
-    var CTX_X = 280;
+    var ROW = 28;
+    var GROUP = (CTX.length - 1) * ROW + 34;
+    var RY0 = 100;
     var groupOf = [];
     var posOf = [];
     rows.forEach(function (r, i) {
@@ -730,24 +715,29 @@
       posOf.push(starts ? 0 : posOf[i - 1] + 1);
     });
     function rowY(i) { return RY0 + groupOf[i] * GROUP + posOf[i] * ROW; }
-    var axisY = rowY(rows.length - 1) + 40;
-    var grid = svgEl('g', null, svg);
-    [0, 0.1, 0.2].forEach(function (v) {
-      svgEl('line', { x1: x(v), x2: x(v), y1: RY0 - 28, y2: axisY, stroke: v === 0 ? C.hair : C.wash, 'stroke-width': 1 }, grid);
-      svgEl('line', { x1: x(v), x2: x(v), y1: axisY, y2: axisY + 7, stroke: C.ink3, 'stroke-width': 1 }, grid);
-      text(grid, x(v), axisY + 31, String(v), 't-mono', { 'text-anchor': 'middle' });
-    });
-    svgEl('line', { x1: X0, x2: X1, y1: axisY, y2: axisY, stroke: C.ink3, 'stroke-width': 1 }, grid);
-    text(grid, X0, axisY + 60, 'query channel CRPS \u00b7 lower is better', 't-mono');
-    text(grid, CTX_X, RY0 - 40, 'context', 't-mono t-small', { 'text-anchor': 'end' });
+    var axisY = rowY(rows.length - 1) + 30;
 
-    var LEG_X = [230, 350, 480, 580];   // name widths differ, so the legend is placed by hand
+    // Scale: a hairline at zero, a faint line per tick, the measure named at the top right.
+    var grid = svgEl('g', null, svg);
+    for (var k = 0; k * TICK <= DMAX + 1e-9; k++) {
+      var xv = x(k * TICK);
+      svgEl('line', { x1: xv, x2: xv, y1: RY0 - 22, y2: axisY, stroke: k === 0 ? C.hair : C.wash, 'stroke-width': 1 }, grid);
+      svgEl('line', { x1: xv, x2: xv, y1: axisY, y2: axisY + 7, stroke: C.ink3, 'stroke-width': 1 }, grid);
+      text(grid, xv, axisY + 31, k === 0 ? '0' : (k * TICK).toFixed(2), 't-mono', { 'text-anchor': 'middle' });
+    }
+    svgEl('line', { x1: X0, x2: X1, y1: axisY, y2: axisY, stroke: C.ink3, 'stroke-width': 1 }, grid);
+    text(grid, X1, 22, 'query channel CRPS \u00b7 lower is better', 't-mono', { 'text-anchor': 'end' });
+    text(grid, CTX_X, RY0 - 36, 'context', 't-mono t-small', { 'text-anchor': 'end' });
+
+    var LEG_X = [0, 130, 280, 400];   // offsets from X0; name widths differ, so placed by hand
     var legend = METHODS.map(function (m, k) {
       var g = svgEl('g', null, svg);
-      svgEl('circle', { cx: LEG_X[k] + 8, cy: 66, r: 8, fill: m.fill }, g);
-      text(g, LEG_X[k] + 26, 73, m.name, 't-lab t-ink');
+      svgEl('circle', { cx: X0 + LEG_X[k] + 8, cy: 15, r: 8, fill: m.fill }, g);
+      var name = text(g, X0 + LEG_X[k] + 26, 22, m.name, 't-lab t-ink');
+      if (m.note) svgEl('tspan', { 'class': 't-mono t-small' }, name).textContent = m.note;
       return g;
     });
+
     var dotRows = rows.map(function (r, i) {
       var y = rowY(i);
       var labels = svgEl('g', null, svg);
@@ -762,73 +752,28 @@
         if (outOfPrior) {
           tint(text(labels, LABEL_X, mid + 19, 'out of prior', 't-mono t-small', { 'text-anchor': 'end' }), C.peachDeep);
           svgEl('path', {
-            d: 'M238 ' + (y - 12) + 'H233V' + (rowY(last) + 12) + 'H238',
+            d: 'M' + (LABEL_X + 16) + ' ' + (y - 12) + 'H' + (LABEL_X + 11) + 'V' + (rowY(last) + 12) + 'H' + (LABEL_X + 16),
             fill: 'none', stroke: C.peachDeep, 'stroke-width': 1.5, 'stroke-linejoin': 'round'
           }, labels);
         }
       }
       text(labels, CTX_X, y + 6, String(r.context), 't-mono', { 'text-anchor': 'end' });
       var range = svgEl('line', { x1: X0, x2: X0, y1: y, y2: y, stroke: C.hair, 'stroke-width': 2 }, svg);
-      var dots = METHODS.map(function (m) {
-        return svgEl('circle', { cx: X0, cy: y, r: 8, fill: m.fill, opacity: 0 }, svg);
-      });
-      return { r: r, y: y, labels: labels, range: range, dots: dots };
+      // Drawn last to first, so River's dot sits on top where two dots come close.
+      var dots = [];
+      for (var m = METHODS.length - 1; m >= 0; m--) {
+        dots[m] = svgEl('circle', { cx: X0, cy: y, r: 8, fill: METHODS[m].fill, opacity: 0 }, svg);
+      }
+      return { r: r, labels: labels, range: range, dots: dots };
     });
 
-    var morph = 0;   // 0 = bars (step 0), 1 = dot plot (step 1)
-    var mt = null;
-
-    // Every morph segment ends by m = 1, so the dot plot is exact when the morph completes.
-    function render() {
-      var t = P.t;
-      var m = morph;
-      var gone = 1 - seg(m, 0, 0.3, ease.inOut);       // state-0 text leaves first
-      var build = seg(t, 0, 700, ease.out);
-
-      reveal(head0, build * gone);
-      reveal(wins, seg(t, 1500, 600, ease.out) * gone);
-      alpha(grid, seg(m, 0.35, 0.4, ease.inOut) * build);
-      legend.forEach(function (g, k) { reveal(g, seg(m, 0.45 + k * 0.06, 0.35, ease.out) * seg(t, 100 + k * 80, 600, ease.out)); });
-
-      // Bars collapse into the first dot row: each bar's end becomes its dot.
-      var top = dotRows[0];
-      var foldIn = seg(m, 0.32, 0.3, ease.out);
-      var lo0 = Infinity;
-      var hi0 = -Infinity;
-      bars.forEach(function (b, k) {
-        var g = seg(t, 300 + k * 80, 1200, ease.outExpo);
-        var end = lerp(X0, x(b.v), g);
-        var mb = seg(m, 0.02 + k * 0.04, 0.5, ease.inOut);
-        var th = lerp(BAR, 4, mb);
-        var yc = lerp(barY[k], top.y, mb);
-        setAttr(b.rect, 'y', px2(yc - th / 2));
-        setAttr(b.rect, 'height', px2(th));
-        setAttr(b.rect, 'width', px2(end - X0));
-        alpha(b.rect, 1 - seg(m, 0.38, 0.22));
-        alpha(b.name, seg(t, 160 + k * 80, 600, ease.out) * gone);
-        setAttr(b.val, 'x', px2(end + 16));
-        setText(b.val, (b.v * g).toFixed(4));
-        alpha(b.val, seg(t, 300 + k * 80, 300) * gone);
-        var d = top.dots[k];
-        lo0 = Math.min(lo0, end);
-        hi0 = Math.max(hi0, end);
-        setAttr(d, 'cx', px2(end));
-        setAttr(d, 'r', px2(8 * foldIn));
-        alpha(d, foldIn);
-      });
-      alpha(top.labels, foldIn * build);
-      setAttr(top.range, 'x1', px2(lo0));
-      setAttr(top.range, 'x2', px2(hi0));
-      alpha(top.range, seg(m, 0.45, 0.3) * build);
-
-      // The other rows arrive in reading order, their dots sliding out from zero. Their
-      // starts spread over m = 0.5..0.7, so every row is complete by m = 1.
-      var spread = 0.2 / Math.max(1, dotRows.length - 2);
-      for (var i = 1; i < dotRows.length; i++) {
-        var row = dotRows[i];
-        var m0 = 0.5 + (i - 1) * spread;
-        var a = seg(m, m0, 0.3, ease.inOut) * seg(t, 200 + i * 70, 600, ease.out);
-        var slide = Math.min(seg(m, m0, 0.3, ease.outQuart), seg(t, 260 + i * 70, 1100, ease.outExpo));
+    P.duration = 2400;
+    P.render = function (t) {
+      alpha(grid, seg(t, 0, 700, ease.out));
+      legend.forEach(function (g, k) { reveal(g, seg(t, 100 + k * 80, 600, ease.out)); });
+      dotRows.forEach(function (row, i) {
+        var a = seg(t, 200 + i * 70, 600, ease.out);
+        var slide = seg(t, 260 + i * 70, 1100, ease.outExpo);
         alpha(row.labels, a);
         var lo = Infinity;
         var hi = -Infinity;
@@ -842,163 +787,29 @@
         setAttr(row.range, 'x1', px2(lo));
         setAttr(row.range, 'x2', px2(hi));
         alpha(row.range, a);
-      }
-    }
-
-    P.duration = 2400;
-    P.render = render;
-    P.setMorph = function (target, instant) {
-      if (mt) { mt.cancel(); mt = null; }
-      if (instant || morph === target) {
-        morph = target;
-        render();
-        return;
-      }
-      mt = Deck.tween({
-        from: morph,
-        to: target,
-        duration: 1700 * Math.abs(target - morph),
-        easing: ease.linear,
-        onUpdate: function (v) { morph = v; render(); },
-        onDone: function () { mt = null; }
       });
-    };
-    var baseStop = P.stop;
-    P.stop = function () {
-      baseStop.call(P);
-      if (mt) { mt.cancel(); mt = null; }
-    };
-    return P;
-  }
-
-  // Step 2: channel CRPS of River against PyMC-Marketing at all three horizons.
-  function buildMmm(host) {
-    var P = new Panel(host);
-    var svg = P.svg;
-    var pm = D.pymcMarketing;
-    var rows = CTX.map(function (ctx) {
-      return pm.rows.filter(function (r) { return r.quantity === 'Channels' && r.context === ctx; })[0];
-    });
-    var max = Math.max.apply(null, rows.map(function (r) { return r.pymc; }));
-    var X0 = 230;
-    var X1 = 700;
-    var BAR = 36;
-    function x(v) { return X0 + (X1 - X0) * v / max; }
-
-    // The takeaway sits under the bars and arrives last, after the ratios.
-    var rule = svgEl('line', { x1: 0, x2: VIEW_W, y1: 488, y2: 488, stroke: C.hair, 'stroke-width': 1 }, svg);
-    var head = svgEl('g', null, svg);
-    var h = text(head, X0, 572, 'less than ', 't-head');
-    tint(svgEl('tspan', null, h), C.aquaDeep).textContent = 'half';
-    text(head, X0 + 2, 616, 'River\u2019s channel CRPS against the MMM\u2019s \u00b7 ' + WORLDS + ' full-input worlds', 't-mono');
-
-    var groups = rows.map(function (r, gi) {
-      var y0 = 48 + gi * 150;
-      var yM = y0 + 40;
-      var yR = y0 + 90;
-      var title = tint(text(svg, X0, y0, r.context + ' context weeks', 't-lab t-strong'), SERIES[gi].deep);
-      var mmm = {
-        v: r.pymc,
-        name: text(svg, X0 - 20, yM + 8, 'PyMC-Marketing', 't-lab t-ink', { 'text-anchor': 'end' }),
-        rect: svgEl('rect', { x: X0, y: yM - BAR / 2, width: 0, height: BAR, fill: C.ink }, svg),
-        val: text(svg, X0, yM + 8, '', 't-val')
-      };
-      // A half mark on the MMM bar makes "less than half" readable at a glance.
-      var quarters = svgEl('g', null, svg);
-      [2].forEach(function (q) {
-        var xq = x(r.pymc * q / 4);
-        svgEl('line', { x1: xq, x2: xq, y1: yM - BAR / 2, y2: yM + BAR / 2, stroke: '#F7F7F7', 'stroke-width': 3 }, quarters);
-      });
-      var river = {
-        v: r.mfm,
-        name: text(svg, X0 - 20, yR + 8, 'River', 't-lab t-strong', { 'text-anchor': 'end' }),
-        rect: svgEl('rect', { x: X0, y: yR - BAR / 2, width: 0, height: BAR, fill: C.aquaDeep }, svg),
-        val: text(svg, X0, yR + 8, '', 't-val')
-      };
-      // Elbow from the end of the MMM bar down to River's value: divide by the ratio.
-      var xe = x(r.pymc);
-      var xs = x(r.mfm) + 16 + r.mfm.toFixed(4).length * VAL_ADVANCE + 18;
-      var link = svgEl('path', {
-        d: 'M' + px2(xe) + ' ' + px2(yM + BAR / 2 + 6) + 'V' + px2(yR) + 'H' + px2(xs),
-        fill: 'none', stroke: C.ink3, 'stroke-width': 1.5, 'stroke-linejoin': 'round'
-      }, svg);
-      var linkLen = (yR - (yM + BAR / 2 + 6)) + (xe - xs);
-      link.setAttribute('stroke-dasharray', px2(linkLen) + ' ' + px2(linkLen + 2));
-      var tip = svgEl('path', { d: 'M' + px2(xs - 1) + ' ' + yR + 'l9 -5v10z', fill: C.ink3 }, svg);
-      var ratio = text(svg, xe + 16, yR + 9, '\u00f7 ' + pm.channelRatio[r.context].toFixed(2), 't-ratio');
-      return { title: title, bars: [mmm, river], quarters: quarters, link: link, linkLen: linkLen, tip: tip, ratio: ratio };
-    });
-    // The paper's caveat for the reference: its settings, and how many fits failed a health check.
-    var note = svgEl('g', null, svg);
-    text(note, X0 + 2, 666, 'PyMC-Marketing ' + pm.version + ' \u00b7 default priors \u00b7 time-varying intercept', 't-mono t-small');
-    text(note, X0 + 2, 690, pm.unhealthyFits + ' fits failed \u2265 1 health check \u00b7 none excluded', 't-mono t-small');
-
-    P.duration = 3900;
-    P.render = function (t) {
-      alpha(rule, seg(t, 2600, 700, ease.out));
-      reveal(head, seg(t, 2800, 800, ease.out));
-      groups.forEach(function (g, gi) {
-        var o = gi * 260;
-        reveal(g.title, seg(t, 200 + o, 600, ease.out));
-        g.bars.forEach(function (b, bi) {
-          var st = 380 + o + bi * 360;
-          var k = seg(t, st, 1250, ease.outExpo);
-          var end = lerp(X0, x(b.v), k);
-          alpha(b.name, seg(t, st - 180, 500, ease.out));
-          setAttr(b.rect, 'width', px2(end - X0));
-          setAttr(b.val, 'x', px2(end + 16));
-          setText(b.val, (b.v * k).toFixed(4));
-          alpha(b.val, seg(t, st, 250));
-        });
-        alpha(g.quarters, seg(t, 1500 + o, 500, ease.out));
-        var kl = seg(t, 1750 + o, 700, ease.inOut);
-        alpha(g.link, kl > 0 ? 1 : 0);
-        setAttr(g.link, 'stroke-dashoffset', px2(g.linkLen * (1 - kl)));
-        alpha(g.tip, seg(kl, 0.85, 0.15));
-        reveal(g.ratio, seg(t, 2150 + o, 600, ease.out));
-      });
-      reveal(note, seg(t, 3200, 600, ease.out));
     };
     return P;
   }
 
   (function () {
     var root = null;
-    var bars = null;
-    var mmm = null;
-
-    function apply(step, o) {
-      if (step >= 2) {
-        bars.hide(o);
-        mmm.show(o);
-        return;
-      }
-      mmm.hide(o);
-      var fresh = bars.show(o);
-      bars.setMorph(step >= 1 ? 1 : 0, fresh || o.instant);
-    }
+    var plot = null;
 
     Deck.registerScene('crps', {
       mount: function (section) {
         root = section.querySelector('.scene-root');
         root.classList.add('rs-root');
-        bars = buildCrps(root);
-        mmm = buildMmm(root);
-        bars.seek(0);
-        mmm.seek(0);
+        plot = buildCrps(root);
+        plot.seek(0);
       },
       enter: function (ctx) {
         setDir(root, ctx.dir);
-        apply(ctx.step, { instant: ctx.instant, delay: ENTER.delay, lead: ENTER.lead });
-      },
-      step: function (ctx) {
-        setDir(root, ctx.dir);
-        apply(ctx.step, { instant: ctx.instant, delay: STEP.delay, lead: STEP.lead });
+        plot.show({ instant: ctx.instant, delay: ENTER.delay, lead: ENTER.lead });
       },
       leave: function (ctx) {
         setDir(root, ctx.dir);
-        bars.hide({});
-        mmm.hide({});
+        plot.hide({});
       }
     });
   })();

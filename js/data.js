@@ -87,56 +87,25 @@ window.DECK_DATA = {
   // Table 12 (Appendix C.6) of the paper, PR #36 commit 499be45: query channel CRPS of
   // window-mean contributions, mean over the n defined worlds, context sales scale (lower is better).
   // Run pr29-final-full-e35866e, experiments/benchmark/results at 10b785a.
-  // wins: strictly lower than PathMC and OLS on the same world ("Joint wins P and O"; excludes MMM).
   // mmm: native PyMC-Marketing column of Table 12 (the MMM runs in all five conditions).
   // Rows per condition in horizon order 99, 185, 207 (the dot plot groups consecutive rows).
-  // Section 4.2: River beats both PathMC and OLS in a majority of worlds in 11 of 15 rows.
   crpsChannels: [
-    { condition: 'Full inputs', context: 99, n: 100, mfm: 0.0295, pathmc: 0.0370, ols: 0.2136, mmm: 0.0659, wins: '63/100' },
-    { condition: 'Full inputs', context: 185, n: 100, mfm: 0.0241, pathmc: 0.0365, ols: 0.1322, mmm: 0.0580, wins: '52/100' },
-    { condition: 'Full inputs', context: 207, n: 100, mfm: 0.0263, pathmc: 0.0396, ols: 0.1175, mmm: 0.0596, wins: '48/100' },
-    { condition: 'In-sample saturation', context: 99, n: 100, mfm: 0.0313, pathmc: 0.0444, ols: 0.2342, mmm: 0.0699, wins: '73/100' },
-    { condition: 'In-sample saturation', context: 185, n: 100, mfm: 0.0279, pathmc: 0.0433, ols: 0.1586, mmm: 0.0647, wins: '61/100' },
-    { condition: 'In-sample saturation', context: 207, n: 100, mfm: 0.0268, pathmc: 0.0477, ols: 0.1857, mmm: 0.0629, wins: '58/100' },
-    { condition: 'Smooth baseline', context: 99, n: 100, mfm: 0.0325, pathmc: 0.0512, ols: 0.1065, mmm: 0.0612, wins: '70/100' },
-    { condition: 'Smooth baseline', context: 185, n: 100, mfm: 0.0283, pathmc: 0.0541, ols: 0.0836, mmm: 0.0438, wins: '62/100' },
-    { condition: 'Smooth baseline', context: 207, n: 100, mfm: 0.0278, pathmc: 0.0512, ols: 0.0933, mmm: 0.0403, wins: '63/100' },
-    { condition: 'Omitted channel', context: 99, n: 84, mfm: 0.0249, pathmc: 0.0286, ols: 0.1708, mmm: 0.0675, wins: '49/84' },
-    { condition: 'Omitted channel', context: 185, n: 84, mfm: 0.0203, pathmc: 0.0356, ols: 0.0915, mmm: 0.0522, wins: '45/84' },
-    { condition: 'Omitted channel', context: 207, n: 84, mfm: 0.0224, pathmc: 0.0360, ols: 0.0947, mmm: 0.0543, wins: '37/84' },
-    { condition: 'Omitted control', context: 99, n: 100, mfm: 0.0315, pathmc: 0.0403, ols: 0.2079, mmm: 0.0670, wins: '62/100' },
-    { condition: 'Omitted control', context: 185, n: 100, mfm: 0.0252, pathmc: 0.0430, ols: 0.1290, mmm: 0.0611, wins: '49/100' },
-    { condition: 'Omitted control', context: 207, n: 100, mfm: 0.0275, pathmc: 0.0463, ols: 0.1178, mmm: 0.0575, wins: '50/100' }
+    { condition: 'Full inputs', context: 99, n: 100, mfm: 0.0295, pathmc: 0.0370, ols: 0.2136, mmm: 0.0659 },
+    { condition: 'Full inputs', context: 185, n: 100, mfm: 0.0241, pathmc: 0.0365, ols: 0.1322, mmm: 0.0580 },
+    { condition: 'Full inputs', context: 207, n: 100, mfm: 0.0263, pathmc: 0.0396, ols: 0.1175, mmm: 0.0596 },
+    { condition: 'In-sample saturation', context: 99, n: 100, mfm: 0.0313, pathmc: 0.0444, ols: 0.2342, mmm: 0.0699 },
+    { condition: 'In-sample saturation', context: 185, n: 100, mfm: 0.0279, pathmc: 0.0433, ols: 0.1586, mmm: 0.0647 },
+    { condition: 'In-sample saturation', context: 207, n: 100, mfm: 0.0268, pathmc: 0.0477, ols: 0.1857, mmm: 0.0629 },
+    { condition: 'Smooth baseline', context: 99, n: 100, mfm: 0.0325, pathmc: 0.0512, ols: 0.1065, mmm: 0.0612 },
+    { condition: 'Smooth baseline', context: 185, n: 100, mfm: 0.0283, pathmc: 0.0541, ols: 0.0836, mmm: 0.0438 },
+    { condition: 'Smooth baseline', context: 207, n: 100, mfm: 0.0278, pathmc: 0.0512, ols: 0.0933, mmm: 0.0403 },
+    { condition: 'Omitted channel', context: 99, n: 84, mfm: 0.0249, pathmc: 0.0286, ols: 0.1708, mmm: 0.0675 },
+    { condition: 'Omitted channel', context: 185, n: 84, mfm: 0.0203, pathmc: 0.0356, ols: 0.0915, mmm: 0.0522 },
+    { condition: 'Omitted channel', context: 207, n: 84, mfm: 0.0224, pathmc: 0.0360, ols: 0.0947, mmm: 0.0543 },
+    { condition: 'Omitted control', context: 99, n: 100, mfm: 0.0315, pathmc: 0.0403, ols: 0.2079, mmm: 0.0670 },
+    { condition: 'Omitted control', context: 185, n: 100, mfm: 0.0252, pathmc: 0.0430, ols: 0.1290, mmm: 0.0611 },
+    { condition: 'Omitted control', context: 207, n: 100, mfm: 0.0275, pathmc: 0.0463, ols: 0.1178, mmm: 0.0575 }
   ],
-
-  // Table 20 (Appendix C.10) of the paper, PR #36 commit 499be45: separate PyMC-Marketing study on
-  // the 100 full-input worlds (run pr29-final-full-e35866e, experiments/mmm_accuracy/results at 10b785a).
-  // River and the MMM run separately from the main benchmark, so River's values differ slightly
-  // from Table 12. OLS and oracle come from the same run's benchmark fits.
-  // MMM (Appendix C.4): PyMC-Marketing 1.2.0, time-varying intercept, eight-lag geometric adstock,
-  // logistic saturation, library-default priors; nutpie, 8 chains x 500 draws, 1,000 tuning steps.
-  pymcMarketing: {
-    version: '1.2',
-    timeVaryingIntercept: true,
-    rows: [
-      { quantity: 'Baseline', context: 99, mfm: 0.0447, pymc: 0.2276, ols: 9.0776, oracle: 0.0304 },
-      { quantity: 'Baseline', context: 185, mfm: 0.0433, pymc: 0.1748, ols: 4.3546, oracle: 0.0266 },
-      { quantity: 'Baseline', context: 207, mfm: 0.0447, pymc: 0.1848, ols: 5.0234, oracle: 0.0257 },
-      { quantity: 'Channels', context: 99, mfm: 0.0299, pymc: 0.0629, ols: 0.2136, oracle: 0.0185 },
-      { quantity: 'Channels', context: 185, mfm: 0.0242, pymc: 0.0589, ols: 0.1322, oracle: 0.0141 },
-      { quantity: 'Channels', context: 207, mfm: 0.0261, pymc: 0.0573, ols: 0.1175, oracle: 0.0139 },
-      { quantity: 'Controls', context: 99, mfm: 0.0318, pymc: 0.1819, ols: 1.5790, oracle: 0.0208 },
-      { quantity: 'Controls', context: 185, mfm: 0.0295, pymc: 0.1627, ols: 1.3983, oracle: 0.0178 },
-      { quantity: 'Controls', context: 207, mfm: 0.0295, pymc: 0.1604, ols: 1.4994, oracle: 0.0182 },
-      { quantity: 'Noise-free total, weekly', context: 99, mfm: 0.0519, pymc: 0.0835, ols: 0.1110, oracle: 0.0331 },
-      { quantity: 'Noise-free total, weekly', context: 185, mfm: 0.0419, pymc: 0.0207, ols: 0.0388, oracle: 0.0145 },
-      { quantity: 'Noise-free total, weekly', context: 207, mfm: 0.0385, pymc: 0.0083, ols: 0.0290, oracle: 0.0073 }
-    ],
-    // Section 4.2: MMM channel CRPS / River channel CRPS, ratios of cohort means, by context.
-    channelRatio: { 99: 2.11, 185: 2.44, 207: 2.20 },
-    riverShare: '41%–48%',          // Section 4.2: River's share of the MMM's mean channel CRPS
-    unhealthyFits: '288 of 300'     // Appendix C.10: fits failing at least one health criterion; none excluded
-  },
 
   // Section 4.3 "Graph recovery" and Appendix C.10 of the academic paper, PR #36 (commit 499be45).
   // Study structure_accuracy of run pr29-final-full-e35866e (code e35866e, results 10b785a):

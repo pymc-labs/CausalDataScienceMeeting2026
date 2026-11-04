@@ -41,9 +41,7 @@
 .rs-svg .t-lab { fill: rgba(12, 31, 64, .74); }
 .rs-svg .t-ink { fill: var(--navy); }
 .rs-svg .t-strong { font-weight: 500; fill: var(--navy); }
-.rs-svg .t-name { font-size: 24px; font-weight: 500; }
 .rs-svg .t-title { font-family: var(--f-display); font-stretch: 125%; font-size: 25px; font-weight: 500; }
-.rs-svg .t-head { font-family: var(--f-display); font-stretch: 125%; font-size: 54px; font-weight: 400; letter-spacing: -.012em; }
 .rs-svg .t-q { font-family: var(--f-display); font-stretch: 125%; font-size: 36px; fill: rgba(12, 31, 64, .45); }
 .rs-svg .t-sales { font-size: 18px; font-weight: 500; fill: #F7F7F7; }
 .rs-svg .t-mono { font-family: var(--f-mono); font-size: 17px; letter-spacing: .04em; fill: rgba(12, 31, 64, .55); }
@@ -51,7 +49,6 @@
 .rs-svg .t-val { font-family: var(--f-mono); font-size: 24px; }
 .rs-svg .t-big { font-family: var(--f-mono); font-size: 36px; }
 .rs-svg .t-count { font-family: var(--f-mono); font-size: 48px; }
-.rs-svg .t-ratio { font-family: var(--f-mono); font-size: 26px; font-weight: 500; fill: var(--aqua-deep); }
 
 @media (prefers-reduced-motion: reduce) {
   .rs-panel, .rs-panel.is-out { transform: none; filter: none; transition-duration: .3s, .3s, .3s; }

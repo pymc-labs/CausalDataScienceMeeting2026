@@ -222,7 +222,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** establish the practical contribution-inference result.
 - **Takeaway:** lower mean contribution CRPS than PathMC, OLS and the native PyMC-Marketing MMM in every tested condition and at all three horizons, while the oracle remains better.
-- **Visual / delivery:** explain what CRPS measures before comparisons. Every comparison shows all four methods, PyMC-Marketing included, and all three context lengths. Bound the default-prior PyMC-Marketing claim and mention fit-health caveats.
+- **Visual / delivery:** one picture, no steps (Carlos, 4 November 2026). A dot plot of query channel CRPS: all four methods, PyMC-Marketing included, in all five conditions and at all three context lengths. The legend bounds PyMC-Marketing to default priors. Explain what CRPS measures before the comparison. The full-input numbers, the per-world wins, the separate PyMC-Marketing study (Table 20) and its fit-health caveats are in the speaker notes, for questions.
 
 ### 17 — Where River falls short · 35 seconds · Main, compressed
 

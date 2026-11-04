@@ -576,25 +576,21 @@
   </aside>
 </section>
 
-<!-- 16 · Contribution accuracy -->
-<section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light" data-steps="2"
+<!-- 16 · Contribution accuracy: one dot plot, no steps -->
+<section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light"
   data-scene="crps" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
+  <div class="frame">
     <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
     <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
-    <div class="flow-text">
-      <div data-step-only="0"><p class="body">Query channel CRPS with full inputs and 99 context weeks. River has the lowest mean error of the four methods, PyMC-Marketing included. It has a lower score than both regressions in 63 of 100 worlds.</p></div>
-      <div data-step-only="1"><p class="body">River has the lowest mean error of the four methods in all five conditions and at all three horizons, also when the largest-effect channel or control is hidden.</p></div>
-      <div data-step-only="2"><p class="body">Against a PyMC-Marketing model with default priors and a time-varying intercept, River’s mean channel CRPS is less than half of the MMM’s. The test uses the 100 full-input worlds.</p></div>
-    </div>
   </div>
-  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <div class="scene-root" style="left:80px;top:360px;width:1760px;height:590px"></div>
   <aside class="notes">
     <p>Source: Section 4.2 and Tables 12 and 20 of the paper. CRPS of window-mean contributions on the context sales scale. Lower is better.</p>
-    <p>CRPS scores a whole distribution against the true value. Lower is better.</p>
-    <p>Step 0: with full inputs and 99 context weeks, the means are 0.0295 for River, 0.0370 for PathMC, 0.2136 for OLS and 0.0659 for the native MMM.</p>
-    <p>Step 1: five conditions and all three context lengths: 99, 185 and 207 weeks. The fourth dot is the native PyMC-Marketing MMM of Table 12. River has a lower mean than PathMC, OLS and the native MMM in all 15 rows. A lower mean is not a win in every world: River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
-    <p>Step 2: a separate study on the 100 full-input worlds. PyMC-Marketing 1.2 uses a time-varying intercept, eight-lag geometric adstock, logistic saturation and library-default priors. Each fit uses eight chains of 500 draws. The MMM/River ratio of mean channel CRPS is 2.11 at 99 context weeks, 2.44 at 185 and 2.20 at 207. These are ratios of cohort means, not typical world-level ratios. 288 of the 300 MMM fits fail at least one health criterion. None is excluded. The scores describe this configured procedure, not a converged MMM. River runs separately in this study, so its values differ slightly from step 1.</p>
+    <p>Say: CRPS scores a whole distribution against the true value. Each row is one condition at one context length. River has the lowest mean error of the four methods in all 15 rows. This is also true when we hide the largest-effect channel or control.</p>
+    <p>Full inputs, 99 context weeks: 0.0295 for River, 0.0370 for PathMC, 0.2136 for OLS and 0.0659 for PyMC-Marketing.</p>
+    <p>A lower mean is not a win in every world. River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
+    <p>PyMC-Marketing is the native MMM of Table 12: version 1.2, a time-varying intercept, eight-lag geometric adstock, logistic saturation and library-default priors.</p>
+    <p>If asked, the separate PyMC-Marketing study (Table 20, the 100 full-input worlds): the MMM/River ratio of mean channel CRPS is 2.11 at 99 context weeks, 2.44 at 185 and 2.20 at 207. These are ratios of cohort means, not typical world-level ratios. Each fit uses eight chains of 500 draws. 288 of the 300 MMM fits fail at least one health criterion, and none is excluded. The scores describe this configured procedure, not a converged MMM.</p>
   </aside>
 </section>
 
