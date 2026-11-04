@@ -6,7 +6,7 @@
 
 The slot is confirmed: **20 minutes including Q&A**. Target **15 minutes of presentation plus 5 minutes of questions**. Detailed derivations and architecture internals are candidates for backup, not extra main-talk content.
 
-This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. The deck has 21 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026), the flowchart on slide 14, which replaces the card layout, and the close in the order limitations, main results, future work, thank you (Carlos, 4 November 2026).
+This is the shared editorial plan: chapter intent, slide purpose and agreed narrative decisions. The deck has 22 main slides, then backup slides B1 and B2. Implemented: the opening subtitle removal, the wording changes on slides 8 and 11, the alternative DAGs on slides 5–6, the full nine-step walkthrough on slide 12, the move of the flow-matching and three-checks slides to backup (agreed by Carlos on 3 and 4 November 2026), the flowchart on slide 14, which replaces the card layout, the close in the order limitations, main results, future work, thank you, and the papers slide before the thank-you (Carlos, 4 November 2026).
 
 ## Walkthrough notes — pending changes
 
@@ -90,7 +90,7 @@ Keep the comparison scope explicit: these are synthetic results, and the default
 
 ## 5. Boundaries and next steps — A first result, not the finished tool · 2 minutes
 
-*Current slides 17–21: the limitations, what River demonstrates, the future work (graph slots, then what comes next) and the thank-you slide.*
+*Current slides 17–22: the limitations, what River demonstrates, the future work (graph slots, then what comes next), the papers and the thank-you slide.*
 
 Close with a bounded claim: reusable contribution inference and partial direct-effect structure recovery are demonstrated in the tested synthetic setting. The limitations slide lists only properties of River that restrict where its output can be trusted: direct effects only, reliability outside the prior on some axes only, contribution intervals that miss the truth too often, and no check for approximation error on a single dataset. The oracle gap and sales prediction are not limitations: the oracle has privileged information, and River is not built as a forecaster. Real-business causal identification is not established.
 
@@ -246,14 +246,20 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 ### 20 — This is just the start · 10 seconds · Main
 
-- **Purpose:** state the research direction and where to find the paper.
-- **Visual / delivery:** "What comes next" with the paper title, the link and the contact.
+- **Purpose:** state the research direction, the link and the contact.
+- **Visual / delivery:** "What comes next" with the link and the contact. The papers are on slide 21.
 
-### 21 — Thank you · 5 seconds · Main
+### 21 — The white paper is out; the academic paper is next · 10 seconds · Main
+
+- **Purpose:** tell the audience where to read more.
+- **Visual / delivery:** two columns. The white paper, available now: one line and a QR code to `dub.sh/mfm-cdsm` (the white-paper landing page). The academic paper, coming soon: its title and the top of its first page, from the current draft (MarketingFoundationalModels PR #36, commit `499be45`).
+- **Agreed decision, implemented (Carlos, 4 November 2026):** a separate slide before the thank-you. The "Read the paper" column moves from slide 20 to this slide, because the academic paper is not out yet. The slide adds 10 seconds to the 15-minute budget.
+
+### 22 — Thank you · 5 seconds · Main
 
 - **Purpose:** close and invite discussion.
 - **Visual / delivery:** one word only. "Thank you" is drawn as a graph (nodes on the letter outlines, edges between neighbours) that morphs into "Kiitos", "Gracias" and "Obrigado" and back. Only the PyMC Labs logo (top left) and the conference name (bottom right) sit in the corners. Transition directly to the five-minute Q&A.
-- **Agreed decision, implemented (Carlos, 4 November 2026):** the thank-you is its own slide, after “What comes next”. The conclusions budget dropped by 5 seconds, so the talk stays at 15 minutes.
+- **Agreed decision, implemented (Carlos, 4 November 2026):** the thank-you is its own slide, after the papers slide. The conclusions budget dropped by 5 seconds, so the talk stayed at 15 minutes before the papers slide was added.
 
 ### B1 — Flow matching turns noise into draws · Backup
 
