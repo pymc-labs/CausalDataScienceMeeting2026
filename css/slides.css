@@ -40,11 +40,18 @@
 }
 .slide-title .title-sub { margin: 40px 0 0; max-width: 940px; font-size: 29px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
 .slide-title .title-foot {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 170px;
+  position: absolute; left: 0; right: 0; bottom: 0; height: 170px; z-index: 0;
   padding: 36px var(--mx) 0;
-  border-top: 1px solid rgba(243, 246, 251, .18);
-  background: #07142F;   /* solid band, as on the white-paper cover: the art ends above it */
   display: grid; grid-template-columns: 380px 1fr; gap: 60px;
+}
+/* The solid band, as on the white-paper cover: the art ends above it. On a screen that is not 16:9
+   the stage leaves a margin below it or at its sides; the band's fill and rule continue into that
+   margin, so the band always reaches the edges of the screen. */
+.slide-title .title-foot::before {
+  content: ''; position: absolute; z-index: -1;
+  left: -100vw; right: -100vw; top: 0; bottom: -100vh;
+  border-top: 1px solid rgba(243, 246, 251, .18);
+  background: #07142F;
 }
 .slide-title .who { display: flex; flex-direction: column; gap: 10px; font-size: 21px; line-height: 1.45; color: var(--fg); }
 .slide-title .who .label { font-weight: 600; font-size: 17px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
