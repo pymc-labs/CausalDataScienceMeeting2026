@@ -245,7 +245,7 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** future work: motivate the next research stage.
 - **Takeaway:** richer mechanisms need new priors, new training and new evaluation; capacity is not a learned capability.
-- **Proposal:** one sentence on richer and time-varying graphs, no slot-count walkthrough.
+- **Visual / delivery (Carlos, 5 November 2026):** one state, no steps. The picture is the former last step: graphs that change over the weeks, with mediation, hidden demand and an interaction behind them. The four points stand together at the left, in short form: today (direct effects only, one graph for every week), 321 slots with 301 as capacity, the next stage (mediation, interactions, hidden demand), then time-varying graphs.
 
 ### 20 — This is just the start · 10 seconds · Main
 

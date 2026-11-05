@@ -5,8 +5,8 @@
                         coherent noise over weeks
      graphs (slide 13)  router graph draws, edge probabilities and the
                         spike-and-slab contribution posteriors
-     slots  (slide 19)  one graph for every week, the unused graph slots,
-                        research mechanisms, time-varying graphs
+     slots  (slide 19)  one state: time-varying graphs over the weeks, with the
+                        research mechanisms behind them
    A canvas draws each figure; small DOM labels sit on top for the text.
    Every frame is a function of the current step and of the times at which
    its parts were switched on, so steps can jump in any order.
@@ -387,13 +387,6 @@
       ctx.strokeStyle = rgba(NAVY_DEEP, 1);
       ctx.stroke();
     }
-  }
-  // Small cross marking an excluded slot.
-  function cross(ctx, x, y, s) {
-    ctx.moveTo(x - s, y - s);
-    ctx.lineTo(x + s, y + s);
-    ctx.moveTo(x + s, y - s);
-    ctx.lineTo(x - s, y + s);
   }
   function monoFont(ctx, px) {
     ctx.font = '400 ' + px + 'px "Fira Mono", ui-monospace, Menlo, monospace';
@@ -1355,7 +1348,8 @@
   }
 
   /* ==========================================================================
-     slots (slide 19): one graph for every week; the slots beyond River's prior
+     slots (slide 19): one state, no steps. The week cards morph into graphs that change over
+     time; the research mechanisms (mediation, hidden demand, interaction) show behind them.
      ========================================================================== */
   function slotsScene() {
     var IX = [266, 373, 480, 587, 694];
@@ -1389,9 +1383,9 @@
 
     var sf;
     var L = {};
-    var A = { slots: new Anim(0), mech: new Anim(0), row: new Anim(1), front: new Anim(1), morph: new Anim(0) };
-    var st = { step: 0, enterT0: 0, scanT0: Infinity, slotsT0: 0, mechT0: 0 };
-    var direct, arcs, uEdges, med, hid, inter, junction, cards;
+    var A = { mech: new Anim(0), front: new Anim(1), morph: new Anim(0) };
+    var st = { enterT0: 0, mechT0: 0 };
+    var direct, med, hid, inter, junction, cards;
 
     // Point (u, v) of card k: u lateral, v vertical, both in [-1, 1]. The far side of a card is a little shorter.
     function cardPt(k, u, v, out) {
@@ -1402,7 +1396,7 @@
       out[1] = cy + u * ROW.ly * s - v * ROW.hh * s * (1 - 0.06 * u);
       return out;
     }
-    // Slot between inputs i < j: a short link between neighbours, an arc over the row otherwise.
+    // Link between inputs i < j: straight between neighbours, an arc over the row otherwise.
     function arcEdge(i, j) {
       var x0 = IX[i] + RI + 2;
       var x1 = IX[j] - RI - 2;
@@ -1414,17 +1408,10 @@
       var i, j, k;
       direct = [];
       for (i = 0; i < 5; i++) direct.push(makeEdge(IX[i], IY, SX, SY, 0.1 * (SX - IX[i]), RI + 3, RS + 5));
-      // Slots between inputs: channel-channel, control-channel and control-control (every pair here).
-      arcs = [];
-      for (i = 0; i < 5; i++) for (j = i + 1; j < 5; j++) arcs.push({ i: i, j: j, e: arcEdge(i, j) });
-      // Latent demand U -> channels, controls and sales.
-      uEdges = [];
-      for (i = 0; i < 5; i++) uEdges.push(makeEdge(UX, UY, IX[i], IY, 0.06 * (IX[i] - UX), RU + 3, RI + 5));
-      uEdges.push(makeEdge(UX, UY, SX, SY, 0, RU + 3, RS + 5));
       // Research mechanisms: mediation TV -> Search -> Sales, hidden demand U -> Search and U -> Sales,
       // interaction TV x Promo (TV modulates the Promo edge).
-      med = arcs[0].e;
-      hid = [uEdges[1], uEdges[5]];
+      med = arcEdge(0, 1);
+      hid = [makeEdge(UX, UY, IX[1], IY, 0.06 * (IX[1] - UX), RU + 3, RI + 5), makeEdge(UX, UY, SX, SY, 0, RU + 3, RS + 5)];
       junction = qpt(direct[3], 0.5, [0, 0]);
       inter = makeEdge(IX[0], IY, junction[0], junction[1], 26, RI + 3, 7);
       // Week cards, near to far.
@@ -1440,19 +1427,14 @@
 
     function cardIn(now, k) { return prog(now, st.enterT0 + 650 + 70 * k, 700, ease.out); }
     function frontIn(now, i) { return prog(now, st.enterT0 + 150 + 60 * i, 600, ease.out); }
-    function scanFlash(now, k) {
-      if (still()) return 0;
-      var pos = (now - st.scanT0) / 140 - 1;
-      return Math.exp(-((pos - k) * (pos - k)) / 0.8);
-    }
 
     function draw(now) {
       var ctx = sf.begin();
-      drawRow(ctx, now, A.row.get(now));
+      drawRow(ctx, now);
       drawFront(ctx, now);
     }
 
-    function drawRow(ctx, now, aRow) {
+    function drawRow(ctx, now) {
       var m = A.morph.get(now);
       var k, i;
       monoFont(ctx, 15);
@@ -1460,13 +1442,13 @@
       ctx.textBaseline = 'alphabetic';
       for (k = NW - 1; k >= 0; k--) {
         var c = cards[k];
-        var a = cardIn(now, k) * aRow;
+        var a = cardIn(now, k);
         if (a < 0.003) continue;
         var mk = ease.inOut(clamp(m * (1 + SPAN) - SPAN * k / (NW - 1), 0, 1));
         var changes = WEEK_MED[k] || WEEK_HID[k];
         for (i = 0; i < 5; i++) if (WEEK_G[k][i] !== FIXED[i]) changes = 1;
-        var flash = Math.max(changes ? Math.sin(Math.PI * mk) : 0, 0.8 * scanFlash(now, k));
-        var border = mix(mix(INK, AQUA, Math.min(1, scanFlash(now, k))), PEACH, changes ? Math.sin(Math.PI * mk) : 0);
+        var flash = changes ? Math.sin(Math.PI * mk) : 0;
+        var border = mix(INK, PEACH, flash);
         // card
         ctx.globalAlpha = a;
         ctx.beginPath();
@@ -1550,33 +1532,8 @@
 
     function drawFront(ctx, now) {
       var aF = A.front.get(now);
-      var aS = A.slots.get(now);
       var aM = A.mech.get(now);
-      var i, k;
-      // capacity slots: zero in River's prior (dotted, with a small cross)
-      if (aS > 0.003) {
-        for (k = 0; k < arcs.length; k++) {
-          var pa = prog(now, st.slotsT0 + 35 * k, 700);
-          drawEdge(ctx, arcs[k].e, { col: INK, a: 0.42 * aS * aF, w: 1.2, dash: DOTTED, p: pa });
-        }
-        for (k = 0; k < uEdges.length; k++) {
-          var pu = prog(now, st.slotsT0 + 300 + 50 * k, 700);
-          drawEdge(ctx, uEdges[k], { col: INK, a: 0.42 * aS * aF, w: 1.2, dash: DOTTED, p: pu });
-        }
-        ctx.globalAlpha = 0.55 * aS * aF * prog(now, st.slotsT0 + 700, 500);
-        ctx.strokeStyle = rgba(INK, 1);
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        for (k = 0; k < arcs.length; k++) {
-          qpt(arcs[k].e, 0.5, PT);
-          cross(ctx, PT[0], PT[1], 3.5);
-        }
-        for (k = 0; k < uEdges.length; k++) {
-          qpt(uEdges[k], 0.5, PT);
-          cross(ctx, PT[0], PT[1], 3.5);
-        }
-        ctx.stroke();
-      }
+      var i;
       // today's direct edges: present solid, permitted but absent dashed
       for (i = 0; i < 5; i++) {
         var pe = prog(now, st.enterT0 + 450 + 70 * i, 900);
@@ -1611,7 +1568,7 @@
       // nodes
       for (i = 0; i < 5; i++) node(ctx, IX[i], IY, RI, INPUTS[i].col, FIXED[i] ? 1 : 0.18, aF * frontIn(now, i));
       disc(ctx, SX, SY, RS, INK, aF * frontIn(now, 5));
-      var aU = Math.max(aS, aM) * aF;
+      var aU = aM * aF;
       if (aU > 0.003) {
         ctx.globalAlpha = aU;
         ctx.beginPath();
@@ -1626,22 +1583,18 @@
       }
     }
 
-    function setStep(s, now, entering) {
-      st.step = s;
-      if (s === 1 && A.slots.get(now) < 0.02) st.slotsT0 = now + (entering ? 900 : 150);
-      A.slots.to(s === 1 ? 1 : (s === 2 ? 0.45 : 0), now, 700);
-      if (s >= 2 && A.mech.get(now) < 0.02) st.mechT0 = now + (entering ? 1000 : 200);
-      A.mech.to(s === 2 ? 1 : (s === 3 ? 0.5 : 0), now, 700);
-      A.row.to(s === 0 || s === 3 ? 1 : 0.3, now, 800);
-      A.front.to(s === 3 ? 0.55 : 1, now, 800);
-      A.morph.to(s === 3 ? 1 : 0, now, s === 3 ? 2200 : 700, s === 3 ? 300 : 0, s === 3 ? ease.linear : ease.inOut);
-      if (s === 0 && entering) st.scanT0 = now + 1700;
-      sf.showLabels(s, entering);
+    // The one state: the mechanisms draw in at half strength, the front graph fades, and the week
+    // cards morph into time-varying graphs.
+    function show(now) {
+      st.mechT0 = now + 1000;
+      A.mech.to(0.5, now, 700);
+      A.front.to(0.55, now, 800);
+      A.morph.to(1, now, 2200, 300, ease.linear);
+      sf.showLabels(0, true);
     }
     function snap(now) {
       snapAll(A);
-      st.enterT0 = st.slotsT0 = st.mechT0 = now - 5000;
-      st.scanT0 = -1e9;
+      st.enterT0 = st.mechT0 = now - 5000;
     }
 
     return {
@@ -1652,35 +1605,20 @@
           sf.label(inp.name, IX[i], IY - RI - 22, { cls: 'mx-name mx-name-s', delay: 60 * i });
         });
         sf.label('Sales', SX, SY, { cls: 'mx-name mx-navy', delay: 320 });
-        sf.label('U', UX, UY, { cls: 'mx-name mx-name-s', steps: [1, 2, 3], delay: 200 });
-        L.latent = sf.label('latent demand', UX, UY + RU + 24, { cls: 'mx-mono', steps: [1], delay: 300 });
-        L.hidden = sf.label('hidden demand', UX, UY + RU + 24, { cls: 'mx-mono mx-peri', steps: [2], delay: 650 });
-        L.med = sf.label('mediation', (IX[0] + IX[1]) / 2, IY - RI - 58, { cls: 'mx-mono mx-peri', steps: [2], delay: 300 });
-        L.inter = sf.label('interaction · TV × Promo', 630, junction[1], { anchor: 'l', cls: 'mx-mono mx-hot', steps: [2], delay: 1000 });
-        L.slots = sf.label(NET.graphSlots + ' slots · ' + NET.graphFamilies + ' families · ' + NET.graphSlotsZero + ' set to zero in River’s prior', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono', steps: [1, 2], delay: 400 });
-        L.one = sf.label('each sampled graph · every week', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-aqua', steps: [0], delay: 1300 });
-        L.tv = sf.label('time-varying causal graphs', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-hot', steps: [3], delay: 400 });
+        sf.label('U', UX, UY, { cls: 'mx-name mx-name-s', delay: 200 });
+        sf.label('time-varying causal graphs', cards[0].quad[0][0], 44, { anchor: 'l', cls: 'mx-mono mx-hot', delay: 400 });
         L.ill = sf.label('illustrative', sf.w - 2, sf.h - 16, { anchor: 'r', cls: 'mx-mono mx-faint', delay: 600 });
       },
       enter: function (ctx) {
         var now = performance.now();
         sf.fit();
-        A.slots.set(0);
         A.mech.set(0);
-        A.row.set(1);
         A.front.set(1);
         A.morph.set(0);
         st.enterT0 = now;
-        st.scanT0 = Infinity;
-        setStep(ctx.step, now, true);
+        show(now);
         if (ctx.instant) snap(now);
         sf.start(draw);
-      },
-      step: function (ctx) {
-        var now = performance.now();
-        setStep(ctx.step, now, false);
-        if (ctx.instant) snap(now);
-        sf.wake();
       },
       leave: function () { sf.stop(); },
       resize: function () { sf.fit(); sf.redraw(); }

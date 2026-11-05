@@ -20,6 +20,13 @@
 .flow-text .eq .katex-display { text-align: left; margin: 0; }
 .flow-text .eq .katex-display > .katex { text-align: left; }
 
+/* --- 19 Graph slots: the four points together, in body text, beside the final picture --- */
+.slide-slots .slot-list { list-style: none; margin: 44px 0 0; padding: 0; display: flex; flex-direction: column; gap: 24px; }
+.slide-slots .slot-list li { display: grid; grid-template-columns: 52px 1fr; align-items: baseline; }
+.slide-slots .slot-list .n { font-family: var(--f-mono); font-size: 17px; color: var(--accent); }
+.slide-slots .slot-list p { margin: 0; font-size: 22px; line-height: 1.45; font-weight: 300; color: var(--fg-2); }
+.slide-slots .slot-list b { font-weight: 600; color: var(--fg); }
+
 .chips { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 36px; }
 .facts { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
 .facts p { font-size: 23px; line-height: 1.42; font-weight: 300; color: var(--fg-2); margin: 0 0 8px; }

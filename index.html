@@ -639,22 +639,24 @@
   </aside>
 </section>
 
-<!-- 19 · Future work: the graph slots -->
-<section class="slide" data-title="The graph slots are already in the network" data-act="05 · Future work" data-theme="dark" data-steps="3"
+<!-- 19 · Future work: the graph slots. One state: the four points together at the left, and the
+     picture in its final form (time-varying graphs, with the research mechanisms behind them). -->
+<section class="slide slide-slots" data-title="The graph slots are already in the network" data-act="05 · Future work" data-theme="dark"
   data-scene="slots" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">05</span>Future work · The next stage</p>
     <h2 class="h2 r">The graph slots are <span class="accent">already in the network</span></h2>
-    <div class="flow-text">
-      <div data-step-only="0"><p class="body">Today each graph that River samples holds for every week: direct effects only.</p></div>
-      <div data-step-only="1"><p class="body">The network keeps 321 graph slots in 8 families. River’s prior uses the 20 direct ones and sets the other 301, for hidden demand and paths between inputs, to zero. They are capacity, not learned effects.</p></div>
-      <div data-step-only="2"><p class="body">The next research stage: mediation, interactions, and recovery under hidden demand. New priors, new weights, new tests.</p></div>
-      <div data-step-only="3"><p class="body">And a structure that can change over time: time-varying causal graphs.</p></div>
-    </div>
+    <ol class="slot-list">
+      <li class="r"><span class="n">01</span><p><b>Today:</b> direct effects only. Each sampled graph holds for every week.</p></li>
+      <li class="r"><span class="n">02</span><p><b>321 graph slots</b> in 8 families. River’s prior uses the 20 direct ones. The other 301 are capacity, not learned effects.</p></li>
+      <li class="r"><span class="n">03</span><p><b>Next:</b> mediation, interactions and recovery under hidden demand. New priors, new weights, new tests.</p></li>
+      <li class="r"><span class="n">04</span><p><b>Then:</b> causal graphs that change over time.</p></li>
+    </ol>
   </div>
   <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
   <aside class="notes">
     <p>Source: Appendix B.5 and Sections 5 and 5.2 of the paper. Time-varying graphs: our research direction, not part of the paper.</p>
+    <p>One picture for the four points. The week cards show graphs that change over time. Behind them: mediation (TV → Search), hidden demand U, and an interaction (TV × Promo).</p>
     <p>The architecture is ahead of the prior. Slots for latent demand and input-to-input edges exist, with zero training targets.</p>
     <p>Mediation: an input acts through another variable. Awareness: marketing builds a state that affects later sales. Funnel: stages from awareness to purchase. Interactions: one input changes another's effect.</p>
     <p>Time-varying graphs are our own research direction. The paper does not cover them.</p>
