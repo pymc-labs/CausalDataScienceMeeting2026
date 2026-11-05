@@ -14,7 +14,7 @@ This is the shared editorial plan: chapter intent, slide purpose and agreed narr
 
 - **Slide 13:** this slide feels repetitive. Review its overlap with other slides and identify whether another slide should be removed or merged. No removal decision yet; keep the slides unchanged for now.
 
-- **Slide 10, step 3:** consider removing the final Simulate → Train → Use summary reveal; it may be unnecessary. Not removed yet.
+- **Slide 9 (Learn the posterior), step 3:** resolved (Carlos, 4 November 2026). The Simulate → Train → Use reveal is removed; the slide has two states.
 - **Deck-wide:** references to pages and equation numbers in the academic paper can be removed from the deck. Recorded for a later cleanup; references are unchanged for now.
 
 ## Review workflow
@@ -37,7 +37,7 @@ Keep the team introduction and agenda brief. The audience needs the question mor
 
 ## 1. The problem — Sales do not reveal causes · 3 minutes
 
-*Current slides 4–7.*
+*Current slides 4–8.*
 
 Different contributions can produce the same sales history. A model that predicts sales well does not necessarily tell us what each channel caused. Choosing one response curve, carryover model and causal structure also hides uncertainty about those choices.
 
@@ -49,7 +49,7 @@ Bayesian model averaging addresses that uncertainty, but repeatedly fitting many
 
 ## 2. Simulated causal worlds — What is being learned? · 3 minutes
 
-*Current slides 8–11.*
+*Current slides 9–11.*
 
 The simulator creates marketing datasets whose graphs and contributions are known. It lets us train on—and later test against—truth that is unavailable in ordinary business data.
 
@@ -170,27 +170,28 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** give the audience a simple description of the output.
 - **Takeaway:** graphs plus contributions conditional on each graph—not one number.
-- **Visual / delivery:** the title on two lines, “A distribution over graphs” in the accent colour and “and contributions.” in white, then the two points. It leads into the intervention slide.
-- **Order (Teemu and Carlos, 5 November 2026):** moved forward from after “Learn the posterior from the prior” and renamed “The Goal”. It comes directly after slide 7, before the intervention slide.
+- **Visual / delivery:** the title on two lines, “A distribution over graphs” in the accent colour and “and contributions.” in white, then the two points. It leads into “Learn the posterior from the prior”.
+- **Order (Teemu and Carlos, 5 November 2026):** moved forward from after “Learn the posterior from the prior” and renamed “The Goal”. It comes directly after slide 7 and closes part 01.
 
-### 9 — A contribution is an interventional quantity · 60 seconds · Main
+### 9 — Learn the posterior from the prior · 40 seconds · Main, compressed
+
+- **Purpose:** connect simulated training to Bayesian model averaging.
+- **Takeaway:** the ideal likelihood loss targets the mixture-prior posterior. River’s flow-matching loss has the same ideal target. Finite training and 16-step sampling do not guarantee exact inference.
+- **Implemented (simplified, Carlos, 4 November 2026):** two rows, each a plain message in large type at the left with its equation small at the right. Step 0: "Simulate worlds with a known truth. Train one network to recover that truth from the data an analyst sees", with the ideal loss. Step 1, the main message: "If the network is flexible enough, the best answer is the model-averaged posterior", with the optimum and a one-line flow-matching caveat. The KL step and the Simulate · Train · Use notes repeated these messages, so they moved to the speaker notes. The first equation is tagged “ideal loss”, because River does not train on the negative log density (verified in [issue #3](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3)).
+- **Order (Carlos, 5 November 2026):** moved from slide 11 to slide 9, the first slide of part 02. The intervention slide now belongs to part 02 too, so the part label does not switch back to 01.
+
+### 10 — A contribution is an interventional quantity · 60 seconds · Main
 
 - **Purpose:** define the causal target and its assumptions together.
 - **Takeaway:** remove a channel’s spend path and compare noise-free sales, within the restricted direct-effect graph family.
 - **Visual / delivery:** the definition, then the intervention do(TV = 0): two states, and the next press goes to “Use the prior to generate worlds with a known truth”.
 - **Agreed decision, implemented (Carlos, 5 November 2026):** the third state, the boundary of River’s prior (no hidden demand, no paths between inputs), is removed. The speaker notes keep it for questions, and the limitations slide states it as its first limitation.
 
-### 10 — Use the prior to generate worlds with a known truth · 55 seconds · Main
+### 11 — Use the prior to generate worlds with a known truth · 55 seconds · Main
 
 - **Purpose:** explain where training examples and known causal truth come from.
 - **Takeaway:** diverse worlds with correlated inputs require distributions of explanations.
 - **Visual / delivery:** one world, then variation across worlds; use the updated channel-share and correlation facts only as supporting evidence.
-
-### 11 — Learn the posterior from the prior · 40 seconds · Main, compressed
-
-- **Purpose:** connect simulated training to Bayesian model averaging.
-- **Takeaway:** the ideal likelihood loss targets the mixture-prior posterior. River’s flow-matching loss has the same ideal target. Finite training and 16-step sampling do not guarantee exact inference.
-- **Implemented (simplified, Carlos, 4 November 2026):** two rows, each a plain message in large type at the left with its equation small at the right. Step 0: "Simulate worlds with a known truth. Train one network to recover that truth from the data an analyst sees", with the ideal loss. Step 1, the main message: "If the network is flexible enough, the best answer is the model-averaged posterior", with the optimum and a one-line flow-matching caveat. The KL step and the Simulate · Train · Use notes repeated these messages, so they moved to the speaker notes. The first equation is tagged “ideal loss”, because River does not train on the negative log density (verified in [issue #3](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3)).
 
 ### 12 — Assembling River · 60 seconds · Main
 
@@ -275,9 +276,9 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 ## Agreed annotation follow-up
 
 - **Slides 5–6:** [Issue #2 — alternative causal DAGs](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/2). Implemented as option A (agreed with Carlos): the formula becomes a DAG on slide 5, then three alternative DAGs; slide 6 names them. DAG 3 is a promotion → Search path between inputs.
-- **Slide 8:** title changed to “Use the prior to generate worlds with a known truth,” highlighting “known truth.” Speaker notes now distinguish the prior from the simulator it defines.
-- **Slides 10, 12, 13, 15 and B1:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Verified against pymc-mfm `32587ac` (the training revision of River-1), run `profile-c-9add72ea6d35` and the structure run; corrections applied. The issue comment holds the claim-by-claim checklist.
-- **Slide 11:** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
+- **Slide 11 (the worlds slide; slide 8 at the time):** title changed to “Use the prior to generate worlds with a known truth,” highlighting “known truth.” Speaker notes now distinguish the prior from the simulator it defines.
+- **Slides 9 (Learn the posterior; slide 10 at the time), 12, 13, 15 and B1:** [Issue #3 — implementation and artifact verification](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3). Verified against pymc-mfm `32587ac` (the training revision of River-1), run `profile-c-9add72ea6d35` and the structure run; corrections applied. The issue comment holds the claim-by-claim checklist.
+- **Slide 8 (The Goal; slide 11 at the time):** use “a distribution over graphs and contributions” rather than “causal systems”; updated in the slide and speaker notes.
 - **Slide 16:** [Issue #4 — converged PyMC-Marketing results](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/4). No converged MMM rerun exists. Carlos decided that the deck follows the latest paper (MarketingFoundationalModels PR #36, commit `499be45`), with its fit-health caveats.
 - **Slide 18:** merged with the conclusions (Carlos, 4 November 2026). The title is now “What River demonstrates”, because the slide no longer shows what is not established.
 

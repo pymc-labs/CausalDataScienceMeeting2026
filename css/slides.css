@@ -200,7 +200,7 @@
 .slide-choices .bma .eq .katex-display > .katex { text-align: left; }
 .slide-choices .bma .small { font-size: 20px; color: var(--fg-2); }
 
-/* --- 10 Prior-fitted networks: each plain message large at the left, its equation small at the right --- */
+/* --- 09 Prior-fitted networks: each plain message large at the left, its equation small at the right --- */
 .slide-pfn .pfn-grid { position: absolute; left: var(--mx); right: var(--mx); top: 390px; display: grid; grid-template-columns: 1040px 1fr; column-gap: 100px; row-gap: 64px; align-items: start; }
 .slide-pfn .pfn-msg { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 36px; line-height: 1.28; color: var(--fg); transition: opacity .6s var(--ease); }
 .slide-pfn[data-step="1"] .pfn-msg { opacity: .4; }

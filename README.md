@@ -79,8 +79,8 @@ With `python3 serve.py`, you can write in the speaker notes on the presenter scr
 | Part | Slides | Content |
 | --- | --- | --- |
 | Opening | 1–3 | Title, the team, the agenda |
-| 01 · The problem | 4–7 | Sales do not reveal causes; the structural model and three alternative causal graphs; one specification against model averaging; “What if we could start backwards?” |
-| 02 · Causal worlds | 8–11 | The prior generates worlds with a known truth; the contribution as an interventional quantity; prior-fitted networks |
+| 01 · The problem | 4–8 | Sales do not reveal causes; the structural model and three alternative causal graphs; one specification against model averaging; “What if the hard work was already done?”; the goal: a distribution over graphs and contributions |
+| 02 · Causal worlds | 9–11 | Prior-fitted networks: learn the posterior from the prior; the contribution as an interventional quantity; the prior generates worlds with a known truth |
 | 03 · Inside River | 12–13 | The architecture, assembled step by step with zoom; graph sampling and graph-averaged inference |
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
 | 05 · Boundaries and the next stage | 17–19 | Limitations of River; what River demonstrates (the main results); future work: the graph slots for the next research stage |

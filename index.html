@@ -297,25 +297,7 @@
   </div>
   <aside class="notes">
     <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
-    <p>River returns graphs and, for each graph, contributions. Next: what one contribution means, as an intervention.</p>
-  </aside>
-</section>
-
-<!-- 09 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 10. -->
-<section class="slide" data-title="A contribution is an interventional quantity" data-act="01 · The problem" data-theme="light" data-steps="1"
-  data-scene="intervention" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
-    <p class="eyebrow r"><span class="num">01</span>The causal target</p>
-    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
-    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
-    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
-  </div>
-  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <aside class="notes">
-    <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
-    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
-    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
-    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
+    <p>River returns graphs and, for each graph, contributions. Next: how one network learns this from simulated worlds.</p>
   </aside>
 </section>
 
@@ -323,33 +305,7 @@
      02 · SIMULATED CAUSAL WORLDS
      ===================================================================== -->
 
-<!-- 10 · Worlds -->
-<section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
-  data-scene="worlds" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
-    <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
-    <h2 class="h2 r">Use the prior to generate worlds with a <span class="accent-2">known truth</span></h2>
-    <p class="body r" style="margin-top:30px">Each world has its own inputs, causal links, response curves and sales. The simulator stores the graph and every contribution.</p>
-    <div class="chips r">
-      <span class="chip fill">200,000 worlds</span><span class="chip fill">208 weeks</span>
-      <span class="chip">1–10 channels</span><span class="chip">1–10 controls</span><span class="chip">50 prior combinations</span>
-    </div>
-    <div class="facts" data-step="2">
-      <p>In the middle 90% of worlds, channels give from <b>5.1%</b> to <b>70.9%</b> of sales.</p>
-      <p>Inputs move together. In the median world, the strongest correlation between two inputs is <b>0.94</b>.</p>
-      <p class="accent-2">Similar data can come from different causal worlds. River learns a distribution of explanations, not one answer.</p>
-    </div>
-  </div>
-  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <aside class="notes">
-    <p>Source: Sections 2.1 and 2.3, Table 1 and Appendix A.2 of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
-    <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
-    <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
-    <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
-  </aside>
-</section>
-
-<!-- 11 · Learn the posterior from the prior. Two rows: a plain message at the left,
+<!-- 09 · Learn the posterior from the prior. Two rows: a plain message at the left,
      its equation small at the right. -->
 <section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
   data-field='{"mode":"none"}'>
@@ -378,6 +334,50 @@
     <p>Step 0: the idea. Draw worlds from the prior and store the graph and the contributions. Train one network on what an analyst would see, with the stored truth as targets. In symbols, the ideal loss is the negative log density of the truth. River does not use this exact loss; step 1 explains.</p>
     <p>Step 1: the main message. The ideal loss equals an expected KL divergence to the true posterior, plus a constant. So, if the network can represent it, the optimum is the posterior of the mixture prior: Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but the paper treats the same posterior as its intended target.</p>
     <p>The limits: the ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views, and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. A new dataset is read with fixed weights; outside the prior, there is no such result.</p>
+  </aside>
+</section>
+
+<!-- 10 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 11. -->
+<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
+  data-scene="intervention" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>The causal target</p>
+    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
+    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
+    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
+    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
+    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
+    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
+  </aside>
+</section>
+
+<!-- 11 · Worlds -->
+<section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+  data-scene="worlds" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
+    <h2 class="h2 r">Use the prior to generate worlds with a <span class="accent-2">known truth</span></h2>
+    <p class="body r" style="margin-top:30px">Each world has its own inputs, causal links, response curves and sales. The simulator stores the graph and every contribution.</p>
+    <div class="chips r">
+      <span class="chip fill">200,000 worlds</span><span class="chip fill">208 weeks</span>
+      <span class="chip">1–10 channels</span><span class="chip">1–10 controls</span><span class="chip">50 prior combinations</span>
+    </div>
+    <div class="facts" data-step="2">
+      <p>In the middle 90% of worlds, channels give from <b>5.1%</b> to <b>70.9%</b> of sales.</p>
+      <p>Inputs move together. In the median world, the strongest correlation between two inputs is <b>0.94</b>.</p>
+      <p class="accent-2">Similar data can come from different causal worlds. River learns a distribution of explanations, not one answer.</p>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Sections 2.1 and 2.3, Table 1 and Appendix A.2 of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
+    <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
+    <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
+    <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
   </aside>
 </section>
 
