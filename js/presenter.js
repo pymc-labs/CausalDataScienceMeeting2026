@@ -39,8 +39,19 @@
     nextMeta: $('[data-next-meta]'),
     nextText: $('[data-next-text]'),
     notes: $('[data-notes]'),
-    save: $('[data-save]')
+    save: $('[data-save]'),
+    mini: $('[data-mini]')
   };
+
+  // The small copy of the slide is the deck in mirror mode. It moves to the deck's address; only
+  // the fragment changes, so it does not reload and plays the same steps and entrances.
+  var MINI = 'index.html?mirror';
+  var miniHash = null;
+  function follow(hash) {
+    if (!hash || hash === miniHash) return;
+    miniHash = hash;
+    el.mini.src = MINI + hash;
+  }
 
   // Use elapsed time, not tick counts, so delayed callbacks do not slow the clock.
   function updateTimer() {
@@ -179,6 +190,7 @@
       el.nextText.textContent = nx.text;
     }
     showNotes(now.title, m.notes);
+    follow(m.hash);
   }
 
   window.addEventListener('message', function (e) {

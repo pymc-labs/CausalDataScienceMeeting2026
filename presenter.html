@@ -25,8 +25,12 @@
   </header>
   <main class="pv-main">
     <section class="pv-now">
-      <p class="pv-k">Now</p>
-      <p class="pv-page"><span data-now-label>––</span><span class="of" data-now-of></span></p>
+      <div class="pv-now-head">
+        <p class="pv-k">Now</p>
+        <p class="pv-page"><span data-now-label>––</span><span class="of" data-now-of></span></p>
+      </div>
+      <!-- A small live copy: the deck in mirror mode, which follows the deck's address. -->
+      <div class="pv-mini"><iframe data-mini src="index.html?mirror" title="The current slide, as the audience sees it" tabindex="-1" aria-hidden="true"></iframe></div>
       <h1 class="pv-title" data-now-title></h1>
       <p class="pv-meta" data-now-meta></p>
       <div class="pv-dots" data-now-dots></div>

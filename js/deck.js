@@ -21,10 +21,12 @@
    They are numbered B1, B2, … and do not count in the page total or the progress bar.
 
    Presenter screen (presenter.html, opened with F or P)
-     A second window shows the current slide and step, what the next arrow press
-     shows, and the speaker notes. The two windows talk with postMessage through
-     window.opener, so the link also works from file:// and survives a reload of
-     either window. The arrows, a clicker and its buttons drive the deck too.
+     A second window shows a small live copy of the current slide, its step, what
+     the next arrow press shows, and the speaker notes. The two windows talk with
+     postMessage through window.opener, so the link also works from file:// and
+     survives a reload of either window. The arrows, a clicker and its buttons
+     drive the deck too. The small copy is this deck in mirror mode
+     (index.html?mirror): it only follows its address, and takes no input.
 
    Scene contract (js/scenes/*.js)
      Deck.registerScene('name', {
@@ -57,6 +59,9 @@
   var leaveTimer = null;
 
   var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Mirror mode: the presenter screen's small copy. It follows its address only: no keys, no pointer,
+  // no hint, no presenter link.
+  var mirror = /[?&]mirror(&|$)/.test(location.search);
 
   /* ---- Small animation toolkit shared with scenes --------------------------- */
   var ease = {
@@ -376,10 +381,22 @@
       var on = f.hasAttribute('data-step-only')
         ? parseList(f.getAttribute('data-step-only')).indexOf(step) !== -1
         : f.hasAttribute('data-step') && Number(f.getAttribute('data-step')) === step;
-      var t = on ? f.textContent.replace(/\s+/g, ' ').trim() : '';
+      var t = on ? blockText(f) : '';
       if (t) return t;
     }
     return '';
+  }
+  // A fragment's words with a break between its blocks: a caption's heading ends with a colon before
+  // its sentence. Equations are left out; their typeset text does not read as words.
+  function blockText(el) {
+    var blocks = Array.prototype.filter.call(el.children, function (c) {
+      return /^(H[1-6]|P|DIV|UL|OL|LI)$/.test(c.tagName);
+    });
+    if (!blocks.length) return el.textContent.replace(/\s+/g, ' ').trim();
+    return blocks.filter(function (c) { return !c.matches('.eq, [data-tex]'); }).map(function (c) {
+      var t = c.textContent.replace(/\s+/g, ' ').trim();
+      return t && /^H[1-6]$/.test(c.tagName) ? t + ':' : t;
+    }).filter(Boolean).join(' ');
   }
   function position(index, step) {
     var s = slides[index];
@@ -395,7 +412,8 @@
       now: position(cur, curStep),
       next: p ? position(p.index, p.step) : null,
       sameSlide: !!p && p.index === cur,
-      notes: notes ? notes.innerHTML : ''
+      notes: notes ? notes.innerHTML : '',
+      hash: location.hash
     }, '*');
   }
   function onMessage(e) {
@@ -626,12 +644,14 @@
     fit();
     window.addEventListener('resize', fit);
     watchPixelRatio();
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('touchstart', onTouchStart, { passive: true });
-    document.addEventListener('touchend', onTouchEnd, { passive: true });
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('click', onClick);
-    window.addEventListener('message', onMessage);
+    if (!mirror) {
+      document.addEventListener('keydown', onKey);
+      document.addEventListener('touchstart', onTouchStart, { passive: true });
+      document.addEventListener('touchend', onTouchEnd, { passive: true });
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('click', onClick);
+      window.addEventListener('message', onMessage);
+    }
     window.addEventListener('hashchange', function () {
       var h = readHash();
       if (h && (h.index !== cur || h.step !== curStep)) go(h.index, h.step);
@@ -645,7 +665,7 @@
 
     var h = readHash() || { index: 0, step: 0 };
     go(h.index, h.step);
-    showHint('← →  navigate   ·   N notes   ·   O overview   ·   Z zoom   ·   F full screen   ·   P presenter', 4200);
+    if (!mirror) showHint('← →  navigate   ·   N notes   ·   O overview   ·   Z zoom   ·   F full screen   ·   P presenter', 4200);
     document.documentElement.classList.add('deck-ready');
   }
 

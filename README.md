@@ -47,7 +47,7 @@ Each slide places its form in its empty space (`data-field` in `index.html`); te
 
 The presenter screen is a second window for your own display. It shows:
 
-- the current slide and step;
+- a small live copy of the current slide, as the audience sees it, with its number, title and step. It plays the same steps and animations as the deck. It is the deck itself in mirror mode (`index.html?mirror`), which only follows the deck's position and takes no input;
 - what the next arrow press shows: the next step (with its caption, when the step has one) or the next slide;
 - the speaker notes of the current slide.
 
