@@ -284,11 +284,28 @@
   </aside>
 </section>
 
+<!-- 08 · The Goal -->
+<section class="slide slide-inter" data-title="The Goal" data-act="01 · The problem" data-theme="dark"
+  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
+  <div class="frame mid">
+    <p class="eyebrow r">The Goal</p>
+    <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over graphs and contributions.</span></h2>
+    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
+      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
+      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
+    <p>River returns graphs and, for each graph, contributions. Now we look at the simulated worlds used to learn this distribution.</p>
+  </aside>
+</section>
+
 <!-- =====================================================================
      02 · SIMULATED CAUSAL WORLDS
      ===================================================================== -->
 
-<!-- 08 · Worlds -->
+<!-- 09 · Worlds -->
 <section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
   data-scene="worlds" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -314,7 +331,7 @@
   </aside>
 </section>
 
-<!-- 09 · Interventional target -->
+<!-- 10 · Interventional target -->
 <section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
   data-scene="intervention" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -336,7 +353,7 @@
   </aside>
 </section>
 
-<!-- 10 · Learn the posterior from the prior. Two rows: a plain message at the left,
+<!-- 11 · Learn the posterior from the prior. Two rows: a plain message at the left,
      its equation small at the right. -->
 <section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
   data-field='{"mode":"none"}'>
@@ -365,23 +382,6 @@
     <p>Step 0: the idea. Draw worlds from the prior and store the graph and the contributions. Train one network on what an analyst would see, with the stored truth as targets. In symbols, the ideal loss is the negative log density of the truth. River does not use this exact loss; step 1 explains.</p>
     <p>Step 1: the main message. The ideal loss equals an expected KL divergence to the true posterior, plus a constant. So, if the network can represent it, the optimum is the posterior of the mixture prior: Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but the paper treats the same posterior as its intended target.</p>
     <p>The limits: the ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views, and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. A new dataset is read with fixed weights; outside the prior, there is no such result.</p>
-  </aside>
-</section>
-
-<!-- 11 · Not a number -->
-<section class="slide slide-inter" data-title="The output is a distribution over graphs and contributions" data-act="02 · Causal worlds" data-theme="dark"
-  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
-  <div class="frame mid">
-    <p class="eyebrow r">The output</p>
-    <h2 class="display-2 r">Not a number.<br><span class="accent">A distribution over graphs and contributions.</span></h2>
-    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
-      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
-      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
-    </ol>
-  </div>
-  <aside class="notes">
-    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
-    <p>River returns graphs and, for each graph, contributions. Now we open the network.</p>
   </aside>
 </section>
 
