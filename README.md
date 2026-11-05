@@ -18,6 +18,7 @@ cd CausalDataScienceMeeting2026
 python3 serve.py
 ```
 
+The repository is private: you need access to `pymc-labs/CausalDataScienceMeeting2026` to clone it.
 Open <http://127.0.0.1:8000> in Chrome, then press **F** for full screen and the presenter screen (see below).
 `serve.py` uses the Python standard library only. It serves the deck with caching off, and it lets the presenter screen save the speaker notes (see [Edit the speaker notes](#edit-the-speaker-notes)). Use `--port 8100` for another port.
 
@@ -91,18 +92,19 @@ With `python3 serve.py`, you can write in the speaker notes on the presenter scr
 
 ```
 index.html            all slides, text and speaker notes
-presenter.html        presenter screen: now, next, editable speaker notes, timer
+presenter.html        presenter screen: a live mini copy of the slide, next step, editable speaker notes, timer
+presentation-story.md the editorial plan: the story of the talk, the purpose of each slide and the agreed decisions
 serve.py              local server: the deck without caching, and saving of the speaker notes into index.html
 css/deck.css          design system: brand palette, type, transitions, chrome
 css/slides.css        slide layouts
 css/presenter.css     presenter screen layout
 css/scenes/*.css      styles of the animated scenes
 js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom, presenter link
-js/presenter.js       presenter screen: the link to the deck, notes editing, timer
+js/presenter.js       presenter screen: the link to the deck, the mini copy, notes editing, timer
 js/field.js           background flow lines and contours; edge-anchored forms that fade out and morph between slides
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results, closing "thank you" graph)
-assets/               fonts, team photos, official PyMC Labs logos
+assets/               fonts, team photos, official PyMC Labs logos, the paper page and the white-paper QR code
 vendor/katex/         KaTeX 0.16.11 for equations
 ```
 
