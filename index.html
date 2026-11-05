@@ -284,7 +284,25 @@
   </aside>
 </section>
 
-<!-- 08 · The Goal -->
+<!-- 08 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 9. -->
+<section class="slide" data-title="A contribution is an interventional quantity" data-act="01 · The problem" data-theme="light" data-steps="1"
+  data-scene="intervention" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">01</span>The causal target</p>
+    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
+    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
+    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
+    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
+    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
+    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
+  </aside>
+</section>
+
+<!-- 09 · The Goal -->
 <section class="slide slide-inter" data-title="The Goal" data-act="01 · The problem" data-theme="dark"
   data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
   <div class="frame mid">
@@ -305,7 +323,7 @@
      02 · SIMULATED CAUSAL WORLDS
      ===================================================================== -->
 
-<!-- 09 · Worlds -->
+<!-- 10 · Worlds -->
 <section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
   data-scene="worlds" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -328,24 +346,6 @@
     <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
     <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
     <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
-  </aside>
-</section>
-
-<!-- 10 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 11. -->
-<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
-  data-scene="intervention" data-field='{"mode":"none"}'>
-  <div class="frame text-col narrow">
-    <p class="eyebrow r"><span class="num">02</span>The causal target</p>
-    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
-    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
-    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
-  </div>
-  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
-  <aside class="notes">
-    <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
-    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
-    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
-    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
   </aside>
 </section>
 
