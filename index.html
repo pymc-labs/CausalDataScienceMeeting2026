@@ -284,7 +284,24 @@
   </aside>
 </section>
 
-<!-- 08 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 9. -->
+<!-- 08 · The Goal -->
+<section class="slide slide-inter" data-title="The Goal" data-act="01 · The problem" data-theme="dark"
+  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
+  <div class="frame mid">
+    <p class="eyebrow r">The Goal</p>
+    <h2 class="display-2 r"><span class="accent">A distribution over graphs</span><br>and contributions.</h2>
+    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
+      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
+      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
+    <p>River returns graphs and, for each graph, contributions. Next: what one contribution means, as an intervention.</p>
+  </aside>
+</section>
+
+<!-- 09 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 10. -->
 <section class="slide" data-title="A contribution is an interventional quantity" data-act="01 · The problem" data-theme="light" data-steps="1"
   data-scene="intervention" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
@@ -299,23 +316,6 @@
     <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
     <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
     <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
-  </aside>
-</section>
-
-<!-- 09 · The Goal -->
-<section class="slide slide-inter" data-title="The Goal" data-act="01 · The problem" data-theme="dark"
-  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
-  <div class="frame mid">
-    <p class="eyebrow r">The Goal</p>
-    <h2 class="display-2 r"><span class="accent">A distribution over graphs</span><br>and contributions.</h2>
-    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
-      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
-      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
-    </ol>
-  </div>
-  <aside class="notes">
-    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
-    <p>River returns graphs and, for each graph, contributions. Now we look at the simulated worlds used to learn this distribution.</p>
   </aside>
 </section>
 

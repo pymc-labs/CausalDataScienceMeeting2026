@@ -166,30 +166,31 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 - **Takeaway:** specify many worlds first, learn inference once, reuse it without a new fit.
 - **Visual / delivery:** contrast the repeated fitting workflow with River’s inference workflow.
 
-### 8 — Use the prior to generate worlds with a known truth · 55 seconds · Main
+### 8 — The Goal: a distribution over graphs and contributions · 25 seconds · Main
 
-- **Purpose:** explain where training examples and known causal truth come from.
-- **Takeaway:** diverse worlds with correlated inputs require distributions of explanations.
-- **Visual / delivery:** one world, then variation across worlds; use the updated channel-share and correlation facts only as supporting evidence.
+- **Purpose:** give the audience a simple description of the output.
+- **Takeaway:** graphs plus contributions conditional on each graph—not one number.
+- **Visual / delivery:** the title on two lines, “A distribution over graphs” in the accent colour and “and contributions.” in white, then the two points. It leads into the intervention slide.
+- **Order (Teemu and Carlos, 5 November 2026):** moved forward from after “Learn the posterior from the prior” and renamed “The Goal”. It comes directly after slide 7, before the intervention slide.
 
 ### 9 — A contribution is an interventional quantity · 60 seconds · Main
 
 - **Purpose:** define the causal target and its assumptions together.
 - **Takeaway:** remove a channel’s spend path and compare noise-free sales, within the restricted direct-effect graph family.
-- **Visual / delivery:** the definition, then the intervention do(TV = 0): two states, and the next press goes to “Learn the posterior from the prior”.
+- **Visual / delivery:** the definition, then the intervention do(TV = 0): two states, and the next press goes to “Use the prior to generate worlds with a known truth”.
 - **Agreed decision, implemented (Carlos, 5 November 2026):** the third state, the boundary of River’s prior (no hidden demand, no paths between inputs), is removed. The speaker notes keep it for questions, and the limitations slide states it as its first limitation.
 
-### 10 — Learn the posterior from the prior · 40 seconds · Main, compressed
+### 10 — Use the prior to generate worlds with a known truth · 55 seconds · Main
+
+- **Purpose:** explain where training examples and known causal truth come from.
+- **Takeaway:** diverse worlds with correlated inputs require distributions of explanations.
+- **Visual / delivery:** one world, then variation across worlds; use the updated channel-share and correlation facts only as supporting evidence.
+
+### 11 — Learn the posterior from the prior · 40 seconds · Main, compressed
 
 - **Purpose:** connect simulated training to Bayesian model averaging.
 - **Takeaway:** the ideal likelihood loss targets the mixture-prior posterior. River’s flow-matching loss has the same ideal target. Finite training and 16-step sampling do not guarantee exact inference.
 - **Implemented (simplified, Carlos, 4 November 2026):** two rows, each a plain message in large type at the left with its equation small at the right. Step 0: "Simulate worlds with a known truth. Train one network to recover that truth from the data an analyst sees", with the ideal loss. Step 1, the main message: "If the network is flexible enough, the best answer is the model-averaged posterior", with the optimum and a one-line flow-matching caveat. The KL step and the Simulate · Train · Use notes repeated these messages, so they moved to the speaker notes. The first equation is tagged “ideal loss”, because River does not train on the negative log density (verified in [issue #3](https://github.com/pymc-labs/CausalDataScienceMeeting2026/issues/3)).
-
-### 11 — The output is a distribution over graphs and contributions · 25 seconds · Main
-
-- **Purpose:** give the audience a simple description of the output.
-- **Takeaway:** graphs plus contributions conditional on each graph—not one number.
-- **Visual / delivery:** use this as the transition into the mechanism.
 
 ### 12 — Assembling River · 60 seconds · Main
 
