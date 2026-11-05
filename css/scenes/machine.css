@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Scenes flow (backup B1), graphs (slide 13) and slots (slide 19), dark slides.
+   A canvas draws the figure; small DOM labels sit on top for the text.
+   ========================================================================== */
+.mx { position: absolute; inset: 0; }
+.mx-canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
+
+/* The canvas freezes when the slide leaves; fade it out like the deck's text. */
+.slide.is-leaving .mx {
+  opacity: 0;
+  transform: translate3d(0, var(--leave-y), 0);
+  filter: blur(6px);
+  transition:
+    opacity var(--t-leave) var(--ease-out),
+    transform var(--t-leave) var(--ease-out),
+    filter var(--t-leave) var(--ease-out);
+}
+
+/* Labels: placed in scene px, revealed per step like the deck's fragments. */
+.mx-lab { position: absolute; white-space: pre; line-height: 1.2; pointer-events: none; }
+.mx-a-c { transform: translate(-50%, -50%); }
+.mx-a-l { transform: translate(0, -50%); }
+.mx-a-r { transform: translate(-100%, -50%); }
+.mx-lab > span {
+  display: inline-block;
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  filter: blur(6px);
+  transition:
+    opacity .7s var(--ease-out),
+    transform .9s var(--ease-out),
+    filter .7s var(--ease-out);
+}
+.mx-lab.on > span { opacity: 1; transform: none; filter: blur(0); transition-delay: var(--d, 0ms); }
+.mx-instant .mx-lab > span { transition: none !important; }
+
+.mx-name { font-family: var(--f-body); font-size: 22px; font-weight: 500; color: #F3F6FB; }
+.mx-name-s { font-size: 20px; }
+.mx-mono { font-family: var(--f-mono); font-size: 16px; letter-spacing: .04em; color: rgba(243, 246, 251, .62); }
+.mx-kind { font-family: var(--f-mono); font-size: 15px; letter-spacing: .04em; color: rgba(243, 246, 251, .5); }
+.mx-navy { color: var(--navy); }
+.mx-aqua { color: var(--aqua); }
+.mx-peri { color: var(--peri); }
+.mx-hot { color: var(--peach); }
+.mx-faint { color: rgba(243, 246, 251, .42); }
+.mx-lab sub { font-size: 15px; position: relative; top: .3em; vertical-align: baseline; line-height: 0; }
+.mx-sw { display: inline-block; width: 24px; height: 2px; margin-right: 12px; vertical-align: middle; background: currentColor; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-lab > span { transform: none; filter: none; transition-duration: .2s; }
+  .mx-lab.on > span { transition-delay: 0ms; }
+}

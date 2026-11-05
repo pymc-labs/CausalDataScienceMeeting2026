@@ -1,0 +1,265 @@
+/* ==========================================================================
+   Slide layouts. Coordinates are stage pixels (1920 x 1080).
+   Side margins come from --mx (deck.css); content uses the width between.
+   ========================================================================== */
+
+/* Text column beside a scene. */
+.frame.text-col { right: auto; width: 720px; }
+.frame.text-col.narrow { width: 660px; }
+.text-col .h1 { font-size: 80px; }
+.text-col .h2 { font-size: 54px; line-height: 1.1; }
+.text-col .body { font-size: 25px; }
+.text-col .chips { margin-top: 22px; }
+.text-col .eq.sm .katex-display { text-align: left; margin: 0; }
+.text-col .eq.sm .katex-display > .katex { text-align: left; }
+
+/* Step text that replaces itself in place. */
+.flow-text { position: relative; margin-top: 40px; min-height: 380px; }
+.flow-text > [data-step-only] { position: absolute; left: 0; right: 0; top: 0; }
+.flow-text .eq { margin-top: 26px; text-align: left; }
+.flow-text .eq .katex-display { text-align: left; margin: 0; }
+.flow-text .eq .katex-display > .katex { text-align: left; }
+
+/* --- 19 Graph slots: the four points together, in body text, beside the final picture --- */
+.slide-slots .slot-list { list-style: none; margin: 44px 0 0; padding: 0; display: flex; flex-direction: column; gap: 24px; }
+.slide-slots .slot-list li { display: grid; grid-template-columns: 52px 1fr; align-items: baseline; }
+.slide-slots .slot-list .n { font-family: var(--f-mono); font-size: 17px; color: var(--accent); }
+.slide-slots .slot-list p { margin: 0; font-size: 22px; line-height: 1.45; font-weight: 300; color: var(--fg-2); }
+.slide-slots .slot-list b { font-weight: 600; color: var(--fg); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 36px; }
+.facts { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.facts p { font-size: 23px; line-height: 1.42; font-weight: 300; color: var(--fg-2); margin: 0 0 8px; }
+.facts b { font-family: var(--f-display); font-stretch: 125%; font-weight: 500; font-size: 28px; color: var(--fg); margin-right: 6px; }
+.facts .accent-2 { color: var(--accent-2); font-weight: 400; }
+
+/* --- 01 Title ------------------------------------------------------------- */
+.slide-title .title-top {
+  position: absolute; left: var(--mx); right: var(--mx); top: 84px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.slide-title .title-logo { display: block; height: 64px; width: auto; }
+.slide-title .title-meta { text-align: right; font-size: 22px; line-height: 1.5; color: var(--fg-2); }
+.slide-title .title-block { position: absolute; left: var(--mx); top: 232px; width: 1460px; }
+.slide-title .title-h {
+  font-family: var(--f-display); font-stretch: 125%; font-weight: 400;
+  font-size: 90px; line-height: 1.06; letter-spacing: -.018em; margin: 0; color: var(--fg);
+}
+.slide-title .title-sub { margin: 40px 0 0; max-width: 940px; font-size: 29px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
+.slide-title .title-foot {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 170px; z-index: 0;
+  padding: 36px var(--mx) 0;
+  display: grid; grid-template-columns: 380px 1fr; gap: 60px;
+}
+/* The solid band, as on the white-paper cover: the art ends above it. On a screen that is not 16:9
+   the stage leaves a margin below it or at its sides; the band's fill and rule continue into that
+   margin, so the band always reaches the edges of the screen. */
+.slide-title .title-foot::before {
+  content: ''; position: absolute; z-index: -1;
+  left: -100vw; right: -100vw; top: 0; bottom: -100vh;
+  border-top: 1px solid rgba(243, 246, 251, .18);
+  background: #07142F;
+}
+.slide-title .who { display: flex; flex-direction: column; gap: 10px; font-size: 21px; line-height: 1.45; color: var(--fg); }
+.slide-title .who .label { font-weight: 600; font-size: 17px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+
+/* --- 02 Team --------------------------------------------------------------- */
+.slide-team .team {
+  position: absolute; left: var(--mx); right: var(--mx); top: 470px;
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px;
+}
+.slide-team .team li { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+.slide-team .team img {
+  width: 216px; height: 216px; border-radius: 50%; object-fit: cover; display: block;
+  margin-top: var(--wave, 0);
+  box-shadow: 0 0 0 2px var(--navy), 0 0 0 12px rgba(247, 247, 247, .92);
+}
+.slide-team .team .name { margin-top: 30px; font-family: var(--f-display); font-stretch: 125%; font-size: 24px; line-height: 1.25; color: var(--fg); }
+.slide-team .team .tag {
+  margin-top: 12px; font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--hot);
+}
+.slide-team .team li:nth-child(-n+2) img { box-shadow: 0 0 0 3px var(--peach), 0 0 0 12px rgba(247, 247, 247, .92); }
+.slide-team .team-foot { position: absolute; left: var(--mx); bottom: 96px; font-size: 18px; color: var(--fg-3); margin: 0; }
+
+/* --- 03 Agenda -------------------------------------------------------------- */
+.frame.agenda { display: grid; grid-template-columns: 560px 1fr; gap: 120px; align-items: center; }
+
+/* --- Interstitials ------------------------------------------------------------ */
+.display-2 {
+  font-family: var(--f-display); font-stretch: 125%; font-weight: 400;
+  font-size: 100px; line-height: 1.06; letter-spacing: -.02em; margin: 0; color: var(--fg);
+}
+.points.compact li { padding: 20px 0; grid-template-columns: 70px 1fr; }
+.points.compact .t { font-size: 30px; }
+
+/* Process lines (white paper, "How MFMs change the process"). */
+.process { margin-top: 70px; display: flex; flex-direction: column; gap: 38px; }
+.proc-row { display: grid; grid-template-columns: 200px 1fr; align-items: start; position: relative; }
+.proc-k { font-size: 20px; font-weight: 600; color: var(--fg-2); padding-top: 14px; }
+.proc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); position: relative; }
+.proc.short { grid-template-columns: 1fr 2fr 2fr 1fr; }
+.proc::before { content: ''; position: absolute; left: 28px; right: 28px; top: 27px; height: 1px; background: var(--fg-4); }
+.proc.short::before { right: calc(100% / 6 - 28px); }
+.proc li { position: relative; display: flex; flex-direction: column; align-items: flex-start; }
+.proc i {
+  font-style: normal; font-family: var(--f-mono); font-size: 20px;
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid var(--fg-3); color: var(--fg); background: var(--navy);
+}
+.proc li.end i { background: var(--fg); color: var(--navy); border-color: var(--fg); }
+.proc li.mfm i { background: var(--aqua); color: var(--navy); border-color: var(--aqua); }
+.proc b { margin-top: 14px; font-size: 22px; font-weight: 600; color: var(--fg); }
+.proc small { font-size: 17px; color: var(--fg-3); margin-top: 4px; line-height: 1.35; }
+.proc-loop { grid-column: 2; margin-top: 18px; font-size: 18px; color: var(--accent-2); padding-left: calc(100% / 6); display: flex; align-items: center; gap: 10px; }
+.loop-ico { width: 22px; height: 22px; flex: none; }
+
+/* Three notes side by side: text columns, no boxes. */
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 96px; }
+
+/* --- 05 Structural model ---------------------------------------------------------- */
+.slide-eq .eq-stage { position: absolute; left: var(--mx); right: var(--mx); top: 300px; text-align: center; }
+.slide-eq .eq.lg { font-size: 58px; }
+.slide-eq .eq.sm { font-size: 34px; margin-top: 6px; }
+.slide-eq .eq .katex, .slide-eq .eq .katex * { transition: color .6s var(--ease); }
+.slide-eq .eq .t-b, .slide-eq .eq .t-c, .slide-eq .eq .t-u {
+  display: inline-block;
+  transform-origin: center;
+  transition: color .6s var(--ease), transform .6s var(--ease);
+}
+.slide-eq[data-step="1"] .eq .katex,
+.slide-eq[data-step="2"] .eq .katex,
+.slide-eq[data-step="3"] .eq .katex { color: var(--fg-3); }
+.slide-eq[data-step="1"] .t-b { color: var(--accent-2); }
+.slide-eq[data-step="2"] .t-c { color: var(--accent); }
+.slide-eq[data-step="3"] .t-u { color: var(--accent-2); }
+/* Enlarge the active term without reflowing the surrounding equation. */
+.slide-eq[data-step="1"] .t-b,
+.slide-eq[data-step="2"] .t-c,
+.slide-eq[data-step="3"] .t-u { transform: scale(1.12); }
+.slide-eq .eq-labels { position: relative; height: 80px; margin-top: 30px; transition: opacity .4s var(--ease); }
+.slide-eq .eq-label {
+  position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+  width: 1100px; font-size: 25px; line-height: 1.5; font-weight: 300; color: var(--fg-2);
+}
+.slide-eq .eq-label:not(.is-shown) { transform: translate(-50%, 12px); }
+.slide-eq .eq-label b { color: var(--fg); font-weight: 600; }
+/* Steps 4-5: the equation as a graph, then three forks. A fork starts at the centre
+   (--from) and moves out to its column; its extra assumption draws in after it.
+   The shared base graph is a <use> clone: its rules must not depend on ancestors. */
+.slide-eq .eq-stage { transition: transform .8s var(--ease); }
+.slide-eq[data-step="4"] .eq-stage,
+.slide-eq[data-step="5"] .eq-stage { transform: translateY(-34px); }
+.slide-eq .dags { position: absolute; left: var(--mx); top: 668px; overflow: visible; }
+.slide.slide-eq .dags .dag-fork[data-step]:not(.is-shown) { transform: translateX(var(--from)); filter: none; }
+.dags text { font-family: var(--f-body); }
+.dag-title { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; fill: var(--fg-2); }
+.dag-name { font-size: 16px; fill: var(--fg-3); }
+.dag-note { font-size: 17px; font-style: italic; fill: var(--fg-3); }
+.dag-tag { font-size: 18px; fill: var(--fg-2); }
+.dag-tag.in { fill: var(--accent); }
+.dag-tag.out { fill: var(--hot); }
+.dag-edge { fill: none; stroke: var(--fg); stroke-width: 2; marker-end: url(#dag-head); }
+.dag-edge.hot { stroke: var(--hot); marker-end: url(#dag-head-hot); }
+.dag-head { fill: var(--fg); }
+.dag-head.hot { fill: var(--hot); }
+.dag-dep { fill: none; stroke: var(--fg-3); stroke-width: 2; stroke-dasharray: 5 6; }
+.dag-hidden { fill: none; stroke: var(--fg-3); stroke-width: 2; stroke-dasharray: 4 4; }
+.dag-node.n-tv { fill: #3E9C8C; }
+.dag-node.n-se { fill: #62B5A6; }
+.dag-node.n-pr { fill: var(--peri-deep); }
+.dag-node.n-sales { fill: var(--fg); }
+.slide-eq[data-step="4"] .eq-labels,
+.slide-eq[data-step="5"] .eq-labels { opacity: 0; }
+
+/* --- 06 Specification choices ------------------------------------------------------ */
+.slide-choices .choices { position: absolute; left: var(--mx); top: 360px; width: 1020px; display: flex; flex-direction: column; gap: 30px; transition: opacity .7s var(--ease); }
+.slide-choices .choice-row { display: grid; grid-template-columns: 270px repeat(3, auto); justify-content: start; align-items: center; column-gap: 40px; }
+.slide-choices .choice-k { font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); }
+.slide-choices .chip { font-size: 21px; }
+.slide-choices[data-step="0"] .chip[data-pick="a"],
+.slide-choices[data-step="1"] .chip[data-pick="b"] { color: var(--hot); font-weight: 500; --dot: var(--peach); }
+.slide-choices[data-step="0"] .chip[data-pick="a"]::before,
+.slide-choices[data-step="1"] .chip[data-pick="b"]::before { transform: scale(1.5); }
+.slide-choices[data-step="2"] .choices,
+.slide-choices[data-step="3"] .choices { opacity: .35; }
+.slide-choices .splits { position: absolute; left: 1220px; right: var(--mx); top: 360px; display: flex; flex-direction: column; gap: 30px; }
+.slide-choices .split-row .who { display: block; font-size: 15px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 10px; }
+.slide-choices .splitbar { display: flex; height: 40px; border-radius: 4px; overflow: hidden; }
+.slide-choices .splitbar span {
+  width: var(--w); display: flex; align-items: center; padding-left: 12px;
+  font-size: 17px; font-weight: 500; color: var(--navy); white-space: nowrap;
+}
+.slide-choices .s-tv { background: var(--aqua); }
+.slide-choices .s-se { background: var(--peri); }
+.slide-choices .s-so { background: #D7DCF2; }
+.slide-choices .bma { position: absolute; left: var(--mx); right: var(--mx); top: 720px; display: grid; grid-template-columns: 1fr 1.45fr; gap: 120px; align-items: start; }
+.slide-choices .bma-eq { border-top: 1px solid var(--line); padding-top: 20px; }
+.slide-choices .bma .eq { font-size: 40px; text-align: left; }
+.slide-choices .bma .eq .katex-display { text-align: left; margin: 10px 0 14px; }
+.slide-choices .bma .eq .katex-display > .katex { text-align: left; }
+.slide-choices .bma .small { font-size: 20px; color: var(--fg-2); }
+
+/* --- 09 Prior-fitted networks: each plain message large at the left, its equation small at the right --- */
+.slide-pfn .pfn-grid { position: absolute; left: var(--mx); right: var(--mx); top: 390px; display: grid; grid-template-columns: 1040px 1fr; column-gap: 100px; row-gap: 64px; align-items: start; }
+.slide-pfn .pfn-msg { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 36px; line-height: 1.28; color: var(--fg); transition: opacity .6s var(--ease); }
+.slide-pfn[data-step="1"] .pfn-msg { opacity: .4; }
+/* The main message: its own statement, marked by a rule (as on slide 09). */
+.slide-pfn .pfn-claim { padding: 4px 0 4px 28px; border-left: 3px solid var(--accent-2); }
+.slide-pfn .pfn-main { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 56px; line-height: 1.16; letter-spacing: -.01em; color: var(--fg); }
+.slide-pfn .pfn-main .nowrap { white-space: nowrap; }
+.slide-pfn .pfn-claim-note { margin: 20px 0 0; font-size: 22px; line-height: 1.5; font-weight: 300; color: var(--fg-2); }
+.slide-pfn .pfn-eq { display: flex; flex-direction: column; gap: 4px; }
+.slide-pfn .pfn-eq-main { align-self: center; }
+.slide-pfn .eq { font-size: 25px; color: var(--fg-2); text-align: left; }
+.slide-pfn .eq .katex-display { margin: 0; text-align: left; }
+.slide-pfn .eq .katex-display > .katex { text-align: left; }
+.slide-pfn .eq-tag { font-family: var(--f-mono); font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-2); }
+
+/* --- 12 Architecture --------------------------------------------------------------------- */
+.slide-arch .arch-head { position: absolute; left: var(--mx); right: var(--mx); top: 150px; }
+.slide-arch .arch-head .eyebrow { margin-bottom: 16px; }
+.slide-arch .arch-captions { position: relative; height: 150px; }
+.slide-arch .arch-cap { position: absolute; left: 0; top: 0; width: 1500px; }
+.slide-arch .arch-cap .h3 { font-size: 36px; margin: 0 0 12px; }
+.slide-arch .arch-cap p { margin: 0; font-size: 23px; line-height: 1.55; font-weight: 300; color: var(--fg-2); max-width: 1440px; }
+
+/* --- B2 Stats (backup) --------------------------------------------------------------------- */
+.slide-stats .stats { margin-top: 28px; }
+.slide-stats .stat-row { grid-template-columns: 560px 1fr; padding: 20px 0; }
+.slide-stats .stat-num { font-size: 76px; }
+.slide-stats .stat-num sup { font-size: .5em; vertical-align: .9em; letter-spacing: 0; }
+.slide-stats .stat-head { font-size: 25px; }
+.slide-stats .stat-body { max-width: 1080px; font-size: 21px; }
+.slide-stats .stat-tex { font-size: 68px; line-height: 1; }
+.slide-stats .stat-tex .katex { font-size: 1em; }
+.slide-stats .stat-body .katex { white-space: nowrap; }
+
+/* --- 17 Limits ----------------------------------------------------------------------------- */
+.slide-limits .points { margin-top: 48px; }
+.slide-limits .points li { padding: 22px 0; }
+.slide-limits .points .t { font-size: 30px; }
+.slide-limits .points .t small { font-size: 21px; max-width: 1440px; }
+
+/* --- 18 What River demonstrates --------------------------------------------------------------- */
+.slide-concl .points { margin-top: 48px; }
+.slide-concl .concl-note { margin-top: 40px; font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--accent-2); max-width: 1440px; }
+
+/* --- Closing columns: a short coloured rule, a small label, then text (the papers slide) --- */
+.close-col { position: relative; padding-top: 26px; }
+.close-col::before { content: ''; position: absolute; left: 0; top: 0; width: 32px; height: 3px; border-radius: 2px; background: var(--band); }
+.close-col .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 12px; }
+.close-col p { font-size: 21px; line-height: 1.5; color: var(--fg); margin: 0; }
+
+/* --- 20 The papers: the white paper (title, text and QR code, left), the academic paper (its first page, right) --- */
+/* A smaller title stays in the left half, so the page can rise to the level of the title. */
+.slide-papers .h2 { font-size: 50px; max-width: 880px; }
+.slide-papers .papers { position: absolute; left: var(--mx); top: 380px; width: 640px; }
+.slide-papers .paper-qr { display: block; width: 340px; height: 340px; margin-top: 32px; border-radius: 10px; }
+.slide-papers .paper-link { margin-top: 18px; font-family: var(--f-mono); font-size: 22px; letter-spacing: .02em; color: var(--accent); }
+/* The page sits at the right margin and fades out at its bottom edge, so the crop reads as the top of a page. */
+.slide-papers .paper-page { position: absolute; right: var(--mx); top: 220px; width: 840px; border-radius: 4px 4px 0 0; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent); }
+
+/* --- 21 Thank you: the scene draws the word; two quiet marks sit where the chrome would be --- */
+.slide-close .close-logo { position: absolute; left: var(--mx); top: 60px; height: 44px; width: auto; opacity: .9; }
+.slide-close .close-event { position: absolute; right: var(--mx); bottom: 46px; margin: 0; font-size: 17px; letter-spacing: .02em; color: var(--fg-3); }

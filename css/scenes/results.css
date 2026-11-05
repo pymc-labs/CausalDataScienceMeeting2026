@@ -1,0 +1,50 @@
+/* ==========================================================================
+   Results scenes (slides 17 and 18, LIGHT theme), drawn by js/scenes/results.js.
+   Each step is a panel holding one SVG in stage px. Panels rise in and lift out
+   like the deck's reveals; --rs-dir flips the motion when navigating back.
+   ========================================================================== */
+.rs-root { --rs-dir: 1; }
+
+.rs-panel {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translate3d(0, calc(var(--rs-dir) * 26px), 0);
+  filter: blur(8px);
+  transition:
+    opacity .95s var(--ease-out),
+    transform 1.15s var(--ease-out),
+    filter .95s var(--ease-out);
+  pointer-events: none;
+}
+.rs-panel.is-on { opacity: 1; transform: none; filter: blur(0); }
+.rs-panel.is-out {
+  opacity: 0;
+  transform: translate3d(0, calc(var(--rs-dir) * -18px), 0);
+  filter: blur(6px);
+  transition-duration: .55s, .55s, .55s;
+  transition-timing-function: var(--ease), var(--ease), var(--ease);
+}
+.rs-panel.rs-snap { transition: none !important; }
+
+.rs-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Type: Inter labels, Fira Mono figures and tags, small caps for group headings. */
+.rs-svg text { font-family: var(--f-body); font-size: 21px; font-weight: 400; fill: var(--navy); }
+.rs-svg .t-lab { fill: rgba(12, 31, 64, .74); }
+.rs-svg .t-ink { fill: var(--navy); }
+.rs-svg .t-cap { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; fill: rgba(12, 31, 64, .55); }
+.rs-svg .t-mono { font-family: var(--f-mono); font-size: 17px; letter-spacing: .04em; fill: rgba(12, 31, 64, .55); }
+.rs-svg .t-small { font-size: 15px; }
+.rs-svg .t-val { font-family: var(--f-mono); font-size: 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rs-panel, .rs-panel.is-out { transform: none; filter: none; transition-duration: .3s, .3s, .3s; }
+}

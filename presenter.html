@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presenter screen · CDSM 2026</title>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/deck.css">
+<link rel="stylesheet" href="css/presenter.css">
+</head>
+<!-- Presenter screen: the deck opens it with F or P. It shows where the talk is, what the next
+     arrow press shows, and the speaker notes. js/presenter.js keeps it in step with the deck.
+     With python3 serve.py, the notes are editable: each edit is saved into index.html. -->
+<body class="pv" data-theme="dark">
+  <div class="bg bg-dark"></div>
+  <header class="pv-top">
+    <p class="pv-k">Presenter screen</p>
+    <div class="pv-timer" role="group" aria-label="Presentation timer">
+      <span class="pv-k">Elapsed</span>
+      <output id="presenter-elapsed" class="pv-clock" data-timer role="timer" aria-live="off" aria-label="Elapsed presentation time">00:00</output>
+      <button type="button" class="pv-btn pv-timer-btn" data-timer-toggle aria-controls="presenter-elapsed">Start</button>
+      <button type="button" class="pv-btn pv-timer-btn" data-timer-reset aria-controls="presenter-elapsed">Reset</button>
+    </div>
+    <p class="pv-status" data-status>Waiting for the deck</p>
+  </header>
+  <main class="pv-main">
+    <section class="pv-now">
+      <div class="pv-now-head">
+        <p class="pv-k">Now</p>
+        <p class="pv-page"><span data-now-label>––</span><span class="of" data-now-of></span></p>
+      </div>
+      <!-- A small live copy: the deck in mirror mode, which follows the deck's address. -->
+      <div class="pv-mini"><iframe data-mini src="index.html?mirror" title="The current slide, as the audience sees it" tabindex="-1" aria-hidden="true"></iframe></div>
+      <h1 class="pv-title" data-now-title></h1>
+      <p class="pv-meta" data-now-meta></p>
+      <div class="pv-dots" data-now-dots></div>
+      <p class="pv-text" data-now-text></p>
+    </section>
+    <section class="pv-next">
+      <p class="pv-k accent">Next <span aria-hidden="true">→</span></p>
+      <h2 class="pv-title-2" data-next-title></h2>
+      <p class="pv-meta" data-next-meta></p>
+      <p class="pv-text soft" data-next-text></p>
+    </section>
+    <section class="pv-notes">
+      <div class="pv-notes-head">
+        <p class="pv-k">Speaker notes</p>
+        <p class="pv-save" data-save></p>
+      </div>
+      <textarea class="pv-notes-body" data-notes readonly spellcheck="true" aria-label="Speaker notes of the current slide"></textarea>
+    </section>
+  </main>
+  <footer class="pv-bar">
+    <button type="button" class="pv-btn" data-cmd="prev">← Previous</button>
+    <button type="button" class="pv-btn next" data-cmd="next">Next →</button>
+    <p class="pv-help">The arrow keys and a clicker also work in this window. Click the notes to edit them, one paragraph per line; Esc gives the keys back to the deck.</p>
+  </footer>
+  <script src="js/presenter.js"></script>
+</body>
+</html>

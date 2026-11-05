@@ -1,0 +1,4 @@
+.DS_Store
+node_modules/
+# serve.py writes index.html through a temporary file; a crash during a save can leave one.
+.index-*.tmp

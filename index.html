@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>River · Causal Data Science Meeting 2026 · PyMC Labs</title>
+<link rel="icon" type="image/png" href="assets/brand/favicon.png">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/deck.css">
+<link rel="stylesheet" href="css/slides.css">
+<link rel="stylesheet" href="css/scenes/test-flow.css">
+<link rel="stylesheet" href="css/scenes/arch.css">
+<link rel="stylesheet" href="css/scenes/causal.css">
+<link rel="stylesheet" href="css/scenes/machine.css">
+<link rel="stylesheet" href="css/scenes/results.css">
+</head>
+<body data-theme="dark">
+
+
+<div class="bg bg-dark"></div>
+<div class="bg bg-light"></div>
+<canvas id="field" aria-hidden="true"></canvas>
+
+<main class="stage stage-main">
+
+<!-- =====================================================================
+     OPENING
+     ===================================================================== -->
+
+<!-- 01 · Title -->
+<section class="slide slide-title" data-title="Title" data-act="Opening" data-theme="dark" data-chrome="off"
+  data-field='{"mode":"contour","focus":[0.86,0.66],"reach":540,"intensity":1}'>
+  <header class="title-top">
+    <img class="title-logo r" src="assets/brand/pymc-labs-full-white.png" alt="PyMC Labs">
+    <div class="title-meta r">
+      <div>Causal Data Science Meeting 2026</div>
+      <div class="hot">5 November 2026 · Session 01 · Research prototype</div>
+    </div>
+  </header>
+  <div class="title-block">
+    <p class="eyebrow r">River · our first Marketing Foundational Model</p>
+    <h1 class="title-h r">Foundational Models for<br>Causal Effect Estimation<br>and Conditional Discovery<br><span class="accent">in Marketing</span></h1>
+  </div>
+  <footer class="title-foot r">
+    <div class="who">
+      <span class="label">Presented by</span>
+      <span>Carlos Trujillo · Teemu Säilynoja</span>
+    </div>
+    <div class="who">
+      <span class="label">Authors</span>
+      <span>Carlos Trujillo · Teemu Säilynoja · Camilo Saldarriaga · Masataka Hayashi · Thomas Wiecki, PhD · Luca Fiaschi, PhD</span>
+    </div>
+  </footer>
+  <aside class="notes">
+    <p>Welcome. This talk is about River, the first Marketing Foundational Model that PyMC Labs trained.</p>
+    <p>The question for this audience: can one trained network learn which inputs cause sales, and how much each one contributed, without being told the true graph?</p>
+    <p>The contour field is the white-paper cover: a posterior landscape. The orange point is the answer we look for.</p>
+  </aside>
+</section>
+
+<!-- 02 · Team -->
+<section class="slide slide-team" data-title="The team" data-act="Opening" data-theme="light"
+  data-field='{"mode":"ribbon","y":0.5,"x0":-0.02,"x1":1.02,"intensity":0.9}'>
+  <div class="frame">
+    <p class="eyebrow r">The team</p>
+    <h2 class="h2 r">Researching foundational models<br><span class="accent-2">for marketing science</span></h2>
+  </div>
+  <ul class="team">
+    <li class="r" style="--wave:-26px"><img src="assets/team/carlos-trujillo.webp" alt=""><span class="name">Carlos<br>Trujillo</span><span class="tag">Speaker</span></li>
+    <li class="r" style="--wave:-6px"><img src="assets/team/teemu-sailynoja.webp" alt=""><span class="name">Teemu<br>Säilynoja</span><span class="tag">Speaker</span></li>
+    <li class="r" style="--wave:20px"><img src="assets/team/camilo-saldarriaga.webp" alt=""><span class="name">Camilo<br>Saldarriaga</span></li>
+    <li class="r" style="--wave:24px"><img src="assets/team/masataka-hayashi.webp" alt=""><span class="name">Masataka<br>Hayashi</span></li>
+    <li class="r" style="--wave:2px"><img src="assets/team/thomas-wiecki.webp" alt=""><span class="name">Thomas<br>Wiecki, PhD</span></li>
+    <li class="r" style="--wave:-22px"><img src="assets/team/luca-fiaschi.webp" alt=""><span class="name">Luca<br>Fiaschi, PhD</span></li>
+  </ul>
+  <p class="team-foot r">PyMC Labs · pymc-labs.com/team</p>
+  <aside class="notes">
+    <p>Six authors at PyMC Labs. Carlos and Teemu present today.</p>
+  </aside>
+</section>
+
+<!-- 03 · Agenda -->
+<section class="slide slide-agenda" data-title="Agenda" data-act="Opening" data-theme="dark"
+  data-field='{"mode":"fan","origin":[0,0.80],"length":1.0,"intensity":0.9}'>
+  <div class="frame agenda">
+    <div>
+      <p class="eyebrow r">The talk</p>
+      <h2 class="h1 r">Agenda</h2>
+      <span class="bar r"></span>
+    </div>
+    <ol class="points">
+      <li class="r"><span class="n">01</span><span class="t">Forecasting is not the goal<small>Why marketing measurement is an identification problem.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Learning by simulation<small>A prior that knows the graph and every contribution.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">The architecture<small>One encoder and two flow heads that sample graphs, then effects.</small></span></li>
+      <li class="r"><span class="n">04</span><span class="t">The results<small>Structure, contributions and checks on held-out simulated worlds.</small></span></li>
+      <li class="r"><span class="n">05</span><span class="t">Boundaries and the next stage<small>The limitations, what River demonstrates, and the next research stage.</small></span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>The agenda has five parts. The causal thread runs through all of them: the target is a contribution, an interventional quantity, under uncertainty about which inputs act.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     01 · THE PROBLEM
+     ===================================================================== -->
+
+<!-- 04 · Same sales, different stories -->
+<section class="slide" data-title="Sales show what happened" data-act="01 · The problem" data-theme="light" data-steps="3"
+  data-scene="decomp" data-field='{"mode":"none"}'>
+  <div class="frame text-col">
+    <p class="eyebrow r"><span class="num">01</span>The problem</p>
+    <h2 class="h1 r">Sales show what happened.<br><span class="accent-2">Not what caused it.</span></h2>
+    <p class="lede r" style="margin-top:48px">Different specifications can explain similar sales histories. They can give different contributions to the same channel.</p>
+    <p class="lede fade" data-step="3" style="margin-top:28px"><strong>An accurate sales forecast does not necessarily tell you what each channel caused.</strong></p>
+  </div>
+  <div class="scene-root" style="left:900px;top:200px;width:900px;height:720px"></div>
+  <aside class="notes">
+    <p>Step 0: weekly sales. One line. This is all that the data show.</p>
+    <p>Steps 1 to 3: three decompositions. The total stays the same in every one. Only the split changes.</p>
+    <p>Key point: predicting sales does not determine contributions. The paper names two problems: structural uncertainty and repeated inference. This slide shows the first.</p>
+  </aside>
+</section>
+
+<!-- 05 · The structural model -->
+<section class="slide slide-eq" data-title="A marketing mix model is a structural model" data-act="01 · The problem" data-theme="light" data-steps="5"
+  data-field='{"mode":"fan","origin":[0,0.48],"length":1.0,"intensity":0.9}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">01</span>The problem</p>
+    <h2 class="h2 r">A marketing mix model is a structural model</h2>
+    <span class="bar r"></span>
+  </div>
+  <div class="eq-stage">
+    <div class="eq lg r" data-tex="\mu_t \;=\; \htmlClass{t-b}{B_t} \;+\; \htmlClass{t-c}{\sum_{k=1}^{K} C_{t,k}} \;+\; \htmlClass{t-u}{\sum_{m=1}^{M} U_{t,m}}" data-display></div>
+    <div class="eq sm r" data-tex="Y_t = \mu_t + \htmlClass{t-e}{\varepsilon_t}, \qquad \varepsilon_t \sim \mathrm{Normal}(0, \sigma_Y^2)" data-display></div>
+    <div class="eq-labels">
+      <div class="eq-label" data-step-only="1"><b>Intrinsic baseline.</b> The part of sales that no input explains. It can change over time.</div>
+      <div class="eq-label" data-step-only="2"><b>Channel contributions.</b> Media spend after carryover (adstock) and a response curve, saturating or linear.</div>
+      <div class="eq-label" data-step-only="3"><b>Control contributions.</b> Price, holidays and other measured factors that are not media.</div>
+    </div>
+  </div>
+  <!-- Steps 4-5: the equation as a graph, then three alternative graphs that the
+       same data cannot tell apart. Arrow: assumed direct effect. Dashed line:
+       observed dependency. Dashed circle: hidden variable. Peach: a path that
+       River's prior does not contain. Fork centres: 293, 880, 1467 (stage px). -->
+  <svg class="dags" viewBox="0 0 1760 256" width="1760" height="256" aria-hidden="true">
+    <defs>
+      <marker id="dag-head" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dag-head" d="M0,0 L10,5 L0,10 z"/></marker>
+      <marker id="dag-head-hot" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dag-head hot" d="M0,0 L10,5 L0,10 z"/></marker>
+      <g id="dag-base">
+        <path class="dag-edge" d="M-108 113 L-18 183"/>
+        <path class="dag-edge" d="M0 119 L0 174"/>
+        <path class="dag-edge" d="M108 113 L18 183"/>
+        <circle class="dag-node n-tv" cx="-120" cy="104" r="15"/>
+        <circle class="dag-node n-se" cx="0" cy="104" r="15"/>
+        <circle class="dag-node n-pr" cx="120" cy="104" r="15"/>
+        <circle class="dag-node n-sales" cx="0" cy="196" r="18"/>
+        <text class="dag-name" x="-143" y="109" text-anchor="end">TV</text>
+        <text class="dag-name" x="0" y="78" text-anchor="middle">Search</text>
+        <text class="dag-name" x="143" y="109">Promo</text>
+        <text class="dag-name" x="28" y="202">Sales</text>
+      </g>
+    </defs>
+    <g class="dag-fork dag-start" data-step-only="4">
+      <g transform="translate(880 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">The equation as a graph</text>
+        <use href="#dag-base"/>
+        <text class="dag-tag" x="0" y="246" text-anchor="middle">Each arrow assumes that an input acts on sales directly</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:587px">
+      <g transform="translate(293 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">1 · Channels run together</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <path class="dag-dep" d="M-104 104 L-16 104"/>
+          <text class="dag-note" x="-60" y="94" text-anchor="middle">ρ</text>
+        </g>
+        <text class="dag-tag in" x="0" y="246" text-anchor="middle">● Correlated inputs · inside River’s prior</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:0px">
+      <g transform="translate(880 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">2 · Spend follows demand</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <circle class="dag-hidden" cx="-120" cy="46" r="15"/>
+          <text class="dag-name" x="-143" y="51" text-anchor="end">Hidden demand</text>
+          <path class="dag-edge hot" d="M-105 46 C-65 42 -35 60 -12 90"/>
+          <path class="dag-edge hot" d="M-133 54 C-260 100 -150 196 -24 196"/>
+        </g>
+        <text class="dag-tag out" x="0" y="246" text-anchor="middle">× Hidden demand · outside River’s prior</text>
+      </g>
+    </g>
+    <g class="dag-fork" data-step="5" style="--from:-587px">
+      <g transform="translate(1467 0)">
+        <text class="dag-title" x="0" y="14" text-anchor="middle">3 · Promotions move with campaigns</text>
+        <use href="#dag-base"/>
+        <g class="dag-extra" data-step="5" style="--d:700ms">
+          <path class="dag-edge hot" d="M103 104 L17 104"/>
+        </g>
+        <text class="dag-tag out" x="0" y="246" text-anchor="middle">× A path between inputs · outside River’s prior</text>
+      </g>
+    </g>
+  </svg>
+  <aside class="notes">
+    <p>Source: Eq. (1) in Section 2.2 of the paper. Graphs are illustrative. Arrow: assumed direct effect. Dashed line: observed dependency. Dashed circle: hidden variable.</p>
+    <p>The model writes sales as a sum. Baseline, each channel, each control, plus noise.</p>
+    <p>Each term is a latent quantity. We never observe it. We observe only the sum.</p>
+    <p>Step 4: the same equation is a causal graph. Every arrow is an assumption: this input acts on sales directly.</p>
+    <p>Step 5: three graphs that fit the same weekly data. Dashed lines are what the data show. Arrows are what we assume.</p>
+    <p>One: TV and search move together. The data show the correlation, not which arrow carries the effect. River's prior contains this case.</p>
+    <p>Two: hidden demand drives both search spending and sales. Part of the "Search effect" is demand. River's prior does not contain hidden demand yet.</p>
+    <p>Three: search spending follows the promotion calendar. That is a path between two inputs. River's prior has no paths between inputs. Part 5 comes back to both.</p>
+  </aside>
+</section>
+
+<!-- 06 · One specification -->
+<section class="slide slide-choices" data-title="Each analysis commits to one specification" data-act="01 · The problem" data-theme="light" data-steps="3"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">01</span>The problem · One specification hides model uncertainty</p>
+    <h2 class="h2 r">Each analysis commits to one specification</h2>
+  </div>
+  <div class="choices r">
+    <div class="choice-row"><span class="choice-k">Carryover</span>
+      <span class="chip" data-pick="a">2 weeks</span><span class="chip">6 weeks</span><span class="chip" data-pick="b">10 weeks</span></div>
+    <div class="choice-row"><span class="choice-k">Diminishing returns</span>
+      <span class="chip">Hill</span><span class="chip" data-pick="b">Logistic</span><span class="chip" data-pick="a">Michaelis–Menten</span></div>
+    <div class="choice-row"><span class="choice-k">Causal structure</span>
+      <span class="chip" data-pick="a">Correlated inputs</span><span class="chip" data-pick="b">Hidden demand</span><span class="chip">Promo → Search</span></div>
+    <div class="choice-row"><span class="choice-k">Constraints</span>
+      <span class="chip">Positive effects</span><span class="chip" data-pick="a">ROAS range</span><span class="chip" data-pick="b">Last year’s priors</span></div>
+  </div>
+  <div class="splits">
+    <div class="split-row" data-step="0"><span class="who">Analyst 1 · illustrative</span>
+      <div class="splitbar"><span style="--w:45%" class="s-tv">TV 45%</span><span style="--w:30%" class="s-se">Search 30%</span><span style="--w:25%" class="s-so">Social 25%</span></div></div>
+    <div class="split-row" data-step="1"><span class="who">Analyst 2</span>
+      <div class="splitbar"><span style="--w:20%" class="s-tv">TV 20%</span><span style="--w:50%" class="s-se">Search 50%</span><span style="--w:30%" class="s-so">Social 30%</span></div></div>
+    <p class="small" data-step="1" style="--d:300ms">Both fit last year’s sales equally well. Illustrative numbers from the white paper; the structure choices follow slide 5.</p>
+  </div>
+  <div class="bma">
+    <div class="bma-eq" data-step="2">
+      <div class="eq" data-tex="p(C \mid \mathcal{D}, \hat m)" data-display></div>
+      <p class="small">One selected specification. Its intervals ignore every other model.</p>
+    </div>
+    <div class="bma-eq" data-step="3">
+      <div class="eq" data-tex="p(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
+      <p class="small">Bayesian model averaging: uncertainty within each model <em>and</em> about the model. Each term needs its own fit.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Every analysis makes four kinds of choices. One of them is the causal structure: the three graphs from the previous slide.</p>
+    <p>Initial view and step 1: two analysts, two sets of choices, two different channel splits. Both fit the data equally well.</p>
+    <p>Step 2: selecting one model conditions on that choice. The intervals then ignore the other models.</p>
+    <p>Step 3: the principled answer is model averaging. But each specification needs its own fit. Observed data do not give the true contributions, and experiments cover only some effects.</p>
+  </aside>
+</section>
+
+<!-- 07 · Front-load inference -->
+<section class="slide slide-inter" data-title="What if the hard work was already done?" data-act="01 · The problem" data-theme="dark" data-steps="1"
+  data-field='{"mode":"ribbon","y":0.32,"x0":0.62,"x1":1.04,"intensity":0.8}'>
+  <div class="frame mid">
+    <p class="eyebrow r">A different order of work</p>
+    <h2 class="display-2 r">What if the hard work<br><span class="accent">was already done?</span></h2>
+    <p class="lede r" style="margin-top:44px">Write many specifications down first. Learn inference once, on worlds where the truth is known. Then read each new dataset with no new fit.</p>
+    <div class="process" data-step="1">
+      <div class="proc-row">
+        <span class="proc-k">Today</span>
+        <ol class="proc"><li><i>1</i><b>Data</b></li><li><i>2</i><b>Specialist</b><small>chooses the structure</small></li><li><i>3</i><b>Build</b><small>adstock, curves, priors</small></li><li><i>4</i><b>Fit</b><small>MCMC sampling</small></li><li><i>5</i><b>Check</b><small>plausible? refit</small></li><li class="end"><i>6</i><b>Decision</b><small>after weeks</small></li></ol>
+        <span class="proc-loop"><svg class="loop-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3M19.5 4.5v4.6h-4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>every change is a new build, fit and check</span>
+      </div>
+      <div class="proc-row">
+        <span class="proc-k">With River</span>
+        <ol class="proc short"><li><i>1</i><b>Data</b></li><li class="mfm"><i>2</i><b>River</b><small>fixed weights, no new fit</small></li><li><i>3</i><b>Draws</b><small>graphs and contributions</small></li><li class="end"><i>4</i><b>Decision</b><small>goal: a shorter loop</small></li></ol>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The usual order: assume one thing, fit, check, change, fit again. It is sequential.</p>
+    <p>We reverse it. We assume many things at the start, in a prior. We learn inference once. Then each new dataset needs only sampling with fixed weights, not a new fit.</p>
+    <p>A shorter loop is a goal. Backup B2 and Section 4.5 of the paper give the measured cost and its caveats.</p>
+  </aside>
+</section>
+
+<!-- 08 · The Goal -->
+<section class="slide slide-inter" data-title="The Goal" data-act="01 · The problem" data-theme="dark"
+  data-field='{"mode":"fan","origin":[1,0.66],"length":0.28,"dir":-1,"intensity":0.9}'>
+  <div class="frame mid">
+    <p class="eyebrow r">The Goal</p>
+    <h2 class="display-2 r"><span class="accent">A distribution over graphs</span><br>and contributions.</h2>
+    <ol class="points compact r" style="margin-top:56px;max-width:1240px">
+      <li><span class="n">1</span><span class="t">A set of graphs of direct effects that can explain the data.</span></li>
+      <li><span class="n">2</span><span class="t">For each graph, a distribution of contributions over time.</span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>The outcome is not one number: it is a distribution over graphs and contributions.</p>
+    <p>River returns graphs and, for each graph, contributions. Next: how one network learns this from simulated worlds.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     02 · SIMULATED CAUSAL WORLDS
+     ===================================================================== -->
+
+<!-- 09 · Learn the posterior from the prior. Two rows: a plain message at the left,
+     its equation small at the right. -->
+<section class="slide slide-pfn" data-title="Learn the posterior from the prior" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">02</span>Amortized inference · prior-fitted networks</p>
+    <h2 class="h2 r">Learn the posterior from the prior</h2>
+    <span class="bar r"></span>
+  </div>
+  <div class="pfn-grid">
+    <p class="pfn-msg r">Simulate worlds with a known truth. Train one network to recover that truth from the data an analyst sees.</p>
+    <div class="pfn-eq r">
+      <span class="eq-tag">ideal loss</span>
+      <div class="eq" data-tex="\mathcal{L}(\varphi) = \mathbb{E}_{(\mathcal{D}, C) \sim p(\mathcal{D}, C)}\big[-\log q_\varphi(C \mid \mathcal{D})\big]" data-display></div>
+    </div>
+    <div class="pfn-claim" data-step="1">
+      <p class="pfn-main">If the network is flexible enough, the best answer is <span class="accent-2 nowrap">the model-averaged posterior</span>.</p>
+      <p class="pfn-claim-note">River’s flow-matching loss aims at the same target, without a guarantee of exact draws.</p>
+    </div>
+    <div class="pfn-eq pfn-eq-main" data-step="1" style="--d:200ms">
+      <span class="eq-tag">optimum</span>
+      <div class="eq" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{m \in \mathcal{M}} p(C \mid \mathcal{D}, m)\, p(m \mid \mathcal{D})" data-display></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Source: Eqs. (19), (21) and (22) in Appendix B.1, and Appendix B.9 of the paper; prior-fitted networks (Müller et al., 2022).</p>
+    <p>Step 0: the idea. Draw worlds from the prior and store the graph and the contributions. Train one network on what an analyst would see, with the stored truth as targets. In symbols, the ideal loss is the negative log density of the truth. River does not use this exact loss; step 1 explains.</p>
+    <p>Step 1: the main message. The ideal loss equals an expected KL divergence to the true posterior, plus a constant. So, if the network can represent it, the optimum is the posterior of the mixture prior: Bayesian model averaging over every specification in the prior, learned once. River minimizes the squared error of a flow velocity, plus an auxiliary edge loss. That loss is not a KL divergence, but the paper treats the same posterior as its intended target.</p>
+    <p>The limits: the ideal needs data from the prior, a flexible enough network, exact minimization and exact integration. River trains on a fixed set of 196,000 worlds, each at six context lengths, for about 3.4 passes over these views, and samples with 16 Euler steps. So the posterior is the intended target, not a guarantee. A new dataset is read with fixed weights; outside the prior, there is no such result.</p>
+  </aside>
+</section>
+
+<!-- 10 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 11. -->
+<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
+  data-scene="intervention" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>The causal target</p>
+    <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
+    <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
+    <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
+    <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
+    <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
+    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
+  </aside>
+</section>
+
+<!-- 11 · Worlds -->
+<section class="slide" data-title="Use the prior to generate worlds with a known truth" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+  data-scene="worlds" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">02</span>Simulated causal worlds</p>
+    <h2 class="h2 r">Use the prior to generate worlds with a <span class="accent-2">known truth</span></h2>
+    <p class="body r" style="margin-top:30px">Each world has its own inputs, causal links, response curves and sales. The simulator stores the graph and every contribution.</p>
+    <div class="chips r">
+      <span class="chip fill">200,000 worlds</span><span class="chip fill">208 weeks</span>
+      <span class="chip">1–10 channels</span><span class="chip">1–10 controls</span><span class="chip">50 prior combinations</span>
+    </div>
+    <div class="facts" data-step="2">
+      <p>In the middle 90% of worlds, channels give from <b>5.1%</b> to <b>70.9%</b> of sales.</p>
+      <p>Inputs move together. In the median world, the strongest correlation between two inputs is <b>0.94</b>.</p>
+      <p class="accent-2">Similar data can come from different causal worlds. River learns a distribution of explanations, not one answer.</p>
+    </div>
+  </div>
+  <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Sections 2.1 and 2.3, Table 1 and Appendix A.2 of the paper. 196,000 training and 4,000 holdout worlds; 50 equally weighted combinations. Correlation: median of 1,000 sampled training worlds.</p>
+    <p>We write the plausible specifications into one prior. We use the prior to generate worlds with a known truth.</p>
+    <p>Step 1: one world. It has a graph of direct effects and a decomposition. Both are known, because we generated them.</p>
+    <p>Step 2: the worlds are wide and hard on purpose. Media can give a small or a large part of sales. Inputs move together, a known problem in marketing mix models. So similar data can come from different worlds, and River must return a distribution of explanations.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     03 · INSIDE RIVER
+     ===================================================================== -->
+
+<!-- 12 · Architecture assembly -->
+<section class="slide slide-arch" data-title="Assembling River" data-act="03 · Inside River" data-theme="dark" data-steps="8"
+  data-scene="arch" data-field='{"mode":"none"}'>
+  <div class="arch-head">
+    <p class="eyebrow r"><span class="num">03</span>Inside River</p>
+    <div class="arch-captions r">
+      <div class="arch-cap" data-step-only="0"><h3 class="h3">One dataset in</h3><p>Spend and controls for every week. Sales only for the context weeks. Query sales are zero-filled and flagged. The true graph and contributions never enter the encoder.</p></div>
+      <div class="arch-cap" data-step-only="1"><h3 class="h3">A shared transformer encoder</h3><p>Attention runs across weeks and across inputs. Time attention is causal: a cell cannot attend to later weeks directly. Four blocks, width 128, eight heads.</p></div>
+      <div class="arch-cap" data-step-only="2"><h3 class="h3">The joint router</h3><p>A flow head that generates a graph and a decomposition together. Its target appends the graph, coded −1 / +1, to the contributions: 346 coordinates per week.</p></div>
+      <div class="arch-cap" data-step-only="3"><h3 class="h3">A sampled graph G</h3><p>An edge is present when its mean signed state over the query weeks is above zero. River keeps the graph and discards the router’s decomposition.</p></div>
+      <div class="arch-cap" data-step-only="4"><h3 class="h3">The graph conditioner</h3><p>One round of messages along the sampled edges between inputs, latent demand, baseline and sales. 321 graph slots in 8 families; River’s prior uses only the 20 direct ones.</p></div>
+      <div class="arch-cap" data-step-only="5"><h3 class="h3">The conditional decoder</h3><p>A second flow head generates contributions for that graph. A support mask removes forbidden coordinates: an absent edge gives exactly zero.</p></div>
+      <div class="arch-cap" data-step-only="6"><h3 class="h3">One decomposition draw</h3><p>Baseline, each channel and each control, for every week of the requested window. 25 coordinates per week, including four latent and indirect slots that River’s prior sets to zero.</p></div>
+      <div class="arch-cap" data-step-only="7"><h3 class="h3">Training</h3><p>The simulator’s graph and contributions are the targets. The decoder learns with the true graph. An auxiliary edge classifier adds a training loss; checkpoint selection only checks that its held-out score is valid. It never selects graphs.</p></div>
+      <div class="arch-cap" data-step-only="8"><h3 class="h3">Inference: weights fixed</h3><p>In the evaluation, each of 256 draws samples a graph with the router, then decodes contributions for that graph.</p></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:120px;top:330px;width:1680px;height:660px"></div>
+  <aside class="notes">
+    <p>We assemble the network piece by piece. The camera moves to each part in turn.</p>
+    <p>0: the input is 208 weeks by 21 rows: up to 10 channels, 10 controls and sales, with 31 features per cell. Context and query windows.</p>
+    <p>1: the encoder. Time attention is lower-triangular. Entity attention is bidirectional over all cells of a week, inputs and sales.</p>
+    <p>2 and 3: the router generates contributions and a graph together. We keep only the graph.</p>
+    <p>4 and 5: the conditioner adjusts the representations for that graph. The decoder draws contributions for it. Absent edges give exact zeros.</p>
+    <p>6: one draw of the decomposition: baseline, channels and controls for every week of the window.</p>
+    <p>7: training uses the true graph for the decoder, and the simulated contributions as targets. Loss: joint and conditional velocity losses for query and context windows, plus an edge classification loss. The evaluated checkpoint is the last one of a fixed 62,500-update budget.</p>
+    <p>8: inference repeats graph, then contributions, with the weights fixed. The evaluation used 256 draws; the structure study used 2,048 router draws. If asked: each flow head takes 16 Euler steps per draw (backup B1).</p>
+  </aside>
+</section>
+
+<!-- 13 · Graph sampling -->
+<section class="slide" data-title="At inference, River samples the causal graph" data-act="03 · Inside River" data-theme="dark" data-steps="4"
+  data-scene="graphs" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">03</span>Inside River · The causal core</p>
+    <h2 class="h2 r">At inference, River samples <span class="accent">the causal graph</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">The prior permits one edge from each input to sales. The true graph is not given. River infers which edges are present.</p></div>
+      <div data-step-only="1"><p class="body">Each draw starts with a graph from the router.</p><div class="eq sm" data-tex="G^{(s)} \sim q^{\text{router}}_\varphi(G \mid \mathcal{D}), \quad s = 1, \dots, 256" data-display></div></div>
+      <div data-step-only="2"><p class="body">Over many draws, the graphs give a probability for each edge. In the evaluation, the calibration error of the channel-edge probabilities is 0.04 to 0.07.</p></div>
+      <div data-step-only="3"><p class="body">For each graph, the decoder draws contributions. An input without an edge contributes exactly zero, so each contribution posterior mixes a point mass at zero with a continuous part.</p></div>
+      <div data-step-only="4"><p class="body">Together, they form the learned posterior: variation between graphs and within each graph.</p>
+        <div class="eq sm" data-tex="q_\varphi(C \mid \mathcal{D}) = \sum_{G} \htmlClass{tex-hot}{q^{\text{router}}_\varphi(G \mid \mathcal{D})}\; \htmlClass{tex-accent}{q^{\text{cond}}_\varphi(C \mid \mathcal{D}, G)}" data-display></div></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:780px;top:170px;width:1020px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Sections 3, 4.3 and B.6.1, Eq. (32) of the paper.</p>
+    <p>This is the causal core of River. It is conditional discovery: structure inferred from the data, conditional on the prior's graph family.</p>
+    <p>Step 1: 256 graph draws, the setting of the contribution evaluation; the structure study used 2,048 router draws per view. Step 2: their frequencies are edge probabilities.</p>
+    <p>Step 3: absent edges give exact zeros. A channel's contribution posterior is a spike at zero plus a slab. Graph uncertainty enters the contribution draws.</p>
+    <p>Step 4: Eq. (32) is the network's counterpart of the model-averaged posterior in Eq. (19). Graphs take the place of specifications. Response functions, carryover choices and input settings enter through the training mixture of 50 combinations.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     04 · EVIDENCE
+     ===================================================================== -->
+
+<!-- 14 · How we test: the evaluation flow, one section per step.
+     Four columns on one row grid: the world, the conditions, the analysts, the scores. Each step adds
+     the next column and a one-line caption; earlier columns fade back, and the last step shows all.
+     Grey lines carry observed data and estimates; peach lines carry what only the simulator knows. -->
+<section class="slide slide-test-flow" data-title="One world, five analysts" data-act="04 · Evidence" data-theme="light" data-steps="3" data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · How we test</p>
+    <h2 class="h2 r">One world. <span class="accent-2">Five analysts.</span></h2>
+  </div>
+  <div class="tf-caps r">
+    <p class="tf-cap" data-step-only="0"><b>A simulated world.</b> The simulator knows the true graph and every contribution. An analyst sees only the inputs and the sales of the context weeks.</p>
+    <p class="tf-cap" data-step-only="1"><b>Five conditions, 100 cases each.</b> Three conditions select the worlds. Two conditions hide the largest-effect channel or control, outside River’s training prior.</p>
+    <p class="tf-cap" data-step-only="2"><b>Five analysts get the same table.</b> No analyst sees the true contributions. Only the oracle also gets the true graph and the mechanisms. It runs on the full-input cases only.</p>
+    <p class="tf-cap" data-step-only="3"><b>Scores against the held-out truth.</b> CRPS compares each predicted distribution with the true value. Lower is better. 500 cases at three horizons give 1,500 scored views.</p>
+  </div>
+  <svg class="eval-flow r" viewBox="0 0 1760 520" role="img" aria-labelledby="eval-flow-title eval-flow-desc">
+    <title id="eval-flow-title">Evaluation data flow</title>
+    <desc id="eval-flow-desc">A simulated world gives observed data to five test conditions and then to five analysts. Only the oracle also gets the true graph, and only for full inputs. The held-out truth goes only to scoring.</desc>
+    <defs>
+      <marker id="ef-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head" d="M0 0 L10 5 L0 10Z"/></marker>
+      <marker id="ef-head-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ef-head hot" d="M0 0 L10 5 L0 10Z"/></marker>
+    </defs>
+
+    <!-- 0 · The world: what the simulator knows, what an analyst sees, what is held out.
+         The true graph is its own section: it stays bright on step 2, where it reaches the oracle. -->
+    <text class="ef-col ef-sec" data-sec="0" x="0" y="14">One simulated world</text>
+    <g class="ef-sec" data-sec="0g">
+      <circle class="ef-dot hot" cx="6" cy="70" r="5"/>
+      <text class="ef-name" x="22" y="78">True graph</text>
+      <text class="ef-sub" x="22" y="104">and mechanisms</text>
+    </g>
+    <g class="ef-sec" data-sec="0">
+      <circle class="ef-dot aqua" cx="6" cy="226" r="5"/>
+      <text class="ef-name" x="22" y="234">Observed data</text>
+      <text class="ef-sub" x="22" y="260">Inputs · all weeks</text>
+      <text class="ef-sub" x="22" y="284">Sales · context weeks</text>
+      <circle class="ef-dot hot" cx="6" cy="382" r="5"/>
+      <text class="ef-name" x="22" y="390">Held-out truth</text>
+      <text class="ef-sub" x="22" y="416">True decomposition</text>
+      <text class="ef-sub" x="22" y="440">Query sales</text>
+    </g>
+
+    <!-- 1 · The conditions: the observed data pass through them -->
+    <g class="ef-sec" data-sec="1"><g data-step="1">
+      <text class="ef-col" x="470" y="14">Five conditions · 100 each</text>
+      <path class="ef-line ef-arrow" d="M300 226 H458"/>
+      <circle class="ef-dot aqua" cx="476" cy="146" r="4"/><text class="ef-item" x="492" y="154">Full inputs</text>
+      <circle class="ef-dot aqua" cx="476" cy="186" r="4"/><text class="ef-item" x="492" y="194">In-sample saturation</text>
+      <circle class="ef-dot aqua" cx="476" cy="226" r="4"/><text class="ef-item" x="492" y="234">Smooth baseline</text>
+      <circle class="ef-dot hot" cx="476" cy="266" r="4"/><text class="ef-item" x="492" y="274">Omitted channel</text>
+      <circle class="ef-dot hot" cx="476" cy="306" r="4"/><text class="ef-item" x="492" y="314">Omitted control</text>
+      <text class="ef-tag" x="492" y="346">last two · out of prior</text>
+    </g></g>
+
+    <!-- 2 · The analysts. Four get every condition from one line; the oracle gets the true graph
+         (dashed) and the full-input condition only (curve). -->
+    <g class="ef-sec" data-sec="2"><g data-step="2">
+      <text class="ef-col" x="930" y="14">Five analysts</text>
+      <path class="ef-line" d="M712 226 H860 M860 148 V382"/>
+      <path class="ef-line ef-arrow" d="M860 148 H918"/>
+      <path class="ef-line ef-arrow" d="M860 226 H918"/>
+      <path class="ef-line ef-arrow" d="M860 304 H918"/>
+      <path class="ef-line ef-arrow" d="M860 382 H918"/>
+      <path class="ef-line ef-arrow" d="M612 146 C 740 146 790 100 918 100"/>
+      <path class="ef-hot ef-dash ef-arrow-hot" d="M300 70 H918"/>
+      <circle class="ef-dot hot" cx="936" cy="70" r="5"/>
+      <text class="ef-name" x="952" y="78">Oracle</text>
+      <text class="ef-sub" x="952" y="104">true graph · full inputs only</text>
+      <circle class="ef-dot aqua" cx="936" cy="148" r="5"/>
+      <text class="ef-name river" x="952" y="156">River</text>
+      <text class="ef-sub" x="952" y="182">graph not supplied</text>
+      <circle class="ef-dot" cx="936" cy="226" r="5"/>
+      <text class="ef-name" x="952" y="234">PyMC-Marketing</text>
+      <text class="ef-sub" x="952" y="260">default priors</text>
+      <circle class="ef-dot" cx="936" cy="304" r="5"/>
+      <text class="ef-name" x="952" y="312">PathMC</text>
+      <text class="ef-sub" x="952" y="338">Bayesian regression</text>
+      <circle class="ef-dot" cx="936" cy="382" r="5"/>
+      <text class="ef-name" x="952" y="390">OLS</text>
+      <text class="ef-sub" x="952" y="416">linear regression</text>
+    </g></g>
+
+    <!-- 3 · Every analyst's estimates meet the held-out truth at the scores -->
+    <g class="ef-sec" data-sec="3"><g data-step="3">
+      <text class="ef-col" x="1430" y="14">Scoring</text>
+      <path class="ef-line" d="M1180 70 H1260 M1180 148 H1260 M1180 226 H1260 M1180 304 H1260 M1180 382 H1260 M1260 70 V382"/>
+      <path class="ef-line ef-arrow" d="M1260 226 H1418"/>
+      <path class="ef-hot ef-arrow-hot" d="M300 382 H400 V470 H1436 V244"/>
+      <text class="ef-mono hot" x="700" y="498">held-out truth · used only for scoring</text>
+      <circle class="ef-dot ink" cx="1436" cy="226" r="6"/>
+      <text class="ef-name" x="1456" y="234">Scores</text>
+      <text class="ef-sub" x="1456" y="262">Contributions · sales predictions</text>
+      <text class="ef-mono" x="1456" y="290">CRPS · lower is better</text>
+    </g></g>
+  </svg>
+  <aside class="notes">
+    <p>Source: Section 4.1 of the paper. 300 distinct held-out worlds; the full-input and both omission conditions share 100 base worlds.</p>
+    <p>Step 0, the world. It holds the observations, the held-out truth, and the true graph and mechanisms. Analysts get the input histories and the context sales. They do not get the true decomposition or the query sales.</p>
+    <p>Step 1, the conditions: 100 cases each. The first three select the worlds. The last two hide the largest-effect channel or control, so they are out of prior. They are not five transformations of every world: the 500 cases come from 300 distinct worlds.</p>
+    <p>Step 2, the analysts. Every method gets the same table. The oracle is a fitted reference with privileged information: the generating graph, the mechanism families and prior information. No analyst has it, and it is not a guaranteed best case. It runs on the 100 full-input cases only. PyMC-Marketing runs in all five conditions. A separate PyMC-Marketing study also uses the 100 full-input worlds.</p>
+    <p>Step 3, the scores. We compare each method's contributions and sales predictions with the held-out truth. CRPS scores a whole predicted distribution against the true value. Three horizons: 99 context weeks with 109 query weeks, 185 with 23, and 207 with 1. That gives 1,500 scored views. The structure study on the next slide scores graph recovery.</p>
+  </aside>
+</section>
+
+<!-- 15 · Structure recovery: one dot plot, no steps -->
+<section class="slide" data-title="Structure is partly recovered" data-act="04 · Evidence" data-theme="light"
+  data-scene="structure" data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · Structure</p>
+    <h2 class="h2 r">River finds most direct effects <span class="accent-2">without the true graph</span></h2>
+  </div>
+  <div class="scene-root" style="left:80px;top:450px;width:1760px;height:440px"></div>
+  <aside class="notes">
+    <p>Source: Section 4.3, Figure 3 and Appendix C.10 of the paper. Structure study of run pr29-final-full-e35866e: router, 100 full-input worlds, 2,048 graph draws per view.</p>
+    <p>Say: River does not get the true graph. We score its sampled graphs on the 100 full-input worlds. Edge by edge, it is right about nine times in ten. The whole set is right less often: the exact channels in about half of the worlds, channels and controls together in fewer than one in five. This is partial structure recovery, under the specified prior.</p>
+    <p>Edge by edge: precision and recall are 0.89 and 0.90 with 99 context weeks, 0.89 and 0.91 with 185, and 0.92 and 0.87 with 207. An edge counts when its marginal probability is at least 0.5. In one draw, an edge is present when its mean signed state over the query weeks is above zero. Its probability is the share of 2,048 draws that contain it. There is no recalibration and no threshold tuning.</p>
+    <p>Whole set: the exact channel set in 45%, 51% and 49% of worlds; channels and controls together in 17%, 19% and 19%.</p>
+    <p>If asked about the draws: the true complete graph is among the 2,048 draws in 82, 84 and 86 of 100 worlds at 99, 185 and 207 context weeks. Full-graph calibration is not established.</p>
+    <p>If asked about calibration: the edge-pooled calibration error (ECE) for channel edges is 0.040, 0.039 and 0.067. These are measurements, not proof of calibration. At 99 and 207 context weeks, the lowest bin is too low: edges with a probability of about 0.03 are present in about 11% of cases; at 185 weeks, in about 7%. At 207 context weeks, edges rated 0.3 to 0.8 are present more often than their rating.</p>
+  </aside>
+</section>
+
+<!-- 16 · Contribution accuracy: one dot plot, no steps -->
+<section class="slide" data-title="Contributions: lower error in every condition" data-act="04 · Evidence" data-theme="light"
+  data-scene="crps" data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">04</span>Evidence · Contributions</p>
+    <h2 class="h2 r">Lower contribution error <span class="accent-2">in every condition</span></h2>
+  </div>
+  <div class="scene-root" style="left:80px;top:360px;width:1760px;height:590px"></div>
+  <aside class="notes">
+    <p>Source: Section 4.2 and Tables 12 and 20 of the paper. CRPS of window-mean contributions on the context sales scale. Lower is better.</p>
+    <p>Say: CRPS scores a whole distribution against the true value. Each row is one condition at one context length. River has the lowest mean error of the four methods in all 15 rows. This is also true when we hide the largest-effect channel or control.</p>
+    <p>Full inputs, 99 context weeks: 0.0295 for River, 0.0370 for PathMC, 0.2136 for OLS and 0.0659 for PyMC-Marketing.</p>
+    <p>A lower mean is not a win in every world. River beats both regressions on the same world in a majority of worlds in 11 of 15 rows. Against PathMC, only the omitted-channel row at 99 context weeks has a paired interval that includes zero.</p>
+    <p>PyMC-Marketing is the native MMM of Table 12: version 1.2, a time-varying intercept, eight-lag geometric adstock, logistic saturation and library-default priors.</p>
+    <p>If asked, the separate PyMC-Marketing study (Table 20, the 100 full-input worlds): the MMM/River ratio of mean channel CRPS is 2.11 at 99 context weeks, 2.44 at 185 and 2.20 at 207. These are ratios of cohort means, not typical world-level ratios. Each fit uses eight chains of 500 draws. 288 of the 300 MMM fits fail at least one health criterion, and none is excluded. The scores describe this configured procedure, not a converged MMM.</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     05 · BOUNDARIES AND THE NEXT STAGE
+     ===================================================================== -->
+
+<!-- 17 · Limitations: properties of River, measured or set by its design, that restrict where its
+     output can be trusted. Not listed here: the gap to the oracle (it has privileged information)
+     and sales prediction (not River's goal). Both are in the notes, for questions. -->
+<section class="slide slide-limits" data-title="Limitations of River" data-act="05 · Boundaries" data-theme="light"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">05</span>Boundaries · Limitations</p>
+    <h2 class="h2 r">Limitations <span class="accent-2">of River</span></h2>
+    <ol class="points limits">
+      <li class="r"><span class="n">01</span><span class="t">Direct effects only<small>The prior has no confounding from hidden demand and no paths between inputs. If the data contain them, the results can be unreliable.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Reliable inside the prior; outside it, only on some axes<small>With 12 channels (training had at most 10), contributions stay the most accurate. With the largest input hidden, the visible inputs stay accurate, but River does not find the hidden cause. With a different input dependence, intervals cover less. Other axes are not tested.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Contribution intervals miss the truth too often<small>80% intervals contain the true window mean in 59% of cases for channels and 68% for controls (full inputs, 99 context weeks). The channel intervals of PathMC, OLS and the MMM miss even more often.</small></span></li>
+      <li class="r"><span class="n">04</span><span class="t">No check for approximation error<small>River has no chains, so divergence and mixing checks do not apply. Approximation error remains, and no check on a single dataset measures it.</small></span></li>
+    </ol>
+  </div>
+  <aside class="notes">
+    <p>Source: Sections 2, 4.2, 4.4, 4.6, 4.7, 4.8 and 5 of the paper; the 80% coverage table and the weekly coverage figure in Appendix C.</p>
+    <p>Say: a limitation here is a property of River that restricts where you can trust its output. Two things are not on this list on purpose. The oracle does better because it gets the true graph. River is not built to forecast sales.</p>
+    <p>01: the prior permits only direct effects from each input to sales. Inference can be unreliable when the prior does not describe the data. Slide 18 lists recovery under hidden confounding as not established.</p>
+    <p>02: twelve-channel cohort: channel CRPS 0.0140, 0.0129 and 0.0135, below PathMC, OLS and the native MMM. This supports the tested larger population, not any number of channels. Largest input hidden (out of prior): lower mean contribution scores on the visible inputs; the hidden input is not recovered, and in one example the baseline error rises. Real-data-informed settings: no detected increase in channel point error; 90% coverage of non-zero effects is 71.0% for K7 and 54.9% for M4, against 73.0% for the corpus reference. Not tested: confounding, paths between inputs, unseen response shapes and real business data.</p>
+    <p>03: exact values 58.9% for channels and 68.0% for controls. The intervals under-cover in every benchmark condition. Bias, not only width, can cause this. Weekly 95% coverage of live channels, read from the figure: River about 85–92%, PathMC about 57–61%, OLS about 42–54%, native MMM about 78–80%, oracle about 90–93%. River's channel intervals are also narrower than those of OLS and the MMM: 12–14% of the sales scale, against 35–90% and 46–62%.</p>
+    <p>04: River's draws avoid MCMC divergences and chain-mixing failures, but not approximation error. The paper measures calibration over cohorts of worlds, not for one dataset.</p>
+    <p>If asked about the oracle: it gets the true graph, the mechanism families and prior information, so a gap is expected. It shows headroom, not a limit. Mean channel CRPS is 0.0185, 0.0141 and 0.0139, against 0.0295, 0.0241 and 0.0263 for River. The oracle is a fitted reference, so its score is not a lower bound.</p>
+    <p>If asked about sales prediction: River is built for the decomposition, not as a forecaster. For the one-week query, mean total-sales CRPS is 0.0384 for River, 0.0213 for PathMC, 0.0290 for OLS and 0.0085 for the native MMM. With 23 query weeks: 0.0422 against 0.0312, 0.0388 and 0.0206. With 109 query weeks, River has the lowest mean in all five conditions.</p>
+    <p>If asked about the sales bands: one-week 95% bands hold sales in 99 of 100 worlds, but they are 49.5% of the sales scale wide, against 12.1% for the oracle. River has no observation-noise draws. The paper does not test why the bands are wide; averaging over graphs is a hypothesis.</p>
+  </aside>
+</section>
+
+<!-- 18 · What River demonstrates: the three main results, right after the limitations.
+     Merges the former "What is demonstrated, and what is not" and "Conclusions" slides. What is
+     not established is in the notes; the research goals are on the next slide. -->
+<section class="slide slide-concl" data-title="What River demonstrates" data-act="05 · Conclusions" data-theme="light"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">05</span>Conclusions · What is demonstrated</p>
+    <h2 class="h2 r">What River demonstrates<br><span class="accent-2">in the tested synthetic setting</span></h2>
+    <ol class="points">
+      <li class="r"><span class="n">01</span><span class="t">Contribution inference<small>Lower mean channel CRPS than PathMC, OLS and PyMC-Marketing in all five conditions and at all three horizons. In a separate study, less than half the channel CRPS of a default PyMC-Marketing model; most of its fits fail a health check.</small></span></li>
+      <li class="r"><span class="n">02</span><span class="t">Constrained structure recovery<small>Channel-edge precision and recall near 0.9, with a calibration error of 0.04 to 0.07 for the edge probabilities. The exact channel set in about half of the worlds; the sampled graphs contain the true graph in most worlds.</small></span></li>
+      <li class="r"><span class="n">03</span><span class="t">Reusable inference<small>One trained network serves new datasets with no new fit. Tested positive changes of units do not change the answer.</small></span></li>
+    </ol>
+    <p class="concl-note r">Graph draws describe structural uncertainty under the prior’s assumptions. They do not establish causal identification from business data.</p>
+  </div>
+  <aside class="notes">
+    <p>Source: Sections 4, 5 and 6 of the paper.</p>
+    <p>Say: three results, each tested against known truth on held-out synthetic worlds, with no new fit. River is a first tool, not the finished tool.</p>
+    <p>If asked what is not established: full DAG discovery, learned edge directions, recovery under hidden confounding, transfer to response mechanisms outside the prior, and causal identification from real business data. The logistic condition uses a response family seen in training. The omission tests do not show recovery of the missing cause.</p>
+    <p>If asked about the source of the gain: the comparison evaluates complete methods. It does not isolate graph sampling as the cause of the better contribution scores.</p>
+  </aside>
+</section>
+
+<!-- 19 · Future work: the graph slots. One state: the four points together at the left, and the
+     picture in its final form (time-varying graphs, with the research mechanisms behind them). -->
+<section class="slide slide-slots" data-title="The graph slots are already in the network" data-act="05 · Future work" data-theme="dark"
+  data-scene="slots" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">05</span>Future work · The next stage</p>
+    <h2 class="h2 r">The graph slots are <span class="accent">already in the network</span></h2>
+    <ol class="slot-list">
+      <li class="r"><span class="n">01</span><p><b>Today:</b> direct effects only. Each sampled graph holds for every week.</p></li>
+      <li class="r"><span class="n">02</span><p><b>321 graph slots</b> in 8 families. River’s prior uses the 20 direct ones. The other 301 are capacity, not learned effects.</p></li>
+      <li class="r"><span class="n">03</span><p><b>Next:</b> mediation, interactions and recovery under hidden demand. New priors, new weights, new tests.</p></li>
+      <li class="r"><span class="n">04</span><p><b>Then:</b> causal graphs that change over time.</p></li>
+    </ol>
+  </div>
+  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Appendix B.5 and Sections 5 and 5.2 of the paper. Time-varying graphs: our research direction, not part of the paper.</p>
+    <p>One picture for the four points. The week cards show graphs that change over time. Behind them: mediation (TV → Search), hidden demand U, and an interaction (TV × Promo).</p>
+    <p>The architecture is ahead of the prior. Slots for latent demand and input-to-input edges exist, with zero training targets.</p>
+    <p>Mediation: an input acts through another variable. Awareness: marketing builds a state that affects later sales. Funnel: stages from awareness to purchase. Interactions: one input changes another's effect.</p>
+    <p>Time-varying graphs are our own research direction. The paper does not cover them.</p>
+    <p>To close the research part: the next test keeps real marketing inputs and simulates their effects, so the truth stays known. After that, real campaigns.</p>
+  </aside>
+</section>
+
+<!-- 20 · The papers: the white paper is out (text and QR code, left); the academic paper comes next
+     (the top of its first page, right, from the current draft: MarketingFoundationalModels PR #36, 499be45). -->
+<section class="slide slide-papers" data-title="The white paper is out; the academic paper is next" data-act="Closing" data-theme="dark" data-chrome="min"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r">Read more</p>
+    <h2 class="h2 r">The white paper is out.<br><span class="accent">The academic paper is next.</span></h2>
+  </div>
+  <div class="papers">
+    <div class="close-col r" style="--band:var(--aqua)">
+      <p class="card-label">White paper · available now</p>
+      <p>A high-level introduction to Marketing Foundational Models.</p>
+      <img class="paper-qr" src="assets/papers/mfm-cdsm-qr.png" alt="QR code that opens dub.sh/mfm-cdsm">
+      <p class="paper-link">dub.sh/mfm-cdsm</p>
+    </div>
+  </div>
+  <img class="paper-page r" src="assets/papers/mfm-academic-paper-page1.png" alt="The academic paper, coming soon: the top of its first page, with the title, the authors and the start of the abstract">
+  <aside class="notes">
+    <p>The white paper is out now. Scan the code, or open dub.sh/mfm-cdsm. It gives the high-level picture of Marketing Foundational Models.</p>
+    <p>The academic paper comes soon. It has the full method and every result in this talk. Authors: Carlos Trujillo, Teemu Säilynoja, Camilo Saldarriaga, Masataka Hayashi, Thomas Wiecki and Luca Fiaschi, PyMC Labs.</p>
+    <p>The page is the top of the first page of the current draft (MarketingFoundationalModels PR #36, commit 499be45).</p>
+    <p>If asked: the landing page is pymc-labs.com/marketing-foundation-models, and the contact is info@pymc-labs.com.</p>
+  </aside>
+</section>
+
+<!-- 21 · Thank you: one word as a graph, morphing through English, Finnish, Spanish and Portuguese.
+     Only two quiet marks in the corners: the PyMC Labs logo and the conference. -->
+<section class="slide slide-close" data-title="Thank you" data-act="Closing" data-theme="dark" data-chrome="off"
+  data-scene="thanks" data-field='{"mode":"none"}'>
+  <h2 class="sr-only">Thank you · Kiitos · Gracias · Obrigado</h2>
+  <div class="scene-root" style="left:0;top:0;width:1920px;height:1080px"></div>
+  <img class="close-logo r" src="assets/brand/pymc-labs-full-white.png" alt="PyMC Labs">
+  <p class="close-event r">Causal Data Science Meeting 2026</p>
+  <aside class="notes">
+    <p>Thank you. Kiitos. Gracias. Obrigado. Questions?</p>
+  </aside>
+</section>
+
+<!-- =====================================================================
+     BACKUP · for questions; not part of the 15-minute talk
+     ===================================================================== -->
+
+<!-- B1 · Flow matching -->
+<section class="slide" data-title="Flow matching turns noise into draws" data-act="Backup" data-backup data-theme="dark" data-steps="3"
+  data-scene="flow" data-field='{"mode":"none"}'>
+  <div class="frame text-col narrow">
+    <p class="eyebrow r"><span class="num">B1</span>Backup · Inside River · How a head draws</p>
+    <h2 class="h2 r">Flow matching turns <span class="accent">noise into draws</span></h2>
+    <div class="flow-text">
+      <div data-step-only="0"><p class="body">A flow head starts from random noise. In 16 small steps it moves the noise to one draw. Each step reads the encoded dataset h: the noise selects the draw, the data control the distribution of the draws.</p></div>
+      <div data-step-only="1"><p class="body">Training picks a point on the straight line from noise to the true values of a world. The network sees that point and the encoded data, not the truth. It learns the expected velocity toward the truth.</p>
+        <div class="eq sm" data-tex="z_\tau = (1-\tau)\,z_0 + \tau\,z_1, \qquad u_\tau = z_1 - z_0" data-display></div>
+        <div class="eq sm" data-tex="\mathcal{L}_{\text{flow}} = \mathbb{E}\,\big\| v_\varphi(z_\tau, \tau;\, h, \kappa) - u_\tau \big\|^2_W" data-display></div>
+        <p class="small">h: encoded dataset (for the decoder, after the graph conditioner). κ: shared noise of the draw. W: mask weights.</p></div>
+      <div data-step-only="2"><p class="body">At inference, the head follows its learned velocities from fresh noise. Sixteen Euler steps. Different noise gives different draws.</p>
+        <div class="eq sm" data-tex="z \leftarrow z + \tfrac{1}{16}\, v_\varphi(z, \tau;\, h, \kappa)" data-display></div></div>
+      <div data-step-only="3"><p class="body">The base noise has a shared part over weeks. So each draw starts as one coherent path, not as independent weekly values.</p>
+        <div class="eq sm" data-tex="z_{0,t,a} = \sqrt{\rho}\,\kappa_{t,a} + \sqrt{1-\rho}\,e_{t,a}, \qquad \rho = 0.98" data-display></div></div>
+    </div>
+  </div>
+  <div class="scene-root" style="left:820px;top:170px;width:980px;height:800px"></div>
+  <aside class="notes">
+    <p>Source: Section 3 and Appendix B.6 (Eqs. (28)–(30)) of the paper; conditional flow matching (Lipman et al., 2022; Dax et al., 2023). Checked against pymc-mfm 32587ac (training) and 44521b6 (inference in the paper's evaluation).</p>
+    <p>Both heads are flow-matching heads. Here is how one head makes a draw. The router reads the encoded dataset and draws a graph and contributions together; we keep only the graph. The decoder reads the encoded dataset after the graph conditioner, and the support mask of that graph. It draws the contributions for that graph.</p>
+    <p>Step 1: training. Straight lines from noise to truth. The loss is the squared error of the velocity, not a point-estimate loss on the contributions. W gives zero weight to padded or forbidden coordinates. For the router, the decomposition and each graph family get equal weight per world.</p>
+    <p>Step 2: inference. Start from new noise. Follow the field for 16 Euler steps. The picture uses the exact velocity field of a target with two modes, one for each graph. The router meets such targets; the decoder sees one graph at a time. River's network learns only an approximation of this field.</p>
+    <p>Step 3: the noise has a shared time component. So each draw starts as a coherent path over weeks. The head computes the week pattern of this component from the encoded data: four week patterns, with random weights for each coordinate and draw.</p>
+  </aside>
+</section>
+
+<!-- B2 · Three checks -->
+<section class="slide slide-stats" data-title="Three more checks" data-act="Backup" data-backup data-theme="dark"
+  data-field='{"mode":"none"}'>
+  <div class="frame">
+    <p class="eyebrow r"><span class="num">B2</span>Backup · Evidence · Checks</p>
+    <h2 class="h2 r">Three more checks</h2>
+    <div class="stats">
+      <div class="stat-row r"><div class="stat-num stat-tex" data-tex="8.0 \times 10^{-16}"></div><div><p class="stat-head">The same answer in different units</p><p class="stat-body">We rescale sales, spend and controls by positive factors from 0.001 to 1,000. The largest change in a draw is <span data-tex="8.0 \times 10^{-16}"></span> of the sales scale. No graph flips in 1,536,000 draw pairs.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">1.25<span class="unit">s</span></div><div><p class="stat-head">A first one-week answer, with no fit</p><p class="stat-body">Against 387.30 s for a new native MMM fit and first prediction. For 109 weeks: 113.78 s against 238.66 s. A fitted MMM then repeats the 109-week query in 4.04 s. Device-specific: GPU against eight CPU cores, on a separate twelve-channel cohort.</p></div></div>
+      <div class="stat-row r"><div class="stat-num">Hidden<span class="unit">input</span></div><div><p class="stat-head">Out of prior: the largest-effect input omitted</p><p class="stat-body">River still has the lowest mean contribution error of the four methods on the visible inputs. It does not recover the hidden cause.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Source: Sections 4.5 and 4.8, Tables 12, 13, 14 and 22, and Appendices C.9.1, C.10 and C.12 of the paper.</p>
+    <p>Units: in the test, positive changes of units do not change the decomposition. The test does not cover offsets, nonpositive factors, other inputs or all random seeds. It uses 600 views, ten unit systems and 256 draws per call.</p>
+    <p>Cost: 100 twelve-channel worlds, 4,000 trajectories per call, medians over worlds. First call: River 1.25 s for one week, 22.81 s for 23 weeks and 113.78 s for 109 weeks. A new native MMM fit plus first prediction: 387.30 s, 355.82 s and 238.66 s. Warm calls: River 1.25 s, 22.77 s and 113.61 s; an already fitted MMM 2.08 s, 2.47 s and 4.04 s. River removes the fit. It is not faster for every repeated prediction. River uses CUDA and the MMM uses eight CPU cores, in paired L4 containers. 290 of the 300 timed MMM fits fail the sampler health rule. The paper does not time the main benchmark worlds. These times replace the old 190× figure.</p>
+    <p>Omission: in World 38, the baseline error rises instead. The omission scores measure visible inputs, not recovery of the missing cause. With an omitted channel and 99 context weeks, the paired interval against PathMC includes zero.</p>
+  </aside>
+</section>
+
+</main>
+
+<!-- Chrome: header, footer, progress -->
+<div class="chrome" aria-hidden="true">
+  <div class="stage">
+    <div class="chrome-head">
+      <span class="brand-logo"><img class="on-dark" src="assets/brand/pymc-labs-full-white.png" alt="PyMC Labs"><img class="on-light" src="assets/brand/pymc-labs-full-navy.png" alt=""></span>
+      <div class="chrome-meta">
+        <div>Causal Data Science Meeting 2026</div>
+        <div class="act"><span class="chrome-act-swap" data-chrome-act></span></div>
+      </div>
+    </div>
+    <div class="chrome-foot">
+      <span>PyMC Labs · River · Research prototype</span>
+      <span class="page-num" data-chrome-page></span>
+    </div>
+  </div>
+</div>
+<div class="progress"></div>
+<div class="notes-panel" aria-live="polite"></div>
+<nav class="overview" aria-label="All slides"></nav>
+<div class="blackout"></div>
+<div class="hint"></div>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/field.js"></script>
+<script src="js/deck.js"></script>
+<script src="js/scenes/arch.js"></script>
+<script src="js/scenes/causal.js"></script>
+<script src="js/scenes/machine.js"></script>
+<script src="js/scenes/results.js"></script>
+<script src="js/scenes/thanks.js"></script>
+</body>
+</html>

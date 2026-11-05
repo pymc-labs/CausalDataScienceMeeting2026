@@ -1,0 +1,476 @@
+/* ==========================================================================
+   Deck design system: PyMC Labs brand, white-paper typography.
+   Palette (2025 brand guideline, from the white paper template):
+     Deep Navy #0C1F40 · Pastel Aqua #B4E7DD · Soft Periwinkle #9FAAE2
+     Soft White #F7F7F7 · Peach Orange #F6AE72 (accent, use sparingly)
+   Display: Archivo Expanded (font-stretch 125%) · Body: Inter · Mono: Fira Mono
+   Every slide is laid out on a fixed 1920 x 1080 stage that scales to the window.
+   ========================================================================== */
+
+:root {
+  --navy: #0C1F40;
+  --navy-2: #0A1A38;
+  --navy-deep: #06112A;
+  --navy-ink: #13284F;
+  --aqua: #B4E7DD;
+  --aqua-deep: #4FA595;
+  --peri: #9FAAE2;
+  --peri-deep: #6874C4;
+  --white: #F7F7F7;
+  --peach: #F6AE72;
+  --peach-deep: #D9803C;
+
+  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: 'Fira Mono', ui-monospace, Menlo, monospace;
+
+  --ease: cubic-bezier(.22, .61, .36, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+
+  --t-theme: 1.1s;
+  --t-enter: 1.05s;
+  --t-leave: .55s;
+  --stagger: 75ms;
+  --enter-y: 28px;
+  --leave-y: -18px;
+  --mx: 80px;          /* side margin of the stage; content uses the full width between */
+}
+
+/* Theme tokens. The engine sets data-theme on <body> from the active slide. */
+body[data-theme='dark'] {
+  --fg: #F3F6FB;
+  --fg-2: rgba(243, 246, 251, .74);
+  --fg-3: rgba(243, 246, 251, .46);
+  --fg-4: rgba(243, 246, 251, .18);
+  --line: rgba(243, 246, 251, .16);
+  --accent: var(--aqua);
+  --accent-2: var(--peri);
+  --hot: var(--peach);
+}
+body[data-theme='light'] {
+  --fg: var(--navy);
+  --fg-2: rgba(12, 31, 64, .74);
+  --fg-3: rgba(12, 31, 64, .48);
+  --fg-4: rgba(12, 31, 64, .16);
+  --line: rgba(12, 31, 64, .14);
+  --accent: var(--aqua-deep);
+  --accent-2: var(--peri-deep);
+  --hot: var(--peach-deep);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--navy-deep);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body {
+  font-family: var(--f-body);
+  color: var(--fg);
+  transition: color var(--t-theme) var(--ease);
+  cursor: default;
+}
+body.hide-cursor { cursor: none; }
+
+/* --- Background layers ---------------------------------------------------- */
+.bg {
+  position: fixed;
+  inset: 0;
+  transition: opacity var(--t-theme) var(--ease);
+  pointer-events: none;
+}
+.bg-dark {
+  background:
+    radial-gradient(120% 90% at 85% 0%, #1E3A6B 0%, rgba(30, 58, 107, 0) 55%),
+    radial-gradient(90% 80% at 0% 100%, #0B1C3D 0%, rgba(11, 28, 61, 0) 60%),
+    linear-gradient(180deg, #0D2148 0%, var(--navy) 45%, var(--navy-deep) 100%);
+}
+.bg-light {
+  background:
+    radial-gradient(70% 70% at 100% 100%, rgba(180, 231, 221, .55) 0%, rgba(180, 231, 221, 0) 60%),
+    radial-gradient(60% 60% at 0% 100%, rgba(159, 170, 226, .40) 0%, rgba(159, 170, 226, 0) 60%),
+    linear-gradient(180deg, #FBFBFC 0%, var(--white) 100%);
+  opacity: 0;
+}
+body[data-theme='light'] .bg-light { opacity: 1; }
+body[data-theme='light'] .bg-dark { opacity: 0; }
+
+#field {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+.slide { transition: transform .9s var(--ease-in-out); }
+body.zoom-armed, body.zoom-armed * { cursor: zoom-in !important; }
+body.zoomed, body.zoomed * { cursor: zoom-out !important; }
+
+/* --- Stage ------------------------------------------------------------------ */
+.stage {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) scale(var(--scale, 1));
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.slide.is-active,
+.slide.is-leaving { visibility: visible; }
+.slide.is-active { pointer-events: auto; z-index: 2; }
+.slide.is-leaving { z-index: 1; }
+
+/* Staggered reveal of `.r` elements when a slide enters; quick lift-out on leave. */
+.slide .r {
+  opacity: 0;
+  transform: translate3d(0, var(--enter-y), 0);
+  filter: blur(8px);
+  transition:
+    opacity var(--t-enter) var(--ease-out),
+    transform calc(var(--t-enter) + .2s) var(--ease-out),
+    filter var(--t-enter) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger) + 260ms);
+  will-change: opacity, transform, filter;
+}
+.slide.is-active .r {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+.slide.is-leaving .r {
+  opacity: 0;
+  transform: translate3d(0, var(--leave-y), 0);
+  filter: blur(6px);
+  transition-duration: var(--t-leave), var(--t-leave), var(--t-leave);
+  transition-delay: calc(var(--i, 0) * 18ms);
+}
+body.nav-back { --enter-y: -28px; --leave-y: 18px; }
+.slide.no-anim .r, .slide.no-anim [data-step] { transition: none !important; }
+
+/* Step fragments: visible from their step onward ([data-step]), only on one
+   step ([data-step-only]), or until a step ([data-until]). */
+.slide [data-step],
+.slide [data-step-only],
+.slide [data-until] {
+  transition:
+    opacity .8s var(--ease-out),
+    transform 1s var(--ease-out),
+    filter .8s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.slide [data-step]:not(.is-shown),
+.slide [data-step-only]:not(.is-shown),
+.slide [data-until]:not(.is-shown) {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  filter: blur(6px);
+  pointer-events: none;
+  transition-delay: 0ms;
+}
+.slide .fade[data-step]:not(.is-shown),
+.slide .fade[data-step-only]:not(.is-shown),
+.slide .fade[data-until]:not(.is-shown) { transform: none; filter: none; }
+.slide .dim-past.is-past { opacity: .32; filter: saturate(.6); }
+/* Shown fragments fade out with the leaving slide, like the .r elements. */
+.slide.is-leaving [data-step].is-shown,
+.slide.is-leaving [data-step-only].is-shown,
+.slide.is-leaving [data-until].is-shown {
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity var(--t-leave) var(--ease-out), filter var(--t-leave) var(--ease-out);
+  transition-delay: 0ms;
+}
+
+/* --- Chrome (header, footer, progress) ------------------------------------- */
+.chrome {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.chrome .stage { pointer-events: none; }
+.chrome-head, .chrome-foot {
+  position: absolute;
+  left: var(--mx);
+  right: var(--mx);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: opacity .8s var(--ease), color var(--t-theme) var(--ease);
+  color: var(--fg-2);
+}
+.chrome-head { top: 56px; height: 52px; }
+.chrome-head::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -14px;
+  height: 1px;
+  background: var(--line);
+  transition: background var(--t-theme) var(--ease);
+}
+.chrome-foot { bottom: 46px; font-size: 17px; letter-spacing: .02em; }
+/* Official PyMC Labs full logo: white on dark slides, navy on light slides. */
+.brand-logo { position: relative; display: block; height: 44px; width: 126px; }
+.brand-logo img { position: absolute; left: 0; top: 0; height: 100%; width: auto; transition: opacity var(--t-theme) var(--ease); }
+body[data-theme='dark'] .brand-logo .on-light,
+body[data-theme='light'] .brand-logo .on-dark { opacity: 0; }
+.chrome-meta { text-align: right; font-size: 17px; line-height: 1.35; letter-spacing: .02em; }
+.chrome-meta .act { color: var(--accent); font-weight: 500; transition: color var(--t-theme) var(--ease); }
+.chrome-act-swap { display: inline-block; transition: opacity .45s var(--ease), transform .6s var(--ease-out); }
+.chrome-act-swap.out { opacity: 0; transform: translateY(-8px); }
+.page-num { font-family: var(--f-mono); font-size: 17px; color: var(--fg); }
+.page-num .of { color: var(--fg-3); }
+.progress {
+  position: fixed;
+  left: 0; bottom: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+  background: linear-gradient(90deg, var(--aqua), var(--peri));
+  transition: transform .9s var(--ease-out);
+  z-index: 11;
+}
+body.chrome-off .chrome-head, body.chrome-off .chrome-foot { opacity: 0; }
+body.chrome-min .chrome-head { opacity: 0; }
+
+/* --- Typography ---------------------------------------------------------------- */
+.eyebrow {
+  font-family: var(--f-body);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 28px;
+}
+.eyebrow .num { font-family: var(--f-mono); font-weight: 500; letter-spacing: .06em; margin-right: 18px; color: var(--fg-3); }
+.display, .h1, .h2, .h3 {
+  font-family: var(--f-display);
+  font-stretch: 125%;
+  font-weight: 400;
+  margin: 0;
+  color: var(--fg);
+}
+.display { font-size: 132px; line-height: 1.0; letter-spacing: -.02em; }
+.h1 { font-size: 92px; line-height: 1.06; letter-spacing: -.018em; }
+.h2 { font-size: 66px; line-height: 1.1; letter-spacing: -.012em; }
+.h3 { font-size: 40px; line-height: 1.18; letter-spacing: -.005em; font-weight: 500; }
+.accent { color: var(--accent); }
+.accent-2 { color: var(--accent-2); }
+.hot { color: var(--hot); }
+.soft { color: var(--fg-3); }
+.lede {
+  font-size: 32px;
+  line-height: 1.5;
+  font-weight: 300;
+  color: var(--fg-2);
+  margin: 0;
+  max-width: 1240px;
+}
+.body {
+  font-size: 28px;
+  line-height: 1.55;
+  font-weight: 300;
+  color: var(--fg-2);
+  margin: 0;
+}
+.small { font-size: 22px; line-height: 1.5; color: var(--fg-3); }
+.mono { font-family: var(--f-mono); letter-spacing: .01em; }
+strong, b { font-weight: 600; color: var(--fg); }
+
+/* Heading underline bar, as in the white paper section heads. */
+.bar {
+  display: block;
+  width: 360px;
+  height: 10px;
+  margin-top: 26px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--aqua) 0%, rgba(180, 231, 221, 0) 100%);
+}
+.bar.peri { background: linear-gradient(90deg, var(--peri) 0%, rgba(159, 170, 226, 0) 100%); }
+
+/* --- Layout helpers -------------------------------------------------------------- */
+.frame { position: absolute; left: var(--mx); right: var(--mx); top: 168px; bottom: 120px; }
+.frame.center { display: flex; flex-direction: column; justify-content: center; }
+.frame.mid { top: 140px; bottom: 100px; display: flex; flex-direction: column; justify-content: center; }
+/* Text for screen readers only (the closing slide draws its words on a canvas). */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.row { display: flex; gap: 64px; }
+.col { display: flex; flex-direction: column; }
+.grow { flex: 1; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 96px; align-items: center; }
+.split-37 { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: center; }
+.split-73 { display: grid; grid-template-columns: 7fr 5fr; gap: 80px; align-items: center; }
+.scene-root { position: absolute; inset: 0; }
+
+/* Notes: text only, no box. A short coloured rule and a small label direct the eye. */
+.card {
+  position: relative;
+  padding: 26px 0 0;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  width: 32px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--band, var(--aqua));
+}
+.card.peri { --band: var(--peri); }
+.card.peach { --band: var(--peach); }
+.card .card-title { font-family: var(--f-display); font-stretch: 125%; font-size: 24px; font-weight: 500; line-height: 1.3; margin: 0 0 12px; color: var(--fg); }
+.card .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 12px; }
+.card p { font-size: 20px; line-height: 1.55; font-weight: 300; color: var(--fg-2); margin: 0; }
+
+/* Tags: plain text led by a small dot, no pill. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 19px;
+  color: var(--fg-2);
+  white-space: nowrap;
+  transition: color .5s var(--ease);
+}
+.chip::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--dot, var(--fg-4));
+  transition: background .5s var(--ease), transform .5s var(--ease-out);
+}
+.chip.fill { color: var(--fg); --dot: var(--accent); }
+.chip.peach { color: var(--fg); --dot: var(--peach); }
+
+.rule { height: 1px; background: var(--line); border: 0; margin: 0; }
+
+/* Big-number rows, as on the white paper results pages. */
+.stat-row { display: grid; grid-template-columns: 520px 1fr; gap: 64px; align-items: baseline; padding: 34px 0; border-top: 1px solid var(--line); }
+.stat-row:last-child { border-bottom: 1px solid var(--line); }
+.stat-num { font-family: var(--f-display); font-stretch: 125%; font-size: 92px; line-height: 1; letter-spacing: -.02em; color: var(--fg); font-variant-numeric: tabular-nums; }
+.stat-num .unit { font-size: .5em; color: var(--fg-3); margin-left: 10px; letter-spacing: 0; }
+.stat-head { font-size: 28px; font-weight: 500; color: var(--accent); margin: 0 0 10px; }
+.stat-body { font-size: 24px; line-height: 1.5; font-weight: 300; color: var(--fg-2); margin: 0; }
+
+/* Numbered points list (agenda, conclusions). */
+.points { list-style: none; margin: 0; padding: 0; counter-reset: pt; }
+.points li { display: grid; grid-template-columns: 96px 1fr; align-items: baseline; padding: 24px 0; border-top: 1px solid var(--line); }
+.points li:last-child { border-bottom: 1px solid var(--line); }
+.points .n { font-family: var(--f-mono); font-size: 20px; color: var(--accent); }
+.points .t { font-family: var(--f-display); font-stretch: 125%; font-size: 32px; line-height: 1.25; color: var(--fg); }
+.points .t small { display: block; font-family: var(--f-body); font-stretch: 100%; font-size: 21px; font-weight: 300; color: var(--fg-3); margin-top: 8px; line-height: 1.5; }
+
+/* Equations (KaTeX). */
+.eq { font-size: 46px; color: var(--fg); }
+.eq.sm { font-size: 34px; }
+.eq.lg { font-size: 60px; }
+.eq .katex { font-size: 1em; }
+.eq-note { font-size: 22px; color: var(--fg-3); margin-top: 18px; }
+.katex .mord.accent-c, .tex-accent { color: var(--accent) !important; }
+.tex-hot { color: var(--hot) !important; }
+.tex-peri { color: var(--accent-2) !important; }
+
+/* Speaker notes are carried in the markup and shown with the N key. */
+.notes { display: none; }
+.notes-panel {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translate(-50%, 20px);
+  width: min(1100px, 92vw);
+  max-height: 34vh;
+  overflow: auto;
+  padding: 22px 28px;
+  border-radius: 14px;
+  background: rgba(6, 17, 42, .92);
+  color: #E8EEF8;
+  font: 400 17px/1.55 var(--f-body);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s var(--ease), transform .45s var(--ease-out);
+  z-index: 40;
+}
+.notes-panel.on { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.notes-panel h4 { margin: 0 0 8px; font: 600 13px/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--aqua); }
+
+/* Overview (Esc / O): every slide by act, click to jump. */
+.overview {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  padding: 7vh 8vw;
+  background: rgba(6, 17, 42, .94);
+  backdrop-filter: blur(10px);
+  color: #E8EEF8;
+  overflow: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s var(--ease);
+}
+.overview.on { opacity: 1; pointer-events: auto; }
+.overview h3 { font: 400 15px/1 var(--f-body); letter-spacing: .2em; text-transform: uppercase; color: var(--aqua); margin: 34px 0 12px; }
+.overview ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.overview button {
+  width: 100%;
+  text-align: left;
+  font: 400 16px/1.35 var(--f-body);
+  color: #E8EEF8;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+.overview button:hover, .overview button:focus-visible { border-color: var(--aqua); outline: none; }
+.overview button.current { border-color: var(--peach); }
+.overview button .k { font-family: var(--f-mono); color: rgba(232, 238, 248, .5); margin-right: 10px; }
+
+.blackout {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s var(--ease);
+}
+.blackout.on { opacity: 1; pointer-events: auto; }
+
+.hint {
+  position: fixed;
+  right: 28px;
+  bottom: 22px;
+  z-index: 12;
+  font: 400 13px/1 var(--f-mono);
+  color: var(--fg-3);
+  opacity: 0;
+  transition: opacity .6s var(--ease);
+}
+.hint.on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-enter: .35s; --t-leave: .2s; --stagger: 0ms; --enter-y: 0px; --leave-y: 0px; }
+  .slide { transition: none; }
+  .slide [data-step], .slide [data-step-only], .slide [data-until] { transition-duration: .2s; }
+  .slide [data-step]:not(.is-shown),
+  .slide [data-step-only]:not(.is-shown),
+  .slide [data-until]:not(.is-shown) { transform: none; filter: none; }
+}
