@@ -18,7 +18,6 @@
   var NAVY = '#0C1F40';
   var HAIR = 'rgba(12, 31, 64, .14)';
   var CARD_LINE = 'rgba(12, 31, 64, .18)';
-  var GREY = 'rgba(12, 31, 64, .42)';
   var BASE = 'rgba(12, 31, 64, .16)';
   var PEACH = '#F6AE72';
   var PAPER = '#FFFFFF';
@@ -220,21 +219,6 @@
     if (fillStyle) { c.fillStyle = fillStyle; c.fill(); }
     if (stroke) { c.lineWidth = lw || 1.5; c.strokeStyle = stroke; c.stroke(); }
   }
-  // A small × over a paper dot: marks structure outside River's prior.
-  function cross(c, x, y, s, color, alpha) {
-    c.globalAlpha = alpha;
-    c.setLineDash([]);
-    disc(c, x, y, s + 4, PAPER);
-    c.lineCap = 'round';
-    c.lineWidth = 2;
-    c.strokeStyle = color;
-    c.beginPath();
-    c.moveTo(x - s, y - s); c.lineTo(x + s, y + s);
-    c.moveTo(x + s, y - s); c.lineTo(x - s, y + s);
-    c.stroke();
-    c.lineCap = 'butt';
-    c.globalAlpha = 1;
-  }
 
   // Quadratic edge between two node rims; `bend` offsets the control point
   // along the left normal of a→b, as a fraction of the chord.
@@ -287,7 +271,7 @@
       if (s === 0) c.moveTo(P2[0], P2[1]); else c.lineTo(P2[0], P2[1]);
     }
     c.setLineDash(o.dash || []);
-    c.lineCap = o.cap || 'butt';
+    c.lineCap = 'butt';
     c.lineWidth = o.width || 2.5;
     c.strokeStyle = o.color || NAVY;
     c.globalAlpha = alpha;
@@ -1041,14 +1025,10 @@
     var PRESENT = [true, true, false, true, true];  // Social has no direct edge
     var BENDS = [-0.07, -0.035, 0, 0.035, 0.07];
     var R_IN = 28;
-    // Hidden demand U, and where the × sits on each excluded edge
-    // (TV → Search, U → Search, U → Sales), clear of River's own edges.
-    var U = { x: 630, y: 40, r: 24 };
-    var EX_MARK = [0.5, 0.28, 0.5];
-    var S, loop, edges = [], ex = [];
-    var P = { ent: new Prop(0), dop: new Prop(0), exc: new Prop(0) };
-    var all = [P.ent, P.dop, P.exc];
-    var L = {}, nodeLabels = [], doLabels = [], exLabels = [];
+    var S, loop, edges = [];
+    var P = { ent: new Prop(0), dop: new Prop(0) };
+    var all = [P.ent, P.dop];
+    var L = {}, nodeLabels = [], doLabels = [];
 
     function xAt(i) { return X0 + (X1 - X0) * i / (N - 1); }
     function ySpend(v) { return SP.zero - v / (IV.spendMax * 1.12) * (SP.zero - SP.top); }
@@ -1062,7 +1042,7 @@
 
     function draw(t) {
       var c = S.begin(), j;
-      var en = P.ent.v, dp = P.dop.v, xp = P.exc.v;
+      var en = P.ent.v, dp = P.dop.v;
 
       // Edges: present solid with arrowheads, Social dashed and faint.
       for (j = 0; j < 5; j++) {
@@ -1106,18 +1086,6 @@
       if (dp > 0.002) {
         c.globalAlpha = sstep(seg(dp, 0, 0.45));
         disc(c, NODES[0].x, NODES[0].y, R_IN + 9 + 12 * (1 - ease.out(seg(dp, 0, 0.6))), null, PEACH, 2.5);
-      }
-      // Structure outside River's prior: TV → Search, hidden demand U.
-      if (xp > 0.002) {
-        for (j = 0; j < ex.length; j++) {
-          drawEdge(c, ex[j], 1, { width: 2.2, color: GREY, dash: [3, 6], cap: 'round', head: 9, alpha: xp * 0.9 });
-          ex[j].pt(EX_MARK[j], P2);
-          cross(c, P2[0], P2[1], 5, GREY, xp);
-        }
-        c.globalAlpha = xp;
-        c.setLineDash([5, 5]);
-        disc(c, U.x, U.y, U.r, PAPER, GREY, 1.5);
-        c.setLineDash([]);
       }
       c.globalAlpha = 1;
 
@@ -1199,9 +1167,7 @@
     function apply(s, entering) {
       var w = entering ? 1700 : 0;
       P.dop.to(s >= 1 ? 1 : 0, s >= 1 ? 1300 : 900, s >= 1 ? w : 0, ease.inOut);
-      P.exc.to(s >= 2 ? 1 : 0, 900, s >= 2 ? (entering ? w + 600 : 0) : 0, ease.inOut);
       doLabels.forEach(function (el, q) { show(el, s >= 1, w + 300 + q * 260); });
-      exLabels.forEach(function (el, q) { show(el, s >= 2, (entering ? w + 900 : 350) + q * 80); });
     }
 
     return {
@@ -1216,9 +1182,6 @@
           nodeLabels.push(S.label(inp.kind, lx, nd.y + 15, 'r', 'cz-kind'));
         });
         nodeLabels.push(S.label('Sales', SALES.x, SALES.y, 'c', 'cz-sales'));
-        ex.push(new Edge(NODES[0].x, NODES[0].y, R_IN + 4, NODES[1].x, NODES[1].y, R_IN + 5, 0.12));
-        ex.push(new Edge(U.x, U.y, U.r + 4, NODES[1].x, NODES[1].y, R_IN + 5, 0.1));
-        ex.push(new Edge(U.x, U.y, U.r + 4, SALES.x, SALES.y, SALES.r + 5, -0.1));
 
         L.spend = S.label('TV spend', X0, SP.top - 22, 'l', 'cz-mono');
         L.sales = S.label('noise-free sales ' + Deck.tex('\\mu_t'), X0, SA.top - 24, 'l', 'cz-mono');
@@ -1229,14 +1192,11 @@
         var mk = IV.mark;
         doLabels.push(S.label(Deck.tex('C_{t,\\mathrm{TV}}'), xAt(mk), (ySales(IV.mu[mk]) + ySales(IV.muDo[mk])) / 2, 'c', 'cz-tex'));
         doLabels.push(S.label('<i class="cz-ln is-dash"></i>' + Deck.tex('\\mu_t') + '<i class="cz-ln"></i>' + Deck.tex('\\mu_t(\\mathrm{do}(\\mathrm{TV}=0))'), X1, SA.top - 24, 'r', 'cz-mono'));
-        exLabels.push(S.label('U', U.x, U.y, 'c', 'cz-u'));
-        exLabels.push(S.label('not in River’s prior', U.x + U.r + 14, U.y, 'l', 'cz-mono'));
       },
       enter: function (ctx) {
         S.enter();
         P.ent.set(0).to(1, 2000, 150, ease.linear);
         P.dop.set(0);
-        P.exc.set(0);
         nodeLabels.forEach(function (el, q) {
           var j = Math.min(4, q >> 1);
           show(el, true, q === nodeLabels.length - 1 ? 150 + 0.3 * 2000 : 150 + (0.06 + j * 0.045) * 2000);

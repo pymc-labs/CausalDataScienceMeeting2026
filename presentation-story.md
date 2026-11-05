@@ -176,7 +176,8 @@ The time budgets below total **15 minutes**. Backup slides B1 and B2 have no tim
 
 - **Purpose:** define the causal target and its assumptions together.
 - **Takeaway:** remove a channel’s spend path and compare noise-free sales, within the restricted direct-effect graph family.
-- **Visual / delivery:** show the intervention; explicitly exclude hidden demand and input-to-input paths.
+- **Visual / delivery:** the definition, then the intervention do(TV = 0): two states, and the next press goes to “Learn the posterior from the prior”.
+- **Agreed decision, implemented (Carlos, 5 November 2026):** the third state, the boundary of River’s prior (no hidden demand, no paths between inputs), is removed. The speaker notes keep it for questions, and the limitations slide states it as its first limitation.
 
 ### 10 — Learn the posterior from the prior · 40 seconds · Main, compressed
 

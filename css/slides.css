@@ -193,11 +193,6 @@
 .slide-choices .bma .eq .katex-display > .katex { text-align: left; }
 .slide-choices .bma .small { font-size: 20px; color: var(--fg-2); }
 
-/* --- 09 Intervention boundary: a rule, not a box ----------------------------------- */
-.boundary { margin-top: 44px; padding: 2px 0 2px 24px; border-left: 2px solid var(--peach); }
-.boundary p { margin: 0; font-size: 22px; line-height: 1.55; font-weight: 300; color: var(--fg-2); }
-.boundary .card-label { font-size: 14px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--hot); margin-bottom: 10px; }
-
 /* --- 10 Prior-fitted networks: each plain message large at the left, its equation small at the right --- */
 .slide-pfn .pfn-grid { position: absolute; left: var(--mx); right: var(--mx); top: 390px; display: grid; grid-template-columns: 1040px 1fr; column-gap: 100px; row-gap: 64px; align-items: start; }
 .slide-pfn .pfn-msg { margin: 0; font-family: var(--f-display); font-stretch: 125%; font-size: 36px; line-height: 1.28; color: var(--fg); transition: opacity .6s var(--ease); }

@@ -331,25 +331,21 @@
   </aside>
 </section>
 
-<!-- 10 · Interventional target -->
-<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="2"
+<!-- 10 · Interventional target: the definition, then do(TV = 0). Two states; Next then goes to slide 11. -->
+<section class="slide" data-title="A contribution is an interventional quantity" data-act="02 · Causal worlds" data-theme="light" data-steps="1"
   data-scene="intervention" data-field='{"mode":"none"}'>
   <div class="frame text-col narrow">
     <p class="eyebrow r"><span class="num">02</span>The causal target</p>
     <h2 class="h2 r">A contribution is an <span class="accent-2">interventional quantity</span></h2>
     <p class="body r" style="margin-top:36px">In River’s graph, the contribution of a channel is the change in noise-free sales when its full spend path is set to zero and every other draw stays fixed.</p>
     <div class="eq sm r" style="margin-top:34px" data-tex="C_{t,k} \;=\; \mu_t \;-\; \mu_t\big(\mathrm{do}(X_{k} \equiv 0)\big)" data-display></div>
-    <div class="boundary" data-step="2">
-      <p class="card-label">The boundary of River’s prior</p>
-      <p>Only input → sales edges. No paths between inputs. No hidden demand. River learns which permitted edges are present.</p>
-    </div>
   </div>
   <div class="scene-root" style="left:860px;top:170px;width:940px;height:800px"></div>
   <aside class="notes">
     <p>Source: Section 2.2, Appendix A.1.1 and Eq. (3) of the paper.</p>
     <p>For a causal audience, this is the important definition. A contribution is not a regression coefficient. It is the effect of an intervention on the whole spend path.</p>
     <p>Step 1: we set TV spend to zero for all weeks. Noise-free sales drop. The gap is the TV contribution.</p>
-    <p>Step 2: the boundary. The graph family is restricted: direct effects only, no confounding by hidden demand, no input-to-input paths. River learns which permitted edges are present.</p>
+    <p>If asked about the graph family: it is restricted to direct effects. There is no confounding by hidden demand and there are no paths between inputs. River learns which permitted edges are present. The limitations slide comes back to this.</p>
   </aside>
 </section>
 

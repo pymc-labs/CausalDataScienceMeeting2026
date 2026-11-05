@@ -211,7 +211,8 @@
     if (zoom.on || zoom.armed) setZoom(false);
 
     if (index === cur) {
-      if (step === curStep) return;
+      // Same position: only correct the address (a step past the slide's last step shows as the last step).
+      if (step === curStep) { writeHash(); return; }
       var prevStep = curStep;
       var sdir = step > prevStep ? 1 : -1;
       curStep = step;
