@@ -719,7 +719,7 @@
 
     var cnt = piece(N, { only: [8], order: 20 });
     refs.counter = txt(cnt, 1676, 318, 'draw 1 / ' + NET.draws, 'tm aquat', 20, 'end');
-    txt(cnt, 1676, 340, 'weights fixed · ' + NET.eulerSteps + ' Euler steps', 'tm', FS.mono, 'end');
+    txt(cnt, 1676, 340, 'weights fixed', 'tm', FS.mono, 'end');
     // The full view shows the illustrative grid, graph draws and bands too.
     txt(piece(N, { only: [7, 8], order: 21 }), 1676, 628, 'grid, graph draws, decomposition: illustrative', 'tm dimtext', FS.mono, 'end');
   }
