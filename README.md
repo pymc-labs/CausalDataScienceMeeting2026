@@ -15,12 +15,13 @@ Fonts, KaTeX and the team photos are in the repository, so the deck also runs of
 ```sh
 git clone https://github.com/pymc-labs/CausalDataScienceMeeting2026.git
 cd CausalDataScienceMeeting2026
-python3 -m http.server 8000
+python3 serve.py
 ```
 
-Open <http://localhost:8000> in Chrome, then press **F** for full screen and the presenter screen (see below).
+Open <http://127.0.0.1:8000> in Chrome, then press **F** for full screen and the presenter screen (see below).
+`serve.py` uses the Python standard library only. It serves the deck with caching off, and it lets the presenter screen save the speaker notes (see [Edit the speaker notes](#edit-the-speaker-notes)). Use `--port 8100` for another port.
 
-In Chrome or Edge you can also open `index.html` directly (double-click it); the fonts and the navigation work from `file://`.
+Any other static server, or `index.html` opened directly from `file://` in Chrome or Edge, also shows the deck. Then the speaker notes are read-only.
 
 ## Controls
 
@@ -63,6 +64,16 @@ Its arrow keys, a clicker and its **Previous** and **Next** buttons move the dec
 
 The two windows stay linked after a reload of either window, also from `file://`.
 
+### Edit the speaker notes
+
+With `python3 serve.py`, you can write in the speaker notes on the presenter screen:
+
+- Click the notes and type. Each line is one paragraph. **Esc** gives the arrow keys back to the deck.
+- The notes save by themselves after a short pause, when you leave the notes, or with **Cmd/Ctrl + S**. The status above the notes says when they are saved.
+- `serve.py` writes the notes into that slide's `<aside class="notes">` in `index.html`. Nothing else in the file changes. The open deck and its **N** panel show the new notes at once.
+- The notes are then ordinary changes to a tracked file. Commit and push them, and everyone who pulls the repository sees the same notes. Anyone can edit them again, on the presenter screen or directly in `index.html`.
+- If the notes of that slide changed in `index.html` after the deck loaded (for example after a `git pull`), `serve.py` does not save, so nobody's text is overwritten. Copy your text, reload the deck, then paste it again.
+
 ## Narrative
 
 | Part | Slides | Content |
@@ -80,10 +91,14 @@ The two windows stay linked after a reload of either window, also from `file://`
 
 ```
 index.html            all slides, text and speaker notes
+presenter.html        presenter screen: now, next, editable speaker notes, timer
+serve.py              local server: the deck without caching, and saving of the speaker notes into index.html
 css/deck.css          design system: brand palette, type, transitions, chrome
 css/slides.css        slide layouts
+css/presenter.css     presenter screen layout
 css/scenes/*.css      styles of the animated scenes
-js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom
+js/deck.js            engine: navigation, build steps, transitions, notes, overview, zoom, presenter link
+js/presenter.js       presenter screen: the link to the deck, notes editing, timer
 js/field.js           background flow lines and contours; edge-anchored forms that fade out and morph between slides
 js/data.js            every number shown in the deck, with its source
 js/scenes/*.js        animated scenes (architecture, causal scenes, results, closing "thank you" graph)
@@ -96,7 +111,6 @@ vendor/katex/         KaTeX 0.16.11 for equations
 - Numbers: academic paper in pymc-labs/MarketingFoundationalModels pull request #36 (commit `499be45`),
   with the results of run `pr29-final-full-e35866e` at commit `10b785a`.
   `js/data.js` names the section, table or figure for each value.
-  The reliability diagram uses the calibration bins of the structure_accuracy study of that run.
 - Style and colours: the PyMC Labs white paper template (Deep Navy `#0C1F40`, Pastel Aqua `#B4E7DD`,
   Soft Periwinkle `#9FAAE2`, Soft White `#F7F7F7`, Peach Orange `#F6AE72`; Archivo Expanded, Inter, Fira Mono).
 - Logos: the official PyMC Labs full logo (white and navy); favicon from the short mark.

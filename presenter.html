@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="css/presenter.css">
 </head>
 <!-- Presenter screen: the deck opens it with F or P. It shows where the talk is, what the next
-     arrow press shows, and the speaker notes. js/presenter.js keeps it in step with the deck. -->
+     arrow press shows, and the speaker notes. js/presenter.js keeps it in step with the deck.
+     With python3 serve.py, the notes are editable: each edit is saved into index.html. -->
 <body class="pv" data-theme="dark">
   <div class="bg bg-dark"></div>
   <header class="pv-top">
@@ -38,14 +39,17 @@
       <p class="pv-text soft" data-next-text></p>
     </section>
     <section class="pv-notes">
-      <p class="pv-k">Speaker notes</p>
-      <div class="pv-notes-body" data-notes></div>
+      <div class="pv-notes-head">
+        <p class="pv-k">Speaker notes</p>
+        <p class="pv-save" data-save></p>
+      </div>
+      <textarea class="pv-notes-body" data-notes readonly spellcheck="true" aria-label="Speaker notes of the current slide"></textarea>
     </section>
   </main>
   <footer class="pv-bar">
     <button type="button" class="pv-btn" data-cmd="prev">← Previous</button>
     <button type="button" class="pv-btn next" data-cmd="next">Next →</button>
-    <p class="pv-help">The arrow keys and a clicker also work in this window.</p>
+    <p class="pv-help">The arrow keys and a clicker also work in this window. Click the notes to edit them, one paragraph per line; Esc gives the keys back to the deck.</p>
   </footer>
   <script src="js/presenter.js"></script>
 </body>

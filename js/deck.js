@@ -404,6 +404,22 @@
     if (m.type === 'hello') sendState();
     else if (m.type === 'next') next();
     else if (m.type === 'prev') prev();
+    else if (m.type === 'notes') setNotes(m.title, m.paragraphs);
+  }
+  // The presenter screen saved new notes for a slide into index.html (through serve.py): show them
+  // in this open deck too. Plain text only: each paragraph becomes one <p>.
+  function setNotes(title, paragraphs) {
+    var s = slides.filter(function (x) { return x.title === title; })[0];
+    if (!s || !Array.isArray(paragraphs)) return;
+    var n = s.el.querySelector('.notes');
+    if (!n) { n = document.createElement('aside'); n.className = 'notes'; s.el.appendChild(n); }
+    n.textContent = '';
+    paragraphs.forEach(function (t) {
+      var p = document.createElement('p');
+      p.textContent = String(t);
+      n.appendChild(p);
+    });
+    if (s === slides[cur]) { updateNotes(); sendState(); }
   }
 
   // Two screens and the browser's permission to place windows (Window Management API, Chrome):
