@@ -83,8 +83,8 @@ With `python3 serve.py`, you can write in the speaker notes on the presenter scr
 | 02 · Causal worlds | 8–11 | The prior generates worlds with a known truth; the contribution as an interventional quantity; prior-fitted networks |
 | 03 · Inside River | 12–13 | The architecture, assembled step by step with zoom; graph sampling and graph-averaged inference |
 | 04 · Evidence | 14–16 | Test design; structure recovery; contribution accuracy |
-| 05 · Boundaries and the next stage | 17–20 | Limitations of River; what River demonstrates (the main results); future work: the graph slots for the next research stage, and what comes next (link, contact) |
-| Close | 21–22 | The white paper (available now, with a QR code to `dub.sh/mfm-cdsm`) and the academic paper (coming soon, with the top of its first page); "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
+| 05 · Boundaries and the next stage | 17–19 | Limitations of River; what River demonstrates (the main results); future work: the graph slots for the next research stage |
+| Close | 20–21 | The white paper (available now, with a QR code to `dub.sh/mfm-cdsm`) and the academic paper (coming soon, with the top of its first page); "thank you" as a graph that morphs through English, Finnish, Spanish and Portuguese |
 | Backup | B1–B2 | Flow matching; units, cost and omitted inputs. Hidden during the talk: arrows, End, swipes, the overview and slide numbers in the address never reach them. Open them only by their own address: `#/backup/1` and `#/backup/2` |
 
 ## Structure
